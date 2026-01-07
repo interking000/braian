@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es" translate="no" data-bs-theme="dark">
+<head>
+  <base href="/" target="_blank">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="google" content="notranslate">
+  <link rel="shortcut icon" href="/static/img/favicon.svg" />
+  <title>KING•VPN — Perfil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- CSRF -->
+  <meta name="csrf-token" content="<%= it.csrfToken %>">
+
+  <!-- Libs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+  <!-- Tu CSS -->
+  <link rel="stylesheet" href="../static/css/styles.css">
+  <link rel="stylesheet" href="../static/css/bootstrap.css">
+  <link rel="stylesheet" href="../static/css/sidebar.css">
+  <link rel="stylesheet" href="../static/css/header.css">
+
+  <!-- JS temprano -->
+  <script src="../static/js/dark_light.js"></script>
+  <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+
+  <style>
+    /* ==========================
+       KING•VPN — UI PRO (oscuro)
+       ========================== */
+    :root{
+      --bg1:#070A10;
+      --bg2:#0B1020;
+
+      --panel:#0E1424;
+      --panel2:#0B1020;
+
+      --accent:#22D3EE;   /* celeste */
+      --accent2:#A78BFA;  /* violeta */
+      --danger:#ff4d4d;
+
+      --text:#EAF0FF;
+      --muted:#AAB3D6;
+
+      --radius:18px;
+      --shadow: 0 18px 55px rgba(0,0,0,.65);
+      --ring: 0 0 0 3px rgba(34,211,238,.18);
+      --softGlow: 0 0 0 1px rgba(34,211,238,.12), 0 12px 28px rgba(0,0,0,.55);
+      --softGlow2: 0 0 0 1px rgba(167,139,250,.14), 0 18px 40px rgba(0,0,0,.62);
+
+      /* ⬇⬇⬇ más abajo del header */
+      --header-safe: 140px;
+    }
+
+    html, body { height: 100%; }
+
+    body{
+      background:
+        radial-gradient(950px 520px at 18% 12%, rgba(167,139,250,.16), transparent 62%),
+        radial-gradient(900px 520px at 82% 14%, rgba(34,211,238,.14), transparent 60%),
+        radial-gradient(900px 620px at 50% 92%, rgba(34,211,238,.08), transparent 62%),
+        linear-gradient(135deg, var(--bg1), var(--bg2)) !important;
+      background-attachment: fixed !important;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .content-wrapper{
+      display:flex;
+      justify-content:center;
+      align-items:flex-start; /* ✅ no centrado vertical */
+      height: calc(100vh - 80px);
+      padding: 0 1rem;
+    }
+
+    .kv-shell{
+      width: 100%;
+      max-width: 980px;
+      position: relative;
+      z-index: 2;
+      margin-top: var(--header-safe); /* ✅ empuja hacia abajo */
+      padding-bottom: 24px;
+    }
+
+    .kv-card{
+      background: linear-gradient(180deg, rgba(14,20,36,.92), rgba(11,16,32,.90));
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(34,211,238,.06);
+      border: 1px solid rgba(34,211,238,.14);
+      padding: 1.15rem 1.15rem 1.0rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .kv-card::before{
+      content:"";
+      position:absolute;
+      inset:0 0 auto 0;
+      height: 92px;
+      background:
+        radial-gradient(280px 92px at 16% 30%, rgba(34,211,238,.16), transparent 65%),
+        radial-gradient(360px 92px at 78% 30%, rgba(167,139,250,.12), transparent 65%);
+      border-bottom: 1px solid rgba(34,211,238,.10);
+      pointer-events:none;
+    }
+
+    @media (max-width: 520px){
+      :root{ --header-safe: 160px; }
+    }
+
+    /* top perfil */
+    .kv-top{
+      position: relative;
+      z-index: 1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding-bottom: .8rem;
+      margin-bottom: .6rem;
+    }
+
+    .kv-user{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .kv-avatar{
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: rgba(7,10,18,.75);
+      border: 1px solid rgba(34,211,238,.18);
+      box-shadow: 0 0 0 1px rgba(34,211,238,.10), 0 12px 24px rgba(0,0,0,.45);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex: 0 0 auto;
+      overflow:hidden;
+    }
+    .kv-avatar svg{ width: 28px; height: 28px; opacity: .95; }
+    .kv-avatar svg path{ fill: rgba(34,211,238,.95); }
+
+    .kv-user-meta{ min-width:0; }
+    .kv-user-meta .name{
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: 1.0rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+    .kv-user-meta .sub{
+      color: rgba(170,179,214,.88);
+      font-size: .88rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: .15rem 0 0;
+    }
+
+    /* botón lapiz */
+    .kv-edit-btn{
+      width: 42px; height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(34,211,238,.22);
+      background:
+        radial-gradient(120px 70px at 20% 30%, rgba(34,211,238,.18), transparent 62%),
+        radial-gradient(140px 70px at 75% 30%, rgba(167,139,250,.18), transparent 65%),
+        linear-gradient(135deg, rgba(7,10,18,.70), rgba(11,16,32,.92));
+      box-shadow: var(--softGlow);
+      color: rgba(234,240,255,.95);
+      display:flex; align-items:center; justify-content:center;
+      transition: .2s ease;
+      flex: 0 0 auto;
+    }
+    .kv-edit-btn:hover{ transform: translateY(-1px); box-shadow: var(--softGlow2); }
+    .kv-edit-btn:active{ transform: translateY(0); }
+    .kv-edit-btn i{ font-size: 1.05rem; }
+
+    /* botones "Info" */
+    .kv-actions{
+      position: relative;
+      z-index: 1;
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .kv-action-btn{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: .62rem .95rem;
+      border-radius: 999px;
+      border: 1px solid rgba(34,211,238,.18);
+      background: rgba(7,10,18,.55);
+      color: rgba(234,240,255,.95);
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: .78rem;
+      box-shadow: var(--softGlow);
+      transition: .2s ease;
+    }
+    .kv-action-btn i{
+      color: rgba(34,211,238,.95);
+      font-size: 1.0rem;
+    }
+    .kv-action-btn:hover{ transform: translateY(-1px); box-shadow: var(--softGlow2); }
+    .kv-action-btn:active{ transform: translateY(0); }
+
+    /* box (contenido de modales) */
+    .kv-box{
+      border-radius: 18px;
+      border: 1px solid rgba(34,211,238,.14);
+      background: rgba(7,10,18,.42);
+      box-shadow: 0 0 0 1px rgba(34,211,238,.06);
+      padding: .95rem .95rem .9rem;
+      overflow:hidden;
+      position: relative;
+    }
+    .kv-box::after{
+      content:"";
+      position:absolute;
+      inset:auto -40px -40px auto;
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle at 30% 30%, rgba(34,211,238,.16), transparent 65%);
+      transform: rotate(15deg);
+      pointer-events:none;
+    }
+
+    .kv-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: .65rem;
+    }
+    .kv-title h6{
+      margin:0;
+      font-size: .80rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(34,211,238,.92);
+      font-weight: 950;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .kv-title h6 i{ color: rgba(34,211,238,.95); }
+
+    .kv-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    @media (max-width: 520px){
+      .kv-grid{ grid-template-columns: 1fr; }
+    }
+
+    .kv-row{
+      border: 1px dashed rgba(34,211,238,.18);
+      border-radius: 14px;
+      background: rgba(11,16,32,.55);
+      padding: .65rem .75rem;
+      min-width: 0;
+    }
+    .kv-row .k{
+      font-size: .72rem;
+      color: rgba(170,179,214,.82);
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+    .kv-row .v{
+      margin-top: .25rem;
+      font-weight: 950;
+      font-size: .98rem;
+      color: rgba(234,240,255,.95);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* modal estilo */
+    .modal-content{
+      background: rgba(11,16,32,.96) !important;
+      color: var(--text) !important;
+      border-radius: 18px !important;
+      border: 1px solid rgba(34,211,238,.16) !important;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(167,139,250,.08) !important;
+      overflow: hidden;
+      backdrop-filter: blur(14px);
+    }
+    .modal-header, .modal-footer{
+      background: linear-gradient(90deg, rgba(34,211,238,.10), rgba(11,16,32,.92), rgba(167,139,250,.10)) !important;
+      border-color: rgba(34,211,238,.10) !important;
+    }
+    .modal-title{
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: .92rem !important;
+      font-weight: 950 !important;
+    }
+    .btn-close{ filter: invert(1) brightness(1.2); opacity: .85; }
+    .btn-close:hover{ opacity: 1; }
+
+    .form-control{
+      background: rgba(7,10,18,.70) !important;
+      color: rgba(234,240,255,.95) !important;
+      border: 1px solid rgba(34,211,238,.16) !important;
+      border-radius: 14px !important;
+      font-weight: 750;
+    }
+    .form-control:focus{
+      box-shadow: var(--ring) !important;
+      border-color: rgba(34,211,238,.35) !important;
+    }
+
+    .input-group-text{
+      background: rgba(7,10,18,.60) !important;
+      border: 1px solid rgba(34,211,238,.16) !important;
+      color: rgba(34,211,238,.92) !important;
+      border-radius: 14px 0 0 14px !important;
+      font-weight: 900;
+    }
+    .input-group .form-control{ border-left: 0 !important; }
+
+    .btn-kv{
+      border-radius: 999px !important;
+      font-weight: 950 !important;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      padding: .55rem 1.05rem !important;
+    }
+    .btn-kv-cancel{
+      background: rgba(34,211,238,.12) !important;
+      border: 1px solid rgba(34,211,238,.18) !important;
+      color: rgba(234,240,255,.92) !important;
+    }
+    .btn-kv-primary{
+      background:
+        radial-gradient(120px 70px at 20% 30%, rgba(34,211,238,.18), transparent 62%),
+        radial-gradient(140px 70px at 75% 30%, rgba(167,139,250,.18), transparent 65%),
+        linear-gradient(135deg, rgba(7,10,18,.78), rgba(11,16,32,.92)) !important;
+      border: 1px solid rgba(34,211,238,.22) !important;
+      color: rgba(234,240,255,.95) !important;
+      box-shadow: var(--softGlow) !important;
+    }
+    .btn-kv-danger{
+      background: linear-gradient(90deg, rgba(34,211,238,.95), rgba(167,139,250,.95)) !important;
+      border: none !important;
+      color: #06101f !important;
+      box-shadow: var(--softGlow2) !important;
+    }
+
+    .kv-note{
+      background: rgba(7,10,18,.45);
+      border: 1px solid rgba(34,211,238,.16);
+      border-radius: 14px;
+      padding: .75rem .85rem;
+      color: rgba(234,240,255,.92);
+    }
+    .kv-note b{ color: rgba(34,211,238,.95); }
+
+    .kv-danger-text{
+      color: var(--danger);
+      font-weight: 950;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="d-flex">
+    <%~ include("./sidebar", it) %>
+
+    <div class="container-fluid p-0">
+      <%~ include("./header", it) %>
+
+      <div class="content content-wrapper">
+        <div class="kv-shell">
+          <div class="kv-card">
+
+            <!-- TOP PERFIL: SVG + USER + LAPIZ -->
+            <div class="kv-top">
+              <div class="kv-user">
+                <div class="kv-avatar" aria-hidden="true">
+                  <!-- SVG Perfil -->
+                  <svg viewBox="0 0 24 24" role="img" aria-label="Perfil">
+                    <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"></path>
+                  </svg>
+                </div>
+                <div class="kv-user-meta">
+                  <p class="name" id="uiUsername"><%= it.user.username %></p>
+                  <p class="sub" id="uiEmail"><%= it.user.email %></p>
+                </div>
+              </div>
+
+              <button class="kv-edit-btn" id="btnOpenEdit" type="button" title="Editar datos">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+            </div>
+
+            <!-- BOTONES QUE ABREN MODALES -->
+            <div class="kv-actions">
+              <button class="kv-action-btn" id="btnOpenUserInfo" type="button">
+                <i class="bi bi-person-badge-fill"></i> Info usuario
+              </button>
+
+              <button class="kv-action-btn" id="btnOpenPanelInfo" type="button">
+                <i class="bi bi-grid-1x2-fill"></i> Info panel
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================
+       MODAL: INFO USUARIO
+       ========================= -->
+  <div class="modal fade" id="userInfoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title"><i class="bi bi-person-badge-fill"></i> Info usuario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="kv-box">
+            <div class="kv-title">
+              <h6><i class="bi bi-shield-lock-fill"></i> Datos de acceso</h6>
+            </div>
+
+            <div class="kv-grid">
+              <div class="kv-row">
+                <div class="k">Usuario</div>
+                <div class="v" id="infoUser_username"><%= it.user.username %></div>
+              </div>
+
+              <div class="kv-row">
+                <div class="k">Plan</div>
+                <div class="v" id="infoUser_plan">—</div>
+              </div>
+
+              <div class="kv-row">
+                <div class="k">Vencimiento</div>
+                <div class="v" id="infoUser_expires">—</div>
+              </div>
+
+              <div class="kv-row">
+                <div class="k">Días que quedan</div>
+                <div class="v" id="infoUser_daysLeft">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button class="btn btn-kv btn-kv-cancel" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg"></i> Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================
+       MODAL: INFO PANEL
+       ========================= -->
+  <div class="modal fade" id="panelInfoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title"><i class="bi bi-grid-1x2-fill"></i> Info panel</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="kv-box">
+            <div class="kv-title">
+              <h6><i class="bi bi-sliders2-vertical"></i> Estado del panel</h6>
+            </div>
+
+            <div class="kv-grid">
+              <div class="kv-row">
+                <div class="k">Temas</div>
+                <div class="v" id="infoPanel_themes">—</div>
+              </div>
+
+              <div class="kv-row">
+                <div class="k">Categorías</div>
+                <div class="v" id="infoPanel_categories">—</div>
+              </div>
+
+              <div class="kv-row">
+                <div class="k">Configuraciones</div>
+                <div class="v" id="infoPanel_configs">—</div>
+              </div>
+
+              <div class="kv-row">
+                <div class="k">Estado</div>
+                <div class="v" id="infoPanel_status">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button class="btn btn-kv btn-kv-cancel" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg"></i> Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================
+       MODAL 1: EDITAR DATOS
+       - Usuario / Gmail / Contraseña
+       ========================= -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title"><i class="bi bi-person-gear"></i> Editar datos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="kv-note mb-3">
+            <b>Tip:</b> Si no querés cambiar contraseña, dejala vacía.
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label mb-1">Nombre de usuario</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+              <input type="text" class="form-control" id="edit_username" value="<%= it.user.username %>">
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label mb-1">Gmail</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+              <input type="text" class="form-control" id="edit_email" value="<%= it.user.email %>" readonly>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label mb-1">Contraseña</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+              <input type="password" class="form-control" id="edit_password" placeholder="••••••••">
+              <button class="input-group-text" type="button" id="btnTogglePass" title="Mostrar/ocultar">
+                <i class="bi bi-eye-fill" id="eyeIcon1"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-1">
+            <label class="form-label mb-1">Confirmar contraseña</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+              <input type="password" class="form-control" id="edit_confirm" placeholder="••••••••">
+              <button class="input-group-text" type="button" id="btnTogglePass2" title="Mostrar/ocultar">
+                <i class="bi bi-eye-fill" id="eyeIcon2"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer border-0 d-flex justify-content-between">
+          <button class="btn btn-kv btn-kv-cancel" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg"></i> Cancelar
+          </button>
+          <button class="btn btn-kv btn-kv-primary" id="btnGoConfirm">
+            <i class="bi bi-arrow-right-circle"></i> Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================
+       MODAL 2: CONFIRMAR CAMBIO (antes de guardar)
+       ========================= -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill"></i> Confirmar cambio</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="kv-note">
+            Estás por cambiar tus datos de acceso en <b>KING•VPN</b>.
+            <div class="mt-2" style="color:rgba(170,179,214,.90); font-weight:800;">
+              Esto puede afectar tu acceso premium. Si estás seguro, confirmá.
+            </div>
+            <div class="mt-2">
+              <span class="kv-danger-text">⚠ Al confirmar, se registrará en tu auditoría de acceso.</span>
+            </div>
+          </div>
+
+          <div class="kv-box mt-3" style="padding:.85rem;">
+            <div class="kv-title" style="margin-bottom:.5rem;">
+              <h6><i class="bi bi-eye-fill"></i> Vista previa</h6>
+            </div>
+
+            <div class="kv-grid">
+              <div class="kv-row">
+                <div class="k">Nuevo usuario</div>
+                <div class="v" id="previewUser">—</div>
+              </div>
+              <div class="kv-row">
+                <div class="k">Contraseña</div>
+                <div class="v" id="previewPass">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="confirmError" class="mt-3" style="display:none; color: var(--danger); font-weight: 950;">
+            Error al guardar. Intentá nuevamente.
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 d-flex justify-content-between">
+          <button class="btn btn-kv btn-kv-cancel" data-bs-dismiss="modal">
+            <i class="bi bi-arrow-left"></i> Volver
+          </button>
+          <button class="btn btn-kv btn-kv-danger" id="btnCommitChange">
+            <i class="bi bi-check2-circle"></i> Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libs -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <!-- Tu JS -->
+  <script src="../static/js/sidebar.js"></script>
+  <script src="../static/js/utils.js"></script>
+
+  <script>
+    // ============================
+    // CSRF (tu helper)
+    // ============================
+    let csrfToken = getCsrfTokenHead();
+
+    // ============================
+    // Endpoints
+    // (si tu status real es otro, cambia SOLO esta constante)
+    // ============================
+    const API_STATUS = "/DTunnel/acceso/status";
+    const API_PROFILE_UPDATE = "/profile";
+
+    // ============================
+    // Modales
+    // ============================
+    const editModalEl = document.getElementById("editModal");
+    const confirmModalEl = document.getElementById("confirmModal");
+    const userInfoModalEl = document.getElementById("userInfoModal");
+    const panelInfoModalEl = document.getElementById("panelInfoModal");
+
+    const editModal = new bootstrap.Modal(editModalEl);
+    const confirmModal = new bootstrap.Modal(confirmModalEl);
+    const userInfoModal = new bootstrap.Modal(userInfoModalEl);
+    const panelInfoModal = new bootstrap.Modal(panelInfoModalEl);
+
+    // Abrir modales info
+    document.getElementById("btnOpenUserInfo").addEventListener("click", () => userInfoModal.show());
+    document.getElementById("btnOpenPanelInfo").addEventListener("click", () => panelInfoModal.show());
+
+    // Abrir editar
+    document.getElementById("btnOpenEdit").addEventListener("click", () => {
+      document.getElementById("edit_password").value = "";
+      document.getElementById("edit_confirm").value = "";
+      document.getElementById("confirmError").style.display = "none";
+
+      // reset icons + tipos
+      resetPasswordVisibility();
+
+      editModal.show();
+    });
+
+    // ============================
+    // FIX: Mostrar / ocultar passwords + iconos
+    // ============================
+    function setEyeIcon(iconEl, isVisible){
+      // visible => ojo tachado
+      iconEl.classList.toggle("bi-eye-fill", !isVisible);
+      iconEl.classList.toggle("bi-eye-slash-fill", isVisible);
+    }
+
+    function togglePassword(inputId, iconId){
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+
+      const isVisible = input.type === "text";
+      input.type = isVisible ? "password" : "text";
+      setEyeIcon(icon, !isVisible);
+    }
+
+    function resetPasswordVisibility(){
+      const p1 = document.getElementById("edit_password");
+      const p2 = document.getElementById("edit_confirm");
+      const i1 = document.getElementById("eyeIcon1");
+      const i2 = document.getElementById("eyeIcon2");
+
+      p1.type = "password";
+      p2.type = "password";
+      setEyeIcon(i1, false);
+      setEyeIcon(i2, false);
+    }
+
+    document.getElementById("btnTogglePass").addEventListener("click", () => togglePassword("edit_password", "eyeIcon1"));
+    document.getElementById("btnTogglePass2").addEventListener("click", () => togglePassword("edit_confirm", "eyeIcon2"));
+
+    // ============================
+    // Helpers UI
+    // ============================
+    function fmtISO(iso){
+      if(!iso) return "—";
+      try{
+        const d = new Date(iso);
+        return d.toLocaleDateString("es-AR", { year:"numeric", month:"2-digit", day:"2-digit" });
+      }catch{ return "—"; }
+    }
+    function daysLeft(expiresISO){
+      if(!expiresISO) return "—";
+      const now = new Date();
+      const end = new Date(expiresISO);
+      const diff = Math.ceil((end - now) / (1000*60*60*24));
+      if(!Number.isFinite(diff)) return "—";
+      return String(Math.max(0, diff));
+    }
+
+    function showOk(msg){
+      if (typeof window.showToastSuccess === "function") return window.showToastSuccess(msg);
+      Toastify({ text: msg, duration: 3200, gravity:"top", position:"right" }).showToast();
+    }
+    function showErr(msg){
+      if (typeof window.showToastError === "function") return window.showToastError(msg);
+      Toastify({ text: msg, duration: 3800, gravity:"top", position:"right" }).showToast();
+    }
+
+    // ============================
+    // Cargar info desde STATUS
+    // (se rellena para ambos modales)
+    // ============================
+    async function loadStatus(){
+      try{
+        const r = await fetch(API_STATUS, { headers: { "csrf-token": csrfToken } });
+
+        const csrfTokenRefresh = getCsrfTokenRefresh(r);
+        if (csrfTokenRefresh) csrfToken = csrfTokenRefresh;
+
+        if(!r.ok) return;
+
+        const s = await r.json();
+
+        const plan = s?.plan?.name || s?.plan_name || s?.plan_code || "DEMO";
+        const expires = s?.access_ends_at || s?.expires_at || s?.user?.access_ends_at || null;
+
+        const categories = s?.counts?.categories ?? s?.categories_count ?? s?.categories ?? "—";
+        const configs = s?.counts?.configs ?? s?.configs_count ?? s?.configs ?? "—";
+        const themes = s?.counts?.themes ?? s?.themes_count ?? s?.themes ?? "—";
+
+        const status = s?.access_status || s?.status || "—";
+
+        // INFO USER MODAL
+        document.getElementById("infoUser_plan").textContent = String(plan);
+        document.getElementById("infoUser_expires").textContent = fmtISO(expires);
+        document.getElementById("infoUser_daysLeft").textContent = daysLeft(expires);
+
+        // INFO PANEL MODAL
+        document.getElementById("infoPanel_themes").textContent = String(themes);
+        document.getElementById("infoPanel_categories").textContent = String(categories);
+        document.getElementById("infoPanel_configs").textContent = String(configs);
+        document.getElementById("infoPanel_status").textContent = String(status);
+
+      }catch(e){
+        // silencioso
+      }
+    }
+    loadStatus();
+
+    // cuando abras los modales, refresca por si cambió algo
+    userInfoModalEl.addEventListener("shown.bs.modal", loadStatus);
+    panelInfoModalEl.addEventListener("shown.bs.modal", loadStatus);
+
+    // ============================
+    // Guardar: primero CONFIRMACIÓN
+    // ============================
+    document.getElementById("btnGoConfirm").addEventListener("click", () => {
+      const username = (document.getElementById("edit_username").value || "").trim();
+      const password = (document.getElementById("edit_password").value || "");
+      const confirm = (document.getElementById("edit_confirm").value || "");
+
+      if(!username) return showErr("Nombre de usuario inválido");
+      if(password && password.length < 6) return showErr("Contraseña muy corta (mínimo 6)");
+      if(password !== confirm) return showErr("Las contraseñas no coinciden");
+
+      document.getElementById("previewUser").textContent = username;
+      document.getElementById("previewPass").textContent = password ? "Se actualizará" : "No cambia";
+
+      editModal.hide();
+      confirmModal.show();
+    });
+
+    // ============================
+    // Confirmar => PUT /profile
+    // ============================
+    document.getElementById("btnCommitChange").addEventListener("click", async () => {
+      const username = (document.getElementById("edit_username").value || "").trim();
+      const email = (document.getElementById("edit_email").value || "").trim();
+      const password = (document.getElementById("edit_password").value || "") || null;
+      const confirm_password = (document.getElementById("edit_confirm").value || "") || null;
+
+      document.getElementById("confirmError").style.display = "none";
+
+      const payload = {
+        email,
+        username,
+        password: password ? password : null,
+        confirm_password: password ? confirm_password : null
+      };
+
+      try{
+        const r = await fetch(API_PROFILE_UPDATE, {
+          method: "PUT",
+          headers: {
+            "Content-Type":"application/json",
+            "csrf-token": csrfToken
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const csrfTokenRefresh = getCsrfTokenRefresh(r);
+        if (csrfTokenRefresh) csrfToken = csrfTokenRefresh;
+
+        if(r.status === 200){
+          // refresca UI sin recargar
+          document.getElementById("uiUsername").textContent = username;
+          document.getElementById("infoUser_username").textContent = username;
+
+          confirmModal.hide();
+          showOk("Datos actualizados en KING•VPN ✅");
+
+          // refrescar datos
+          loadStatus();
+          return;
+        }
+
+        let msg = "No se pudieron actualizar los datos";
+        try{
+          const j = await r.json();
+          if(j?.message) msg = j.message;
+        }catch{}
+        showErr(msg);
+        document.getElementById("confirmError").style.display = "block";
+
+      }catch(e){
+        showErr("Error guardando cambios");
+        document.getElementById("confirmError").style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

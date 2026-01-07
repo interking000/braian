@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+
+<head>
+  <base href="/" target="_blank">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/static/img/favicon.svg" />
+  <title>KING•VPN - LOGIN</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <meta name="csrf-token" content="<%= it.csrfToken %>">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      padding: 1rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1a1a; /* Fondo gris oscuro */
+      position: relative;
+    }
+
+    /* ============================================================
+       REFLEJOS VIDRIADOS EN EL FONDO
+    ============================================================ */
+    body::before,
+    body::after,
+    body .reflect1,
+    body .reflect2,
+    body .reflect3,
+    body .reflect4 {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: float 60s ease-in-out infinite;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    body::before { width: 250px; height: 250px; top: 5%; left: 10%; animation-duration: 65s; }
+    body::after { width: 200px; height: 200px; top: 40%; left: 70%; animation-duration: 80s; }
+    body .reflect1 { width: 300px; height: 300px; top: 70%; left: 15%; animation-duration: 75s; }
+    body .reflect2 { width: 180px; height: 180px; bottom: 10%; left: 50%; animation-duration: 90s; }
+    body .reflect3 { width: 220px; height: 220px; top: 20%; right: 20%; animation-duration: 70s; }
+    body .reflect4 { width: 150px; height: 150px; bottom: 20%; right: 10%; animation-duration: 85s; }
+
+    @keyframes float {
+      0% { transform: translate(0px, 0px); opacity: 0.15; }
+      25% { transform: translate(40px, 20px); opacity: 0.12; }
+      50% { transform: translate(-30px, 40px); opacity: 0.10; }
+      75% { transform: translate(20px, -20px); opacity: 0.12; }
+      100% { transform: translate(0px, 0px); opacity: 0.15; }
+    }
+
+    /* TARJETA */
+    .card {
+      background-color: #141414;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9);
+      position: relative;
+      z-index: 1;
+    }
+
+    .title-3d {
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      text-shadow:
+        2px 2px 0 #000000,
+        4px 4px 2px rgba(0,0,0,0.5),
+        6px 6px 4px rgba(0,0,0,0.4);
+    }
+
+    .form-control {
+      background-color: #1b1b1b;
+      color: #fff;
+      border: none;
+      transition: color 0.2s;
+    }
+
+    .form-label {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .btn-dark {
+      background-color: #181818;
+      border: none;
+    }
+
+    .btn-dark:hover {
+      background-color: #333333;
+    }
+
+    .login-link {
+      color: #fff !important;
+      font-weight: 700;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #282d31 inset !important;
+      -webkit-text-fill-color: #ffffff !important;
+    }
+
+    /* FOOTER */
+    .footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      z-index: 1;
+      pointer-events: none;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+
+<body>
+  <!-- Reflejos extras -->
+  <div class="reflect1"></div>
+  <div class="reflect2"></div>
+  <div class="reflect3"></div>
+  <div class="reflect4"></div>
+
+  <main class="form-signin text-center">
+    <div class="card">
+      <div class="card-body">
+        <form role="form" action="/login" class="pt-3">
+          <h1 class="title-3d">KING•VPN👑</h1>
+
+          <div class="__spinner">
+            <div class="spinner-border text-light p-4 mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <div class="__inputs">
+            <div class="mb-3 text-start">
+              <label class="form-label ms-1 mb-1" for="username">Nombre de usuario👤</label>
+              <input class="form-control" id="username" name="username" placeholder="usuario" required type="text">
+            </div>
+
+            <div class="mb-4 text-start">
+              <label class="form-label ms-1 mb-1" for="password">Contraseña🔑</label>
+              <input class="form-control" id="password" name="password" placeholder="********" required type="password">
+            </div>
+
+            <button type="submit" id="login" class="w-100 btn btn-dark btn-block mb-4">
+              Entrar
+            </button>
+
+            <p><a href="/register" class="login-link mt-2" target="_self">❌¿No tienes una cuenta? Regístrate aquí</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <div class="footer">Powered By ©InterKing</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="../static/js/utils.js"></script>
+
+  <script>
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    const showSpinner = () => {
+      const spinner = document.querySelector('.__spinner');
+      const inputs = document.querySelector('.__inputs');
+      spinner.style.display = 'block';
+      inputs.style.display = 'none';
+    }
+
+    const closeSpinner = () => {
+      const spinner = document.querySelector('.__spinner');
+      const inputs = document.querySelector('.__inputs');
+      spinner.style.display = 'none';
+      inputs.style.display = 'block';
+    }
+
+    showSpinner();
+    setTimeout(() => closeSpinner(), 500);
+
+    let csrfToken = getCsrfTokenHead();
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      showSpinner();
+
+      const formData = new FormData(form);
+      const body = Object.fromEntries(formData);
+
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'csrf-token': csrfToken,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.status == 200) {
+        showToastSuccess(data.message);
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
+        return;
+      }
+
+      const csrfTokenRefresh = getCsrfTokenRefresh(response);
+      if (csrfTokenRefresh) csrfToken = csrfTokenRefresh;
+
+      showToastError(data.message);
+      closeSpinner();
+    });
+  </script>
+</body>
+</html>

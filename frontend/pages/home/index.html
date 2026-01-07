@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es-AR" translate="no" data-bs-theme="light">
+
+<head>
+  <base href="/" target="_blank">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="google" content="notranslate">
+  <link rel="shortcut icon" href="/static/img/favicon.svg" />
+  <title>DatosUser</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link rel="stylesheet" href="../static/css/styles.css">
+  <link rel="stylesheet" href="../static/css/bootstrap.css">
+  <link rel="stylesheet" href="../static/css/sidebar.css">
+  <link rel="stylesheet" href="../static/css/header.css">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet" />
+  <script src="../static/js/dark_light.js"></script>
+  <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+  <meta name="csrf-token" content="<%= it.csrfToken %>">
+
+  <style>
+    /* ==========================
+       🎨 Misma paleta “azul oscuro + celeste” (mate/pro)
+       ========================== */
+    :root {
+      --bg1: #070A10;
+      --bg2: #0B1020;
+
+      --panel: #0E1424;
+      --panel2: #0B1020;
+
+      --accent: #8B5CF6;
+      --accent2: #22D3EE;
+      --accent3: #A78BFA;
+
+      --line: rgba(167, 139, 250, .22);
+
+      --text: #EAF0FF;
+      --muted: #AAB3D6;
+
+      --radius: 18px;
+
+      --shadow: 0 18px 55px rgba(0, 0, 0, .65);
+      --ring: 0 0 0 3px rgba(139, 92, 246, .18);
+      --softGlow: 0 0 0 1px rgba(167, 139, 250, .14), 0 12px 28px rgba(0, 0, 0, .55);
+      --softGlow2: 0 0 0 1px rgba(34, 211, 238, .12), 0 18px 40px rgba(0, 0, 0, .62);
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body,
+    body[data-bs-theme="light"],
+    body[data-bs-theme="dark"] {
+      min-height: 100vh !important;
+      color: var(--text) !important;
+      background:
+        radial-gradient(950px 520px at 18% 12%, rgba(139, 92, 246, .18), transparent 62%),
+        radial-gradient(900px 520px at 82% 14%, rgba(34, 211, 238, .14), transparent 60%),
+        radial-gradient(900px 620px at 50% 92%, rgba(167, 139, 250, .10), transparent 62%),
+        linear-gradient(135deg, var(--bg1), var(--bg2)) !important;
+      background-attachment: fixed !important;
+      overflow-x: hidden !important;
+    }
+
+    .container-fluid,
+    main.d-flex {
+      background: transparent !important;
+    }
+
+    /* Centrado del contenido */
+    main.d-flex {
+      min-height: 100vh;
+      justify-content: center;
+    }
+
+    .container-fluid {
+      max-width: 1250px;
+      width: 100%;
+    }
+
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: calc(100vh - 80px);
+      padding: 16px;
+    }
+
+    /* Card contenedora general del dashboard */
+    .dash-shell {
+      width: 100%;
+      max-width: 1120px;
+      border-radius: calc(var(--radius) + 6px);
+      background: linear-gradient(180deg, rgba(14, 20, 36, .90), rgba(11, 16, 32, .88));
+      border: 1px solid rgba(167, 139, 250, .22);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(34, 211, 238, .05);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    .dash-shell::before {
+      content: "";
+      position: absolute;
+      inset: -2px -2px auto -2px;
+      height: 110px;
+      background:
+        radial-gradient(380px 110px at 16% 30%, rgba(139, 92, 246, .14), transparent 65%),
+        radial-gradient(560px 110px at 70% 30%, rgba(34, 211, 238, .10), transparent 65%),
+        linear-gradient(90deg, rgba(34, 211, 238, .08), rgba(167, 139, 250, .05));
+      pointer-events: none;
+      border-bottom: 1px solid rgba(167, 139, 250, .10);
+    }
+
+    .dash-title {
+      position: relative;
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(234, 240, 255, .95);
+      text-shadow: 0 0 18px rgba(34, 211, 238, .08);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dash-title i {
+      color: rgba(34, 211, 238, .92);
+    }
+
+    /* ✅ Grilla fija: 2 columnas en desktop, 1 en móvil */
+    .dash-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 820px) {
+      .dash-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ✅ Marco tipo “categorías/servidor” para métricas */
+    .metric-frame {
+      border-radius: 18px !important;
+      background:
+        radial-gradient(320px 90px at 18% 18%, rgba(125, 211, 252, .10), transparent 65%),
+        radial-gradient(360px 90px at 82% 22%, rgba(56, 189, 248, .08), transparent 70%),
+        linear-gradient(180deg, rgba(4, 10, 24, .95), rgba(7, 19, 43, .92)) !important;
+      border: 1px solid rgba(34, 211, 238, .16) !important;
+      box-shadow: 0 0 0 1px rgba(34, 211, 238, .10), 0 12px 28px rgba(0, 0, 0, .55) !important;
+      padding: 14px !important;
+      min-height: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 46px;
+      background:
+        radial-gradient(240px 46px at 18% 30%, rgba(125, 211, 252, .14), transparent 65%),
+        radial-gradient(360px 46px at 75% 30%, rgba(34, 211, 238, .12), transparent 65%);
+      border-bottom: 1px solid rgba(34, 211, 238, .10);
+      pointer-events: none;
+    }
+
+    .metric-title {
+      position: relative;
+      font-size: .78rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(170, 179, 214, .90);
+      margin: 0 0 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .metric-title i {
+      color: rgba(34, 211, 238, .92);
+    }
+
+    .metric-value {
+      position: relative;
+      font-weight: 950;
+      font-size: 1.55rem;
+      letter-spacing: .04em;
+      color: rgba(234, 246, 255, .96);
+      text-shadow: 0 0 18px rgba(34, 211, 238, .16), 0 14px 38px rgba(0, 0, 0, .55);
+      line-height: 1.2;
+    }
+
+    /* Si tu include trae cards bootstrap adentro, las limpiamos visualmente */
+    .metric-frame.card,
+    .metric-frame .card {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Mejora de textos “secundarios” si vienen dentro */
+    .metric-frame small,
+    .metric-frame .text-muted {
+      color: rgba(170, 179, 214, .78) !important;
+    }
+
+    /* Paginación / links si existiesen */
+    a,
+    .btn-link {
+      color: rgba(34, 211, 238, .92) !important;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+
+  <main class="d-flex">
+    <%~ include("./sidebar", it) %>
+
+    <div class="container-fluid p-0">
+      <%~ include("./header", it) %>
+
+      <div class="content pt-1 overflow-auto">
+        <!-- ✅ Nuevo “shell” visual SIN romper lógica del include -->
+        <div class="dash-shell">
+          <div class="dash-title">
+            <i class="bi bi-speedometer2"></i> Panel
+          </div>
+
+          <!-- ✅ Contenedor para reordenar y enmarcar -->
+          <div id="dashGrid" class="dash-grid">
+            <%~ include("./cards", it) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../static/js/sidebar.js"></script>
+  <script src="../static/js/utils.js"></script>
+
+  <script>
+    const padStart = (value, length, pad) => {
+      return `${value}`.padStart(length, pad);
+    };
+
+    const setInternalError = (element) => element.innerHTML = '<span class="text-danger">Error interno</span>';
+
+    const fetchDataAndUpdate = async () => {
+
+      const config = document.querySelector('.__config');
+      const configPlaceholder = document.querySelector('.__config__placeholder');
+
+      const category = document.querySelector('.__category');
+      const categoryPlaceholder = document.querySelector('.__category__placeholder');
+
+      try {
+        const data = await fetch('/config_count', { headers: {} });
+        const response = await data.json();
+
+        if (response.message) {
+          if (config) config.textContent = padStart(0, 2, '0');
+          if (category) category.textContent = padStart(0, 2, '0');
+          return;
+        }
+
+        if (config) config.textContent = padStart(response.total_configs, 2, '');
+        if (category) category.textContent = padStart(response.total_categories, 2, '');
+
+      } catch (err) {
+        if (config) setInternalError(config);
+        if (category) setInternalError(category);
+      } finally {
+        if (configPlaceholder) configPlaceholder.classList.add('d-none');
+        if (categoryPlaceholder) categoryPlaceholder.classList.add('d-none');
+      }
+    };
+
+    fetchDataAndUpdate();
+  </script>
+
+  <script>
+    /* =========================================================
+       ✅ Enmarcado automático (SIN tocar IDs ni lógica)
+       - Encapsula: vencimiento / registro / actualización / totales
+       - Reintenta si ./cards renderiza tarde
+       ========================================================= */
+
+    const wrapInFrame = (valueEl, titleText, iconClass = "bi bi-info-circle") => {
+      if (!valueEl) return;
+      if (valueEl.classList && valueEl.classList.contains('metric-value') && valueEl.closest('.metric-frame')) return;
+
+      // Buscamos el bloque lógico donde está ese valor (no rompemos estructura)
+      const host =
+        valueEl.closest('.card') ||
+        valueEl.closest('.col') ||
+        valueEl.closest('[class*="col-"]') ||
+        valueEl.closest('.p-3') ||
+        valueEl.parentElement;
+
+      if (!host || host.closest('.metric-frame')) return;
+
+      const frame = document.createElement('div');
+      frame.className = 'metric-frame';
+
+      const title = document.createElement('div');
+      title.className = 'metric-title';
+      title.innerHTML = `<i class="${iconClass}"></i> ${titleText}`;
+
+      // Insertar el frame donde estaba el host y mover host adentro
+      host.parentNode.insertBefore(frame, host);
+      frame.appendChild(title);
+      frame.appendChild(host);
+
+      // Estilizamos el valor
+      try { valueEl.classList.add('metric-value'); } catch { }
+    };
+
+    const findByTextNear = (keywords) => {
+      const all = Array.from(document.querySelectorAll('#dashGrid *'))
+        .filter(n => n.childElementCount === 0 && (n.textContent || '').trim().length);
+
+      const hit = all.find(n => {
+        const t = (n.textContent || '').toLowerCase();
+        return keywords.some(k => t.includes(k));
+      });
+
+      if (!hit) return null;
+
+      // Probable “valor” cerca
+      const parent = hit.parentElement;
+      if (!parent) return hit;
+
+      // Intenta encontrar un valor (span/strong/h*) dentro del mismo bloque
+      const candidate =
+        parent.querySelector('span, strong, h1, h2, h3, h4, h5, div') ||
+        hit.nextElementSibling ||
+        parent.nextElementSibling;
+
+      return candidate || hit;
+    };
+
+    const frameDashboardMetrics = () => {
+      // ✅ Totales por clases conocidas
+      wrapInFrame(document.querySelector('.__config'), 'Total de configuraciones', 'bi bi-gear-fill');
+      wrapInFrame(document.querySelector('.__category'), 'Total de categorías', 'bi bi-grid-fill');
+
+      // ✅ Fechas (mejor esfuerzo: por id/clase común o texto cercano)
+      const expire =
+        document.querySelector('#expire, #expiration, #vencimiento, #expiry, .__expire, .__expiration') ||
+        findByTextNear(['venc', 'vencimiento', 'expir', 'expiration', 'expiry']);
+      wrapInFrame(expire, 'Fecha de vencimiento', 'bi bi-calendar2-check-fill');
+
+      const reg =
+        document.querySelector('#register, #registro, #created, #create_at, .__register, .__created') ||
+        findByTextNear(['registro', 'registr', 'cread', 'criado', 'created']);
+      wrapInFrame(reg, 'Fecha de registro', 'bi bi-calendar2-plus-fill');
+
+      const upd =
+        document.querySelector('#update, #updated, #actualizacion, #actualización, #atualizacao, .__updated, .__update') ||
+        findByTextNear(['actualiz', 'actualización', 'atualiz', 'update', 'updated']);
+      wrapInFrame(upd, 'Última actualización', 'bi bi-arrow-repeat');
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      frameDashboardMetrics();
+
+      // por si ./cards cambia/renderean luego
+      const grid = document.getElementById('dashGrid') || document.body;
+      new MutationObserver(() => frameDashboardMetrics())
+        .observe(grid, { childList: true, subtree: true });
+
+      // reintento corto por si hay render tardío
+      let tries = 0;
+      const t = setInterval(() => {
+        frameDashboardMetrics();
+        tries++;
+        if (tries >= 12) clearInterval(t);
+      }, 250);
+    });
+  </script>
+</body>
+
+</html>

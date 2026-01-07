@@ -1,0 +1,116 @@
+<!-- ================= HEADER ================= -->
+<nav class="header">
+  <!-- BOTÓN MENÚ -->
+  <button id="openNav" class="menu-btn" aria-label="Abrir menú">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 6H21"/>
+      <path d="M3 12H21"/>
+      <path d="M3 18H21"/>
+    </svg>
+  </button>
+
+  <!-- TÍTULO -->
+  <div class="header-title">
+    KING<span>•VPN</span>
+  </div>
+
+  <!-- USUARIO -->
+  <div class="header-user">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
+      <path d="M4 20c0-3.31 3.58-6 8-6s8 2.69 8 6"/>
+    </svg>
+    <span><%= it.user.username %></span>
+  </div>
+</nav>
+
+<style>
+/* ================= HEADER ================= */
+.header{
+  height:40px;
+  padding:0 14px;
+  background:linear-gradient(180deg,rgba(7,10,16,.98),rgba(11,16,32,.92));
+  border-bottom:1px solid rgba(34,211,238,.12);
+  display:flex;
+  align-items:center;
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:1200;
+  backdrop-filter:blur(10px);
+}
+
+/* BOTÓN MENÚ */
+.menu-btn{
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  padding:4px;
+  border-radius:10px;
+}
+.menu-btn:hover{
+  box-shadow:0 0 0 2px rgba(34,211,238,.18);
+}
+.menu-btn svg{
+  width:20px;
+  height:20px;
+  stroke:#EAF0FF;
+  stroke-width:2;
+  fill:none;
+}
+
+/* TÍTULO CENTRADO */
+.header-title{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:.9rem;
+  font-weight:900;
+  letter-spacing:.22em;
+  color:#EAF0FF;
+  user-select:none;
+  text-shadow:
+    0 0 8px rgba(34,211,238,.14),
+    0 0 14px rgba(167,139,250,.10);
+}
+.header-title span{
+  opacity:.3;
+}
+
+/* USUARIO DERECHA */
+.header-user{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 10px;
+  border-radius:999px;
+  background:rgba(7,10,18,.35);
+  border:1px solid rgba(34,211,238,.16);
+  box-shadow:0 0 0 1px rgba(34,211,238,.06);
+  max-width:45%;
+  overflow:hidden;
+}
+.header-user svg{
+  width:16px;
+  height:16px;
+  stroke:#22D3EE;
+  stroke-width:2;
+  fill:none;
+}
+.header-user span{
+  font-size:.68rem;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#EAF0FF;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* COMPENSAR HEADER FIXED */
+body{
+  padding-top:40px;
+}
+</style>
