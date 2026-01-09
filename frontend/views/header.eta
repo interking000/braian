@@ -1,116 +1,299 @@
-<!-- ================= HEADER ================= -->
-<nav class="header">
-  <!-- BOTÓN MENÚ -->
-  <button id="openNav" class="menu-btn" aria-label="Abrir menú">
-    <svg viewBox="0 0 24 24">
-      <path d="M3 6H21"/>
-      <path d="M3 12H21"/>
-      <path d="M3 18H21"/>
+<!-- ======================= KINGVPN HEADER (1 SOLO CÓDIGO COMPLETO) ======================= -->
+<!-- PEGÁ TODO ESTO JUNTO (HTML + CSS + JS) -->
+
+<!-- HEADER -->
+<nav class="header king-header" id="kingHeader">
+  <button id="openNav" class="menu-btn" aria-label="Abrir menú" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 6H21"></path>
+      <path d="M3 12H21"></path>
+      <path d="M3 18H21"></path>
     </svg>
   </button>
 
-  <!-- TÍTULO -->
   <div class="header-title">
     KING<span>•VPN</span>
   </div>
 
-  <!-- USUARIO -->
-  <div class="header-user">
-    <svg viewBox="0 0 24 24">
-      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
-      <path d="M4 20c0-3.31 3.58-6 8-6s8 2.69 8 6"/>
+  <div class="header-user" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"></path>
+      <path d="M4 20c0-3.31 3.58-6 8-6s8 2.69 8 6"></path>
     </svg>
     <span><%= it.user.username %></span>
   </div>
 </nav>
 
 <style>
-/* ================= HEADER ================= */
-.header{
-  height:40px;
-  padding:0 14px;
-  background:linear-gradient(180deg,rgba(7,10,16,.98),rgba(11,16,32,.92));
-  border-bottom:1px solid rgba(34,211,238,.12);
+/* ===================== KINGVPN HEADER (ANTI-BUG MODALS) ===================== */
+/* ✅ Importante: NO usa fixed, usa sticky para que Bootstrap modal NO lo rompa */
+.header.king-header{
+  position: sticky;
+  top: 0;
+  z-index: 1200;
+
+  height: 44px;
+  width: 100%;
+  margin: 0;
+  padding: 0 14px;
+
   display:flex;
   align-items:center;
-  position:fixed;
-  top:0;
-  width:100%;
-  z-index:1200;
-  backdrop-filter:blur(10px);
+  justify-content: space-between;
+
+  background:
+    radial-gradient(900px 420px at 8% 0%, rgba(255,211,77,.10), transparent 60%),
+    radial-gradient(900px 420px at 92% 10%, rgba(34,211,238,.10), transparent 60%),
+    linear-gradient(180deg, rgba(7,10,16,.98), rgba(11,16,32,.92));
+
+  border-bottom: 1px solid rgba(34,211,238,.12);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  overflow: hidden;
+  transform: translateZ(0);
 }
+
+.header.king-header::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(180px 180px at 10% 10%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(180px 180px at 88% 40%, rgba(167,139,250,.08), transparent 60%);
+  opacity: .9;
+}
+
+/* ✅ Mata cualquier padding-top viejo que hayas puesto por un header fixed */
+body{ padding-top: 0 !important; }
 
 /* BOTÓN MENÚ */
-.menu-btn{
-  background:transparent;
-  border:none;
-  cursor:pointer;
-  padding:4px;
-  border-radius:10px;
-}
-.menu-btn:hover{
-  box-shadow:0 0 0 2px rgba(34,211,238,.18);
-}
-.menu-btn svg{
-  width:20px;
-  height:20px;
-  stroke:#EAF0FF;
-  stroke-width:2;
-  fill:none;
+.header.king-header .menu-btn{
+  position: relative;
+  z-index: 1;
+
+  width: auto;
+  margin: 0;
+
+  background: rgba(7,10,18,.28);
+  border: 1px solid rgba(34,211,238,.16);
+  box-shadow: 0 0 0 1px rgba(34,211,238,.06);
+
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 12px;
+
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+
+  /* ✅ pisa tu header.css viejo que lo ocultaba */
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: inherit;
 }
 
-/* TÍTULO CENTRADO */
-.header-title{
+.header.king-header .menu-btn:hover{
+  filter: brightness(1.06);
+  box-shadow: 0 0 0 2px rgba(34,211,238,.12);
+}
+.header.king-header .menu-btn:active{ transform: translateY(1px); }
+
+.header.king-header .menu-btn svg{
+  width: 20px;
+  height: 20px;
+  stroke: #EAF0FF;
+  stroke-width: 2;
+  fill: none;
+}
+
+/* TÍTULO */
+.header.king-header .header-title{
   position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:.9rem;
-  font-weight:900;
-  letter-spacing:.22em;
-  color:#EAF0FF;
-  user-select:none;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  font-size: .9rem;
+  font-weight: 950;
+  letter-spacing: .22em;
+  color: #EAF0FF;
+  user-select: none;
+
   text-shadow:
     0 0 8px rgba(34,211,238,.14),
-    0 0 14px rgba(167,139,250,.10);
+    0 0 16px rgba(167,139,250,.10);
 }
-.header-title span{
-  opacity:.3;
-}
+.header.king-header .header-title span{ opacity: .35; }
 
-/* USUARIO DERECHA */
-.header-user{
-  margin-left:auto;
+/* USUARIO */
+.header.king-header .header-user{
+  position: relative;
+  z-index: 1;
+
   display:flex;
   align-items:center;
-  gap:6px;
-  padding:4px 10px;
-  border-radius:999px;
-  background:rgba(7,10,18,.35);
-  border:1px solid rgba(34,211,238,.16);
-  box-shadow:0 0 0 1px rgba(34,211,238,.06);
-  max-width:45%;
-  overflow:hidden;
+  gap: 8px;
+
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  background: rgba(7,10,18,.35);
+  border: 1px solid rgba(34,211,238,.16);
+  box-shadow: 0 0 0 1px rgba(34,211,238,.06);
+
+  max-width: 46%;
+  overflow: hidden;
+  cursor: pointer;
+  transition: filter .12s ease, transform .12s ease;
 }
-.header-user svg{
-  width:16px;
-  height:16px;
-  stroke:#22D3EE;
-  stroke-width:2;
-  fill:none;
-}
-.header-user span{
-  font-size:.68rem;
-  font-weight:900;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  color:#EAF0FF;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+.header.king-header .header-user:hover{ filter: brightness(1.05); }
+.header.king-header .header-user:active{ transform: translateY(1px); }
+
+.header.king-header .header-user svg{
+  width: 16px;
+  height: 16px;
+  stroke: #22D3EE;
+  stroke-width: 2;
+  fill: none;
 }
 
-/* COMPENSAR HEADER FIXED */
-body{
-  padding-top:40px;
+.header.king-header .header-user span{
+  font-size: .70rem;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #EAF0FF;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== Overlay sidebar (para cerrar tocando fuera) ===== */
+#kvSidebarBackdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.58);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s ease, visibility .2s ease;
+  z-index: 998;
+}
+#kvSidebarBackdrop.show{
+  opacity: 1;
+  visibility: visible;
+}
+body.kv-sidebar-open{
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Desktop: ocultar botón (como tu css original) */
+@media (min-width: 992px){
+  .header.king-header .menu-btn{ visibility: hidden !important; opacity: 0 !important; }
+}
+@media (max-width: 991px){
+  .header.king-header .menu-btn{ visibility: visible !important; opacity: 1 !important; }
 }
 </style>
+
+<script>
+/* ===================== KINGVPN HEADER + SIDEBAR TOGGLE (ANTI-BUG) ===================== */
+(function () {
+  const header = document.getElementById('kingHeader');
+  const sidebar = document.getElementById('sidebar');
+  const openBtn = document.getElementById('openNav');   // botón del HEADER
+  const closeBtn = document.getElementById('closeNav'); // botón del SIDEBAR
+
+  if (!sidebar || !openBtn) return;
+
+  // Backdrop (overlay) para tocar fuera y cerrar
+  let backdrop = document.getElementById('kvSidebarBackdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.id = 'kvSidebarBackdrop';
+    document.body.appendChild(backdrop);
+  }
+
+  const isMobile = () => window.matchMedia('(max-width: 991px)').matches;
+
+  function setBackdrop(on) {
+    backdrop.classList.toggle('show', !!on);
+    document.body.classList.toggle('kv-sidebar-open', !!on);
+  }
+
+  function openSidebar() {
+    if (!isMobile()) return;
+    sidebar.classList.add('active');
+    setBackdrop(true);
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    setBackdrop(false);
+  }
+
+  function toggleSidebar() {
+    if (!isMobile()) return;
+    sidebar.classList.contains('active') ? closeSidebar() : openSidebar();
+  }
+
+  // ✅ PISAR LISTENERS VIEJOS (el que te “abre siempre”)
+  // Usamos captura + stopImmediatePropagation
+  openBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    toggleSidebar();
+  }, true);
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      closeSidebar();
+    }, true);
+  }
+
+  // Click fuera = cerrar
+  backdrop.addEventListener('click', closeSidebar);
+
+  // ESC = cerrar
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSidebar();
+  });
+
+  // ✅ ANTI-BUG MODALES:
+  // - al abrir un modal, cerramos sidebar (así no estorba ni queda abierto)
+  // - al cerrar modal, “repintado suave” para evitar posiciones raras en Android
+  document.addEventListener('show.bs.modal', () => {
+    closeSidebar();
+    document.body.classList.add('king-modal-open');
+  }, true);
+
+  document.addEventListener('hidden.bs.modal', () => {
+    document.body.classList.remove('king-modal-open');
+
+    if (header) {
+      header.style.transform = 'translateZ(0)';
+      requestAnimationFrame(() => (header.style.transform = ''));
+    }
+    sidebar.style.transform = 'translateZ(0)';
+    requestAnimationFrame(() => (sidebar.style.transform = ''));
+  }, true);
+
+  // ✅ En cada página, arrancá cerrado en mobile
+  window.addEventListener('DOMContentLoaded', () => closeSidebar());
+
+  // Resize: sincroniza overlay
+  window.addEventListener('resize', () => {
+    if (!isMobile()) setBackdrop(false);
+    else setBackdrop(sidebar.classList.contains('active'));
+  });
+
+})();
+</script>
