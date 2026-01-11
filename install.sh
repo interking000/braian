@@ -1,15 +1,17 @@
 #!/bin/bash
 # ============================================================
-#   KING•VPN  —  INSTALADOR COMPLETO DTunnel (SCRIPT UNIFICADO)
-#   ✔ Visual KING•VPN (marcos + colores)
-#   ✔ Lógica DTunnel INTACTA (NO tocada)
-#   ✔ Evita choques: instala solo lo que falte / idempotente
+#   KING•VPN — INSTALADOR COMPLETO DTunnel (LIMPIO + PERSONALIZADO)
+#   ✅ Pregunta TODO lo importante (sin defaults)
+#   ✅ Genera .env correcto (prisma/database.db)
+#   ✅ Genera SSL con TU dominio (CN = tu dominio)
+#   ✅ Configura NGINX con TU dominio + TU puerto
+#   ✅ Idempotente (no rompe si lo corrés 2 veces)
 # ============================================================
 
-set -e
+set -euo pipefail
 
 # --------------------------
-# COLORES / ESTILO (solo visual)
+# COLORES / ESTILO
 # --------------------------
 RED="\033[0;31m"
 GRN="\033[0;32m"
@@ -32,44 +34,122 @@ title () {
   echo -e "${MAG}${BOX_BOT}${RST}"
 }
 
-step () {
-  echo -e "${CYA}➜${RST} ${WHT}$1${RST}"
-}
+step () { echo -e "${CYA}➜${RST} ${WHT}$1${RST}"; }
+ok ()   { echo -e "${GRN}✔${RST} ${WHT}$1${RST}"; }
+warn () { echo -e "${YEL}⚠${RST} ${WHT}$1${RST}"; }
 
-ok () {
-  echo -e "${GRN}✔${RST} ${WHT}$1${RST}"
-}
-
-warn () {
-  echo -e "${YEL}⚠${RST} ${WHT}$1${RST}"
+need_root () {
+  if [ "$(id -u)" -ne 0 ]; then
+    echo -e "${RED}Este script debe ejecutarse como root${RST}"
+    exit 1
+  fi
 }
 
 # --------------------------
-# HEADER
+# INPUT helpers
 # --------------------------
+ask_required () {
+  local prompt="$1"
+  local var
+  while true; do
+    read -r -p "➜ $prompt: " var
+    if [[ -n "${var// }" ]]; then
+      echo "$var"
+      return 0
+    fi
+    echo -e "${YEL}⚠ Este valor es obligatorio${RST}"
+  done
+}
+
+ask_port () {
+  local p
+  while true; do
+    p="$(ask_required "Agregá el puerto para el panel")"
+    if [[ "$p" =~ ^[0-9]+$ ]] && [ "$p" -ge 1 ] && [ "$p" -le 65535 ]; then
+      echo "$p"
+      return 0
+    fi
+    echo -e "${YEL}⚠ Puerto inválido (1-65535)${RST}"
+  done
+}
+
+sanitize_domain () {
+  local d="$1"
+  d="${d#http://}"
+  d="${d#https://}"
+  d="${d%%/*}"
+  echo "$d"
+}
+
+ask_domain () {
+  local d
+  while true; do
+    d="$(ask_required "Agregá el dominio del panel (sin https)")"
+    d="$(sanitize_domain "$d")"
+    if [[ "$d" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+      echo "$d"
+      return 0
+    fi
+    echo -e "${YEL}⚠ Dominio inválido${RST}"
+  done
+}
+
+ask_url () {
+  local u
+  while true; do
+    u="$(ask_required "Agregá la URL pública del panel (sin / final)")"
+    # normalizamos: si no trae protocolo, le ponemos https por coherencia (solo para guardar)
+    if [[ "$u" != http*://* ]]; then
+      u="https://$u"
+    fi
+    # quitar slash final
+    u="${u%/}"
+    # validar mínimo
+    if [[ "$u" =~ ^https?://[A-Za-z0-9.-]+\.[A-Za-z]{2,}(:[0-9]+)?$ ]]; then
+      echo "$u"
+      return 0
+    fi
+    echo -e "${YEL}⚠ URL inválida${RST}"
+  done
+}
+
+# --------------------------
+# MAIN
+# --------------------------
+need_root
 clear || true
-title "Instalando KING•VPN"
-echo -e "${DIM}OJO: Script instalador completo de DTunnel (lógica intacta).${RST}"
+title "Instalador KING•VPN — DTunnel"
+echo -e "${DIM}Sin defaults en dominio/puerto/tokens. Todo se carga limpio.${RST}"
 echo
 
-# ============================================================
-#  A) BLOQUE 1 — DEPENDENCIAS DTUNNEL (FULL)  (INTACTO)
-#     (Solo se le agregan guards para no chocar / re-ejecutar)
-# ============================================================
+PROJECT_DIR="/root/DTunnel"
+NGINX_DIR="$PROJECT_DIR/nginx"
+ENV_FILE="$PROJECT_DIR/.env"
+NGINX_CONF="/etc/nginx/sites-available/dtunnel.conf"
 
-step "Instalación completa de dependencias DTunnel (FULL)"
+mkdir -p "$PROJECT_DIR" "$NGINX_DIR"
 
-# --- limpiar posibles conflictos viejos ---
-# (si no existen, no pasa nada)
-apt remove -y nodejs libnode-dev node-typescript || true
-apt autoremove -y || true
-apt clean || true
+title "CONFIGURACIÓN OBLIGATORIA"
 
-# --- update base ---
+PANEL_PORT="$(ask_port)"
+PANEL_DOMAIN="$(ask_domain)"
+APP_BASE_URL="$(ask_url)"
+MP_ACCESS_TOKEN="$(ask_required "Pegá tu Access Token de Mercado Pago")"
+
+echo
+ok "Puerto: $PANEL_PORT"
+ok "Dominio: $PANEL_DOMAIN"
+ok "APP_BASE_URL: $APP_BASE_URL"
+ok "MP_ACCESS_TOKEN: (cargado)"
+
+echo
+title "INSTALANDO DEPENDENCIAS"
+
+step "Actualizando sistema..."
 apt update -y
 apt upgrade -y
 
-# --- dependencias base ---
+step "Instalando dependencias base..."
 apt install -y \
   curl \
   build-essential \
@@ -78,207 +158,140 @@ apt install -y \
   unzip \
   zip \
   ca-certificates \
-  software-properties-common
+  software-properties-common \
+  nginx \
+  ufw
 
-# --- Node.js 18 (Nodesource limpio) ---
-step "Instalando Node.js 18"
-curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-apt install -y nodejs
-
-# --- npm global tools ---
-step "Instalando PM2"
-npm install -g pm2
-
-# --- TypeScript (LOCAL + usable con npx) ---
-step "Instalando TypeScript"
-npm install -g typescript
-
-# --- Java JDK (necesario para keytool, apktool, apksigner) ---
-step "Instalando OpenJDK 11"
-apt install -y openjdk-11-jdk
-
-# --- apktool ---
-step "Instalando apktool"
-apt install -y apktool
-
-# --- apksigner (Android build tools) ---
-step "Instalando apksigner"
-apt install -y apksigner
-
-# --- verificación bonita ---
-echo
-title "CHECK DE HERRAMIENTAS INSTALADAS"
-
-echo -e "${BLU}[•] Node:${RST}"
-node -v
-
-echo -e "${BLU}[•] NPM:${RST}"
-npm -v
-
-echo -e "${BLU}[•] TypeScript:${RST}"
-tsc -v
-
-echo -e "${BLU}[•] Java:${RST}"
-java -version || true
-
-echo -e "${BLU}[•] Keytool:${RST}"
-keytool -help | head -n 1 || true
-
-echo -e "${BLU}[•] Apktool:${RST}"
-apktool -version || true
-
-echo -e "${BLU}[•] Apksigner:${RST}"
-apksigner version || true
-
-echo
-ok "TODO INSTALADO CORRECTAMENTE (dependencias base)"
-
-# --- extras del bloque FULL (tal cual) ---
-apt update -y
-apt install -y wget unzip openjdk-11-jdk
-
-# ⚠️ No pisa si ya existen:
-if [ ! -f /usr/local/bin/apktool ]; then
-  step "Descargando script apktool (bin)"
-  wget -O /usr/local/bin/apktool https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool
-  chmod +x /usr/local/bin/apktool
+# Node 18
+if ! command -v node >/dev/null 2>&1 || ! node -v | grep -qE '^v18\.'; then
+  step "Instalando Node.js 18..."
+  apt remove -y nodejs libnode-dev node-typescript >/dev/null 2>&1 || true
+  apt autoremove -y || true
+  curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+  apt install -y nodejs
 else
-  ok "apktool (bin) ya existe → no se reemplaza"
+  ok "Node.js 18 ya instalado: $(node -v)"
 fi
 
-if [ ! -f /usr/local/bin/apktool.jar ]; then
-  step "Descargando apktool.jar"
-  wget -O /usr/local/bin/apktool.jar https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar
+# pm2
+if ! command -v pm2 >/dev/null 2>&1; then
+  step "Instalando PM2..."
+  npm install -g pm2
 else
-  ok "apktool.jar ya existe → no se reemplaza"
+  ok "PM2 ya instalado: $(pm2 -v)"
 fi
 
-# build-tools (si el paquete existe en tu repo, se instala)
-step "Instalando Android build tools (si está disponible en tu repo)"
-apt install -y android-sdk-build-tools || warn "android-sdk-build-tools no disponible en tu repositorio (se omite)"
+# typescript
+if ! command -v tsc >/dev/null 2>&1; then
+  step "Instalando TypeScript..."
+  npm install -g typescript
+else
+  ok "TypeScript ya instalado: $(tsc -v)"
+fi
+
+# Java (opcional para tu ecosistema)
+if ! command -v java >/dev/null 2>&1; then
+  step "Instalando OpenJDK 11..."
+  apt install -y openjdk-11-jdk
+else
+  ok "Java ya instalado"
+fi
 
 echo
-title "Dependencias listas (KING•VPN)"
+title "PROYECTO DTUNNEL"
 
-# ============================================================
-#  B) BLOQUE 2 — INSTALADOR DTunnel (INTACTO)
-#     (Solo visual cambiado a KING•VPN, lógica igual)
-# ============================================================
+if [ ! -f "$PROJECT_DIR/package.json" ]; then
+  warn "No existe package.json en $PROJECT_DIR"
+  echo -e "${YEL}Subí/cloná tu repo DTunnel en ${WHT}$PROJECT_DIR${YEL} y volvé a correr este install.${RST}"
+  exit 1
+fi
 
-echo
-title "INSTALADOR COMPLETO DTunnel (KING•VPN)"
+cd "$PROJECT_DIR"
 
-PROJECT_DIR="/root/DTunnel"
-NGINX_DIR="$PROJECT_DIR/nginx"
+step "Instalando dependencias del proyecto (npm install)..."
+npm install
 
-mkdir -p "$PROJECT_DIR"
-mkdir -p "$NGINX_DIR"
+step "Generando archivo .env (LIMPIO)..."
+DATABASE_PATH='file:./prisma/database.db'
+CSRF_SECRET="$(openssl rand -hex 16)"
+JWT_SECRET_KEY="$(openssl rand -hex 32)"
+JWT_SECRET_REFRESH="$(openssl rand -hex 32)"
 
-# --------------------------
-# 1. Instalar dependencias de sistema
-# --------------------------
-step "Actualizando sistema..."
-apt update -y
-apt upgrade -y
-apt install -y curl build-essential openssl ufw nginx
-
-# --------------------------
-# 2. Instalar Node.js 18 + npm
-# --------------------------
-#step "Instalando Node.js 18..."
-#curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-#apt install -y nodejs
-
-step "Instalando PM2 globalmente..."
-npm install -g pm2
-
-# --------------------------
-# 3. Crear .env con claves secretas
-# --------------------------
-step "Generando archivo .env..."
-DATABASE_PATH="file:./database.db"
-CSRF_SECRET=$(openssl rand -hex 16)
-JWT_SECRET_KEY=$(openssl rand -hex 32)
-JWT_SECRET_REFRESH=$(openssl rand -hex 32)
-
-cat <<EOF > "$PROJECT_DIR/.env"
-PORT=8080
+cat <<EOF > "$ENV_FILE"
+# ===============================
+# SERVIDOR
+# ===============================
+PORT=$PANEL_PORT
 NODE_ENV=production
-DATABASE_URL=$DATABASE_PATH
+
+# ===============================
+# PRISMA SQLITE
+# ===============================
+DATABASE_URL="$DATABASE_PATH"
+
+# ===============================
+# SEGURIDAD
+# ===============================
 CSRF_SECRET=$CSRF_SECRET
 JWT_SECRET_KEY=$JWT_SECRET_KEY
 JWT_SECRET_REFRESH=$JWT_SECRET_REFRESH
+
+# ===============================
+# MERCADO PAGO
+# ===============================
+MP_ACCESS_TOKEN=$MP_ACCESS_TOKEN
+APP_BASE_URL=$APP_BASE_URL
+FRONTEND_RETURN_URL=$APP_BASE_URL
 EOF
 
-ok ".env generado."
+ok ".env generado en $ENV_FILE"
 
-# --------------------------
-# 4. Eliminar DB vieja si existe
-# --------------------------
-if [ -f "$PROJECT_DIR/database.db" ]; then
-    step "Eliminando database.db antigua..."
-    rm -f "$PROJECT_DIR/database.db"
+# Prisma
+if [ ! -d "$PROJECT_DIR/prisma" ]; then
+  warn "No existe carpeta prisma/ en el proyecto."
+  exit 1
 fi
 
-# --------------------------
-# 5. Instalar dependencias del proyecto
-# --------------------------
-cd "$PROJECT_DIR"
-step "Instalando dependencias del proyecto..."
-npm install
-
-# --------------------------
-# 6. Prisma DB
-# --------------------------
-step "Sincronizando base de datos con Prisma..."
+step "Prisma: sincronizando base de datos (NO borra tu DB)..."
 npx prisma db push
 
-# --------------------------
-# 7. Build del panel
-# --------------------------
-step "Construyendo proyecto..."
+step "Build: npm run build"
 npm run build
 
-# --------------------------
-# 8. Certificados SSL autofirmados
-# --------------------------
-if [ ! -f "$NGINX_DIR/fullchain.pem" ] || [ ! -f "$NGINX_DIR/privkey.pem" ]; then
-    step "Generando certificados SSL autofirmados..."
-    openssl req -x509 -nodes -days 365 \
-        -newkey rsa:2048 \
-        -keyout "$NGINX_DIR/privkey.pem" \
-        -out "$NGINX_DIR/fullchain.pem" \
-        -subj "/C=AR/ST=BuenosAires/L=BA/O=DTunnel/OU=IT/CN=panel.interking.online"
-    ok "Certificados generados."
-else
-    ok "Certificados ya existen."
-fi
+echo
+title "SSL + NGINX (CON TU DOMINIO)"
 
-# --------------------------
-# 9. Configurar NGINX base (solo ejemplo)
-# --------------------------
-NGINX_CONF="/etc/nginx/sites-available/dtunnel.conf"
+# SSL
+step "Generando certificados SSL (autofirmados) para $PANEL_DOMAIN..."
+openssl req -x509 -nodes -days 365 \
+  -newkey rsa:2048 \
+  -keyout "$NGINX_DIR/privkey.pem" \
+  -out "$NGINX_DIR/fullchain.pem" \
+  -subj "/C=AR/ST=BuenosAires/O=KINGVPN/CN=$PANEL_DOMAIN"
 
-cat <<EOF > $NGINX_CONF
+ok "SSL generado en $NGINX_DIR"
+
+# Nginx config
+step "Escribiendo config NGINX..."
+cat <<EOF > "$NGINX_CONF"
 server {
     listen 80;
-    server_name panel.interking.online;
-
+    server_name $PANEL_DOMAIN;
     return 301 https://\$host\$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name panel.interking.online;
+    server_name $PANEL_DOMAIN;
 
     ssl_certificate $NGINX_DIR/fullchain.pem;
     ssl_certificate_key $NGINX_DIR/privkey.pem;
 
     location / {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:$PANEL_PORT;
+        proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header Host \$host;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -286,15 +299,48 @@ server {
 }
 EOF
 
-ln -sf $NGINX_CONF /etc/nginx/sites-enabled/dtunnel.conf
-nginx -t && systemctl restart nginx
+# enable site
+ln -sf "$NGINX_CONF" /etc/nginx/sites-enabled/dtunnel.conf
+
+# disable default if exists
+if [ -e /etc/nginx/sites-enabled/default ]; then
+  rm -f /etc/nginx/sites-enabled/default
+fi
+
+step "Probando NGINX..."
+nginx -t
+
+step "Reiniciando NGINX..."
+systemctl restart nginx
+systemctl enable nginx >/dev/null 2>&1 || true
+ok "NGINX OK"
 
 echo
-title "INSTALACIÓN COMPLETA (KING•VPN)"
-echo -e "${BOX_MID} ${GRN}✔${RST} Archivo .env        → ${WHT}$PROJECT_DIR/.env${RST}"
-echo -e "${BOX_MID} ${GRN}✔${RST} Certificados SSL     → ${WHT}$NGINX_DIR${RST}"
-echo -e "${BOX_MID} ${GRN}✔${RST} Base de datos        → ${WHT}$PROJECT_DIR/database.db${RST}"
-echo -e "${BOX_MID} ${CYA}➜${RST} Usar ./start.sh para iniciar el panel"
+title "INICIAR PANEL (PM2)"
+
+# Si existe ecosystem.config.js lo usamos, si no intentamos start.sh
+if [ -f "$PROJECT_DIR/ecosystem.config.js" ]; then
+  step "Iniciando con PM2 (ecosystem.config.js)..."
+  pm2 start "$PROJECT_DIR/ecosystem.config.js" --update-env || pm2 restart kingvpn-panel --update-env || true
+  pm2 save || true
+  ok "PM2 iniciado"
+elif [ -f "$PROJECT_DIR/start.sh" ]; then
+  step "start.sh detectado. Dándole permisos y ejecutando..."
+  chmod +x "$PROJECT_DIR/start.sh"
+  "$PROJECT_DIR/start.sh" || true
+  ok "start.sh ejecutado"
+else
+  warn "No encontré ecosystem.config.js ni start.sh. Iniciá tu panel manualmente."
+fi
+
+echo
+title "FINALIZADO"
+echo -e "${BOX_MID} ${GRN}✔${RST} Proyecto:              ${WHT}$PROJECT_DIR${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} .env:                  ${WHT}$ENV_FILE${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} Prisma DB:             ${WHT}$PROJECT_DIR/prisma/database.db${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} Dominio:               ${WHT}$PANEL_DOMAIN${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} Puerto interno:        ${WHT}$PANEL_PORT${RST}"
+echo -e "${BOX_MID} ${CYA}➜${RST} Logs PM2:              ${WHT}pm2 logs${RST}"
 echo -e "${MAG}${BOX_BOT}${RST}"
 echo
-ok "Finalizado."
+ok "Listo."

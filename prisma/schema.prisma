@@ -7,43 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// SQLite: sin enums nativos en tu entorno.
-// Validamos valores tipo "DEMO|ACTIVE|EXPIRED" desde Zod/TS.
-
 model User {
-  id         String   @id @default(uuid())
-  username   String   @unique
-  password   String
-  email      String   @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id                 String   @id @default(uuid())
+  username           String   @unique
+  password           String
+  email              String   @unique
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
 
-  // CONTROL DE ACCESO
-  // DEMO | ACTIVE | EXPIRED
-  access_status String @default("DEMO")
+  // versiones app
+  app_text_version   Int      @default(1)
+  app_layout_version Int      @default(1)
+  app_config_version Int      @default(1)
 
-  // Demo: 12h desde registro
-  trial_ends_at DateTime?
+  // ===============================
+  // ✅ Premium / Acceso al panel
+  // ===============================
+  access_status    String   @default("NONE") // NONE | TRIAL | ACTIVE | GRACE | BLOCKED
+  trial_ends_at    DateTime?
+  access_ends_at   DateTime?
+  grace_delete_at  DateTime?
+  last_payment_at  DateTime?
 
-  // Acceso pago (cuando MP confirma)
-  access_ends_at  DateTime?
-  last_payment_at DateTime?
-
-  // Plazo de pago / borrado (2 días luego de vencer)
-  grace_delete_at DateTime?
-
-  // Auditoría simple (cuántas veces cambió datos de acceso)
-  access_edit_count   Int      @default(0)
-  access_last_edit_at DateTime?
-
+  // relaciones existentes
+  cdn             Cdn[]
   AppText         AppText[]
   Category        Category[]
   AppConfig       AppConfig[]
   AppLayout       AppLayout[]
   AppNotification AppNotification[]
 
-  Payment     Payment[]
-  AccessEvent AccessEvent[]
+  // pagos
+  payments      Payment[]
+  access_events AccessEvent[]
 
   @@index([access_status])
   @@index([trial_ends_at])
@@ -51,6 +47,18 @@ model User {
   @@index([grace_delete_at])
   @@index([last_payment_at])
   @@map("users")
+}
+
+model Cdn {
+  id     String @id @default(cuid())
+  name   String
+  url    String
+  status String
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("cdn")
 }
 
 model Category {
@@ -61,11 +69,10 @@ model Category {
   status     String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user_id    String
 
-  Config AppConfig[]
-
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id String
+  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Config  AppConfig[]
 
   @@index([user_id])
   @@map("categories")
@@ -91,6 +98,15 @@ model AppConfig {
   proxy_port             Int?
   server_host            String?
   server_port            Int?
+  dnstt_key              String?
+  dnstt_name_server      String?
+  dnstt_server           String?
+  hy_obfs                String?
+  hy_insecure            Boolean?
+  hy_port                String?
+  hy_up_mbps             Int?
+  hy_down_mbps           Int?
+  hy_version             Int?
   sorter                 Int
   status                 String
   tls_version            String?
@@ -98,9 +114,10 @@ model AppConfig {
   created_at             DateTime @default(now())
   updated_at             DateTime @updatedAt
   url_check_user         String?
-  user_id                String
 
-  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id String
+  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   category Category @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([user_id])
@@ -112,23 +129,21 @@ model AppText {
   id      Int    @id @default(autoincrement())
   label   String
   text    String
-  user_id String
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([user_id])
   @@map("app_texts")
 }
 
 model AppLayout {
-  id             Int                @id @default(autoincrement())
-  user_id        String
-  is_active      Boolean            @default(false)
-  created_at     DateTime           @default(now())
-  updated_at     DateTime?          @updatedAt
-  layout_storage AppLayoutStorage[]
+  id        Int     @id @default(autoincrement())
+  user_id   String
+  is_active Boolean @default(false)
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user           User               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  layout_storage AppLayoutStorage[]
 
   @@index([user_id])
   @@index([is_active])
@@ -136,137 +151,111 @@ model AppLayout {
 }
 
 model AppLayoutStorage {
-  id            Int      @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   label         String
   name          String
   status        String
   type          String
   value         String?
-  created_at    DateTime @default(now())
-  updated_at    DateTime? @updatedAt
-  app_layout_id Int
 
-  app_layout AppLayout @relation(fields: [app_layout_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  app_layout_id Int
+  app_layout    AppLayout @relation(fields: [app_layout_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([app_layout_id])
   @@index([type])
   @@map("app_layout_storages")
 }
 
+// ===============================
+// ✅ Notificaciones (para tu endpoint dtunnelmod)
+// ===============================
 model AppNotification {
-  id Int @id @default(autoincrement())
-
-  title    String
-  subtitle String?
-  message  String
-  link     String?
-  image    String?
-
+  id          Int      @id @default(autoincrement())
+  user_id     String
+  status      String   @default("ACTIVE") // ACTIVE | INACTIVE
+  title       String?
+  subtitle    String?
+  message     String?
+  link        String?
+  image       String?
   scheduled_at DateTime?
+  next_send_at DateTime?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
-  starts_at            DateTime  @default(now())
-  repeat_every_minutes Int?
-  repeat_until         DateTime?
-  next_send_at         DateTime  @default(now())
-  last_sent_at         DateTime?
-  sent_count           Int       @default(0)
-
-  status     String   @default("ACTIVE")
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  user_id String
-  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([user_id])
   @@index([next_send_at])
   @@map("app_notifications")
 }
 
-// Planes para no hardcodear precios/días
-// code: "1M" | "2M" | "3M"
+// ===============================
+// ✅ PLANES (3 planes)
+// ===============================
 model Plan {
   id          Int      @id @default(autoincrement())
-  code        String   @unique
+  code        String   @unique   // "plan_1m" | "plan_3m" | "plan_5m"
   name        String
-  days        Int
+  months      Int
   price_ars   Int
   is_active   Boolean  @default(true)
-  description String?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
   payments Payment[]
-
   @@index([is_active])
   @@map("plans")
 }
 
-// Pagos Mercado Pago
-// provider: "MERCADOPAGO"
-// status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "REFUNDED" | "CHARGEDBACK"
+// ===============================
+// ✅ PAGOS (Mercado Pago)
+// ===============================
 model Payment {
-  id Int @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
+  user_id       String
+  plan_id       Int?
+  provider      String   @default("MERCADOPAGO") // MERCADOPAGO | MANUAL | OTHER
+  status        String   @default("PENDING")     // PENDING | APPROVED | REJECTED | CANCELLED | REFUNDED | CHARGEDBACK
+  amount        Int?
+  currency      String?
+  mp_payment_id String?  @unique
+  mp_pref_id    String?
+  external_ref  String?
+  metadata      String?  // JSON string (por sqlite)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
-  user_id  String
-  provider String @default("MERCADOPAGO")
-  status   String @default("PENDING")
-
-  plan_id Int
-  plan    Plan @relation(fields: [plan_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
-
-  plan_code String
-  days      Int
-  amount    Int
-  currency  String @default("ARS")
-
-  mp_payment_id        String? @unique
-  mp_preference_id     String?
-  mp_merchant_order_id String?
-
-  external_reference String?
-  description        String?
-
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  approved_at DateTime?
-
-  mp_raw String?
-
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user   User  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  plan   Plan? @relation(fields: [plan_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   access_events AccessEvent[]
 
   @@index([user_id])
   @@index([plan_id])
-  @@index([status])
   @@index([provider])
+  @@index([status])
   @@index([created_at])
   @@map("payments")
 }
 
-// Eventos de auditoría (type como string)
+// ===============================
+// ✅ Eventos de acceso (auditoría)
+// ===============================
 model AccessEvent {
-  id Int @id @default(autoincrement())
-
-  user_id String
-  type    String
-
+  id         Int      @id @default(autoincrement())
+  user_id    String
   payment_id Int?
-  payment    Payment? @relation(fields: [payment_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
-
-  message String?
-
-  prev_access_ends_at DateTime?
-  new_access_ends_at  DateTime?
-
+  type       String   // PAYMENT_APPROVED | PAYMENT_REJECTED | SUBSCRIPTION_EXTENDED | ADMIN_GRANT | etc
+  message    String?
   created_at DateTime @default(now())
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  payment Payment? @relation(fields: [payment_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   @@index([user_id])
-  @@index([type])
   @@index([payment_id])
+  @@index([type])
   @@index([created_at])
   @@map("access_events")
 }

@@ -8,8 +8,7 @@
   <meta name="google" content="notranslate">
   <link rel="shortcut icon" href="../static/img/favicon.svg" />
 
-  <!-- Title elegante -->
-  <title>DTunnelMod • Tus Diseños & App</title>
+  <title>KING•VPN • Tu App y Tus Diseños</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -39,6 +38,358 @@
       display: none !important;
     }
   </style>
+
+  <!-- =========================================================
+       KING•VPN UI (solo para esta página)
+       - Fondo pro
+       - Header título pro
+       - Panel botones pro
+       ========================================================= -->
+  <style>
+    :root{
+      --kv-bg0:#060a11;
+      --kv-bg1:#0a1420;
+      --kv-card:rgba(12,18,30,.66);
+      --kv-card2:rgba(16,26,40,.72);
+      --kv-b:rgba(255,255,255,.08);
+      --kv-text:rgba(238,243,255,.95);
+      --kv-muted:rgba(238,243,255,.66);
+      --kv-gold:rgba(255,211,77,.80);
+      --kv-gold-b:rgba(255,211,77,.16);
+      --kv-cyan:rgba(34,211,238,.80);
+      --kv-cyan-b:rgba(34,211,238,.14);
+      --kv-shadow:0 22px 70px rgba(0,0,0,.55);
+      --kv-shadow2:0 12px 35px rgba(0,0,0,.40);
+    }
+
+    /* Fondo general (chau gris) */
+    body{
+      background:
+        radial-gradient(900px 520px at 12% 0%, rgba(255,211,77,.10), transparent 62%),
+        radial-gradient(900px 520px at 92% 10%, rgba(34,211,238,.08), transparent 60%),
+        linear-gradient(180deg, var(--kv-bg0), var(--kv-bg1)) !important;
+      color: var(--kv-text);
+    }
+
+    /* Contenedor principal de contenido */
+    .kv-page{
+      padding: 12px 10px 18px;
+    }
+
+    /* Card general pro */
+    .kv-card{
+      background: rgba(10,16,28,.30) !important;
+      border: 1px solid rgba(255,255,255,.06) !important;
+      box-shadow: var(--kv-shadow2);
+      border-radius: 18px !important;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Título pro */
+    .kv-titlebar{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 14px 14px 10px;
+      margin: 0 0 10px;
+    }
+    .kv-title-icon{
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(16px 16px at 28% 30%, rgba(255,211,77,.26), transparent 65%),
+        radial-gradient(16px 16px at 70% 70%, rgba(34,211,238,.18), transparent 65%),
+        rgba(10,16,28,.55);
+      border: 1px solid rgba(255,211,77,.16);
+      box-shadow: 0 0 0 1px rgba(34,211,238,.08), 0 12px 28px rgba(0,0,0,.35);
+    }
+    .kv-title-icon i{ color: var(--kv-gold); font-size: 1.1rem; }
+    .kv-title{
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      margin: 0;
+      font-size: 1.05rem;
+      color: rgba(238,243,255,.96);
+    }
+    .kv-subtitle{
+      margin: 2px 0 0;
+      font-size: .88rem;
+      color: var(--kv-muted);
+      letter-spacing: .04em;
+    }
+
+    /* Panel de botones (fondo aparte) */
+    .kv-actions{
+      background:
+        radial-gradient(750px 260px at 10% 0%, rgba(255,211,77,.08), transparent 62%),
+        radial-gradient(750px 260px at 90% 10%, rgba(34,211,238,.06), transparent 60%),
+        rgba(8,12,20,.55);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.30);
+    }
+
+    /* Botón KING pro (reemplaza ese btn-dark feo visualmente) */
+    .kv-btn{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      width: 100%;
+      border-radius: 999px !important;
+
+      /* más chico */
+      padding: .52rem .90rem !important;
+      font-weight: 900 !important;
+      letter-spacing: .12em !important;
+      text-transform: uppercase;
+
+      color: rgba(238,243,255,.95) !important;
+      border: 1px solid rgba(255,211,77,.14) !important;
+
+      background:
+        radial-gradient(140px 80px at 20% 30%, rgba(255,211,77,.16), transparent 60%),
+        radial-gradient(140px 80px at 80% 30%, rgba(34,211,238,.10), transparent 60%),
+        linear-gradient(135deg, rgba(7,10,18,.70), rgba(10,16,28,.92)) !important;
+
+      box-shadow: 0 0 0 1px rgba(255,211,77,.06), 0 14px 30px rgba(0,0,0,.42) !important;
+      transition: transform .14s ease, filter .14s ease, box-shadow .14s ease;
+    }
+    .kv-btn i{ opacity: .95; font-size: 1.05rem; }
+    .kv-btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 1px rgba(34,211,238,.10), 0 18px 40px rgba(0,0,0,.50) !important;
+      filter: brightness(1.05);
+    }
+    .kv-btn:active{
+      transform: translateY(0px);
+      filter: brightness(.98);
+    }
+    .kv-btn:disabled{
+      opacity: .55;
+      cursor: not-allowed !important;
+      transform:none !important;
+      box-shadow:none !important;
+    }
+
+    /* botón principal destacado (generar APK) */
+    .kv-btn-primary{
+      border: 1px solid rgba(34,211,238,.16) !important;
+      background:
+        radial-gradient(160px 90px at 20% 30%, rgba(34,211,238,.16), transparent 60%),
+        radial-gradient(160px 90px at 80% 30%, rgba(255,211,77,.14), transparent 60%),
+        linear-gradient(135deg, rgba(7,10,18,.66), rgba(10,16,28,.96)) !important;
+    }
+
+    /* Ajustes del área “content” para que todo se vea pro */
+    .content{
+      background: transparent !important;
+    }
+    .card.h-100.border-0.overflow-auto{
+      background: transparent !important;
+    }
+    #loading .spinner-border{
+      color: rgba(255,211,77,.85);
+      border-top-color: rgba(34,211,238,.95);
+    }
+  </style>
+
+  <!-- ✅ ESTILOS SOLO DEL MODAL (scoped, ya pro) -->
+  <style>
+    #downloadModal .modal-content{
+      background: rgba(6,6,16,.94) !important;
+      color: #eef3ff !important;
+      border-radius: 24px !important;
+      border: 1px solid rgba(255,211,77,.22) !important;
+      box-shadow: 0 45px 140px rgba(0,0,0,.78) !important;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    #downloadModal .modal-header,
+    #downloadModal .modal-footer{
+      background:
+        radial-gradient(900px 420px at 8% 0%, rgba(255,211,77,.18), transparent 60%),
+        radial-gradient(900px 420px at 92% 10%, rgba(34,211,238,.14), transparent 60%),
+        linear-gradient(180deg, rgba(6,6,16,.92), rgba(6,6,16,.88)) !important;
+      border-color: rgba(255,211,77,.12) !important;
+    }
+
+    #downloadModal .king-badge{
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(255,211,77,.35), transparent 60%),
+        radial-gradient(18px 18px at 70% 60%, rgba(34,211,238,.25), transparent 60%),
+        rgba(10,10,24,.65);
+      border: 1px solid rgba(255,211,77,.20);
+      box-shadow: 0 0 0 1px rgba(255,211,77,.08), 0 14px 30px rgba(0,0,0,.45);
+    }
+    #downloadModal .king-badge i{ color:#ffd34d; font-size: 1.1rem; }
+
+    #downloadModal .king-title{
+      font-weight: 950;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: .95rem !important;
+    }
+    #downloadModal .king-sub{
+      color: rgba(238,243,255,.70);
+      letter-spacing: .06em;
+    }
+
+    #downloadModal .btn-close{ filter: invert(1) brightness(1.2); opacity: .85; }
+    #downloadModal .btn-close:hover{ opacity: 1; }
+
+    #downloadModal .form-control{
+      background: rgba(10,10,24,.65) !important;
+      color: rgba(238,243,255,.95) !important;
+      border: 1px solid rgba(255,211,77,.16) !important;
+      border-radius: 14px !important;
+    }
+    #downloadModal .form-control:focus{
+      box-shadow: 0 0 0 3px rgba(255,211,77,.18) !important;
+      border-color: rgba(255,183,3,.35) !important;
+    }
+
+    #downloadModal .app-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 520px){
+      #downloadModal .app-grid{ grid-template-columns: 1fr; }
+    }
+
+    #downloadModal .logo-preview{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255,211,77,.22);
+      background: rgba(10,10,24,.45);
+    }
+
+    #downloadModal .logo-bubble{
+      width: 56px;
+      height: 56px;
+      flex: 0 0 56px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,211,77,.18);
+      box-shadow: 0 0 0 1px rgba(34,211,238,.10), 0 14px 28px rgba(0,0,0,.45);
+      background: rgba(7,10,18,.85);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    #downloadModal .logo-bubble img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display:none;
+    }
+    #downloadModal .logo-bubble i{
+      color: rgba(255,211,77,.95);
+      font-size: 1.1rem;
+    }
+
+    #downloadModal .logo-meta .t1{
+      font-weight: 950;
+      letter-spacing: .06em;
+      font-size: .82rem;
+      text-transform: uppercase;
+    }
+    #downloadModal .logo-meta .t2{
+      font-size: .85rem;
+      color: rgba(238,243,255,.72);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 240px;
+    }
+
+    #downloadModal .king-status{
+      margin: 8px 0 0;
+      color: rgba(238,243,255,.72);
+    }
+
+    #downloadModal .king-btn-cancel{
+      background: rgba(255,211,77,.10) !important;
+      border: 1px solid rgba(255,211,77,.18) !important;
+      border-radius: 999px !important;
+      color: rgba(238,243,255,.92) !important;
+      font-weight: 950 !important;
+      letter-spacing: .10em;
+      padding: .60rem 1.1rem;
+    }
+
+    #downloadModal .king-btn-generate{
+      background:
+        radial-gradient(120px 70px at 20% 30%, rgba(255,211,77,.22), transparent 62%),
+        radial-gradient(140px 70px at 75% 30%, rgba(34,211,238,.18), transparent 65%),
+        linear-gradient(135deg, rgba(7,10,18,.82), rgba(11,16,32,.94)) !important;
+      border: 1px solid rgba(255,211,77,.24) !important;
+      border-radius: 999px !important;
+      color: rgba(238,243,255,.96) !important;
+      font-weight: 950 !important;
+      letter-spacing: .12em;
+      padding: .60rem 1.2rem;
+      box-shadow: 0 0 0 1px rgba(255,211,77,.10), 0 14px 30px rgba(0,0,0,.55) !important;
+    }
+    #downloadModal .king-btn-generate:disabled{
+      opacity: .65;
+      cursor:not-allowed;
+      box-shadow:none !important;
+    }
+
+    #downloadModal .king-btn-download{
+      background: linear-gradient(90deg, rgba(255,211,77,.98), rgba(34,211,238,.92)) !important;
+      border: none !important;
+      border-radius: 999px !important;
+      color: #06101f !important;
+      font-weight: 999 !important;
+      letter-spacing: .12em;
+      padding: .60rem 1.2rem;
+      box-shadow: 0 14px 34px rgba(0,0,0,.45);
+    }
+
+    #downloadModal #spinnerContainer{
+      display:none;
+      justify-content:center;
+      margin: 10px 0 4px;
+    }
+    #downloadModal .spinner-border{
+      width: 2rem;
+      height: 2rem;
+      border-width:0.35em;
+      color: rgba(255,211,77,.85);
+      border-top-color: rgba(34,211,238,.95);
+    }
+
+    #downloadModal .app-ready{
+      color: rgba(34,211,238,.96) !important;
+      text-shadow: 0 0 10px rgba(34,211,238,.25);
+      font-weight: 950;
+    }
+    #downloadModal .status-error{
+      color: #ff4d4d !important;
+      font-weight: 950;
+    }
+  </style>
 </head>
 
 <body>
@@ -51,19 +402,44 @@
       <%~ include("./header", it) %>
 
       <div class="content pt-1 overflow-auto">
+        <div class="kv-page">
 
-        <div class="card h-100 border-0 overflow-auto">
-          <div class="card-body m-0">
+          <div class="card kv-card h-100 border-0 overflow-auto">
+            <div class="card-body m-0">
 
-            <!-- TÍTULO limpio y elegante -->
-            <div class="d-flex align-items-center gap-2 mt-2 mb-4">
-              <i class="bi bi-stars fs-4 text-dark"></i>
-              <h1 class="h3 m-0 text-dark fw-bold">
-                Tus diseños & App
-              </h1>
-            </div>
+              <!-- ✅ TITULO PRO (KING•VPN) -->
+              <div class="kv-titlebar">
+                <div class="kv-title-icon">
+                  <i class="bi bi-lightning-charge-fill"></i>
+                </div>
+                <div class="d-flex flex-column">
+                  <h1 class="kv-title">TU APP Y TUS DISEÑOS.</h1>
+                  <div class="kv-subtitle">KING•VPN • Diseños & APK • Panel de configuración</div>
+                </div>
+              </div>
 
-            <div class="d-md-flex justify-content-between align-items-center mb-3">
+              <!-- ✅ PANEL BOTONES PRO -->
+              <div class="kv-actions mb-3">
+                <div class="d-flex gap-2">
+                  <button type="button" class="__create kv-btn flex-fill">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>NUEVO</span>
+                  </button>
+
+                  <button type="button" class="__import kv-btn flex-fill">
+                    <i class="bi bi-file-earmark-arrow-up"></i>
+                    <span>IMPORTAR</span>
+                  </button>
+                </div>
+
+                <div class="mt-2">
+                  <!-- OJO: mantiene export-config y disabled -->
+                  <button type="button" class="export-config kv-btn kv-btn-primary w-100" disabled>
+                    <i class="bi bi-android"></i>
+                    <span>GENERAR APK</span>
+                  </button>
+                </div>
+              </div>
 
               <!-- selector oculto pero existente -->
               <div class="col-md-2 mb-2" style="display:none !important;">
@@ -74,41 +450,99 @@
                 </select>
               </div>
 
-              <div class="d-flex flex-column">
-                <div class="d-flex mb-1" style="min-width: 300px;">
-                  <button type="button" class="__create btn btn-dark flex-fill me-1 w-50">
-                    <i class="bi bi-plus-lg"></i>
-                    <span>NUEVO</span>
-                  </button>
+              <div class="row m-auto mb-3 center-column" id="app"></div>
 
-                  <button type="button" class="__import btn btn-dark flex-fill w-50">
-                    <i class="bi bi-file-earmark-arrow-up"></i>
-                    <span>IMPORTAR</span>
-                  </button>
-                </div>
-
-                <div class="d-flex">
-                  <button type="button" class="btn btn-dark flex-fill me-1 w-50 export-config" disabled>
-                    <i class="bi bi-android"></i>
-                    <span>&nbsp;GENERAR APK</span>
-                  </button>
+              <div class="d-flex justify-content-center align-items-center mt-5" id="loading">
+                <div class="spinner-border p-5" role="status">
+                  <span class="sr-only"></span>
                 </div>
               </div>
+
             </div>
-
-            <div class="row m-auto mb-3 center-column" id="app"></div>
-
-            <div class="d-flex justify-content-center align-items-center mt-5" id="loading">
-              <div class="spinner-border p-5" role="status">
-                <span class="sr-only"></span>
-              </div>
-            </div>
-
           </div>
+
         </div>
       </div>
     </div>
   </main>
+
+  <!-- ✅ MODAL GENERAR APK (INLINE) -->
+  <div class="modal fade" id="downloadModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <div class="d-flex align-items-center gap-2">
+            <div class="king-badge">
+              <i class="bi bi-android2"></i>
+            </div>
+            <div class="d-flex flex-column">
+              <h5 class="modal-title king-title m-0">Generar APK</h5>
+              <small class="king-sub">KING•VPN • build seguro</small>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body position-relative">
+          <div class="app-grid mb-2">
+            <div>
+              <label class="form-label mb-1">Nombre de la app</label>
+              <input class="form-control" id="appName" placeholder="Ej: KING VPN" value="KING VPN">
+            </div>
+            <div>
+              <label class="form-label mb-1">Nombre del paquete</label>
+              <input class="form-control" id="packageName" placeholder="Ej: com.kingvpn.app">
+            </div>
+          </div>
+
+          <div class="app-grid mb-2">
+            <div>
+              <label class="form-label mb-1">URL del logo (opcional)</label>
+              <input class="form-control" id="logoUrl" placeholder="https://.../logo.png">
+            </div>
+            <div>
+              <label class="form-label mb-1">Importar logo PNG (opcional)</label>
+              <input class="form-control" id="logoFile" type="file" accept="image/png">
+            </div>
+          </div>
+
+          <div class="logo-preview mb-2">
+            <div class="logo-bubble" id="logoBubble">
+              <i class="bi bi-image"></i>
+              <img id="logoImg" alt="Logo preview">
+            </div>
+            <div class="logo-meta">
+              <div class="t1">Preview del logo</div>
+              <div class="t2" id="logoHint">Elegí un PNG o poné una URL</div>
+            </div>
+          </div>
+
+          <div id="spinnerContainer">
+            <div class="spinner-border" role="status"></div>
+          </div>
+
+          <p id="modalStatus" class="text-center king-status">
+            Completá los campos y presioná <strong>Generar APK</strong>.
+          </p>
+        </div>
+
+        <div class="modal-footer border-0 d-flex justify-content-between">
+          <button type="button" class="btn king-btn-cancel" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg"></i> Cancelar
+          </button>
+
+          <div class="d-flex gap-2">
+            <button type="button" class="btn king-btn-generate" id="btnGenerateApp">
+              <i class="bi bi-gear-fill"></i> Generar
+            </button>
+            <button type="button" class="btn king-btn-download" id="btnConfirmDownload" style="display:none;">
+              <i class="bi bi-download"></i> Descargar APK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
@@ -128,7 +562,208 @@
 
   <script src="../static/js/jscolor.js"></script>
   <script src="/static/js/dark_light.js"></script>
-  <script type="module" src="../static/js/app_config/main.js"></script>
 
+  <!-- ✅ Creds -->
+  <script>
+    window.__APK_CREDS__ = {
+      user_id: "<%= it.user.id %>",
+      token: "<%= it.user.id %>" // si tu token real es otro, cambiá acá
+    };
+  </script>
+
+  <!-- ✅ JS MODAL (inline) -->
+  <script>
+    (function () {
+      let csrfToken = (typeof getCsrfTokenHead === "function") ? getCsrfTokenHead() : null;
+
+      function toastErr(msg) {
+        if (typeof showToastError === "function") return showToastError(msg);
+        try { toastr.error(msg); } catch {}
+      }
+      function toastOk(msg) {
+        if (typeof showToastSuccess === "function") return showToastSuccess(msg);
+        try { toastr.success(msg); } catch {}
+      }
+
+      const downloadModalEl = document.getElementById("downloadModal");
+      const downloadModal = new bootstrap.Modal(downloadModalEl);
+
+      const modalStatus = document.getElementById("modalStatus");
+      const spinner = document.getElementById("spinnerContainer");
+      const btnGenerate = document.getElementById("btnGenerateApp");
+      const btnConfirm = document.getElementById("btnConfirmDownload");
+
+      const appNameEl = document.getElementById("appName");
+      const packageNameEl = document.getElementById("packageName");
+      const logoUrlEl = document.getElementById("logoUrl");
+      const logoFileEl = document.getElementById("logoFile");
+
+      const logoImg = document.getElementById("logoImg");
+      const logoHint = document.getElementById("logoHint");
+      const logoBubble = document.getElementById("logoBubble");
+      const logoIcon = logoBubble ? logoBubble.querySelector("i") : null;
+
+      let apkUrl = null;
+      let logoBase64 = null;
+      let logoFilename = null;
+
+      function resetModalUI() {
+        apkUrl = null;
+        spinner.style.display = "none";
+        btnConfirm.style.display = "none";
+        btnGenerate.disabled = false;
+
+        modalStatus.classList.remove("app-ready", "status-error");
+        modalStatus.textContent = "Completá los campos y presioná Generar APK.";
+
+        logoBase64 = null;
+        logoFilename = null;
+
+        if (logoImg) logoImg.style.display = "none";
+        if (logoIcon) logoIcon.style.display = "inline-block";
+        if (logoHint) logoHint.textContent = "Elegí un PNG o poné una URL";
+        if (logoFileEl) logoFileEl.value = "";
+      }
+
+      async function readResponseUrl(response) {
+        const ct = (response.headers.get("content-type") || "").toLowerCase();
+        if (ct.includes("application/json")) {
+          const data = await response.json();
+          return data.url || data.apkUrl || data.path || null;
+        }
+        return (await response.text()).trim();
+      }
+
+      function bindOpenButton() {
+        const btnOpen = document.querySelector(".export-config");
+        if (!btnOpen) return;
+
+        btnOpen.addEventListener("click", () => {
+          resetModalUI();
+          downloadModal.show();
+        });
+      }
+      bindOpenButton();
+
+      logoUrlEl.addEventListener("input", () => {
+        const url = (logoUrlEl.value || "").trim();
+        if (!url) return;
+        if (!logoBase64) {
+          logoImg.src = url;
+          logoImg.style.display = "block";
+          if (logoIcon) logoIcon.style.display = "none";
+          logoHint.textContent = url;
+        }
+      });
+
+      logoFileEl.addEventListener("change", () => {
+        const file = logoFileEl.files && logoFileEl.files[0];
+        if (!file) return;
+
+        if (file.type !== "image/png") {
+          toastErr("El logo debe ser PNG.");
+          logoFileEl.value = "";
+          return;
+        }
+
+        logoFilename = file.name;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          logoBase64 = reader.result;
+          logoImg.src = logoBase64;
+          logoImg.style.display = "block";
+          if (logoIcon) logoIcon.style.display = "none";
+          logoHint.textContent = file.name;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      btnGenerate.addEventListener("click", async () => {
+        const appName = (appNameEl.value || "").trim() || "KING VPN";
+        const packageName = (packageNameEl.value || "").trim() || null;
+        const logo_url = (logoUrlEl.value || "").trim() || null;
+
+        const creds = window.__APK_CREDS__ || {};
+        const user_id = (creds.user_id || "").toString().trim();
+        const token = (creds.token || "").toString().trim();
+
+        if (!user_id) {
+          modalStatus.classList.add("status-error");
+          modalStatus.textContent = "Faltan credenciales (user_id).";
+          toastErr("Faltan credenciales (user_id).");
+          return;
+        }
+        if (!token) {
+          modalStatus.classList.add("status-error");
+          modalStatus.textContent = "Faltan credenciales (token).";
+          toastErr("Faltan credenciales (token).");
+          return;
+        }
+
+        const payload = {
+          user_id,
+          token,
+          appName,
+          packageName,
+          logo_url,
+          logo_base64: logoBase64 || null,
+          logo_filename: logoFilename || null
+        };
+
+        spinner.style.display = "flex";
+        btnGenerate.disabled = true;
+        btnConfirm.style.display = "none";
+        modalStatus.classList.remove("app-ready", "status-error");
+        modalStatus.textContent = "Generando tu aplicación…";
+
+        try {
+          const response = await fetch("/download-app", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(csrfToken ? { "csrf-token": csrfToken } : {})
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (typeof getCsrfTokenRefresh === "function") {
+            const refreshed = getCsrfTokenRefresh(response);
+            if (refreshed) csrfToken = refreshed;
+          }
+
+          if (!response.ok) throw new Error("Error generando APK");
+
+          apkUrl = await readResponseUrl(response);
+          if (!apkUrl) throw new Error("URL inválida");
+
+          spinner.style.display = "none";
+          modalStatus.textContent = "¡Tu APK está listo!";
+          modalStatus.classList.add("app-ready");
+
+          btnConfirm.style.display = "inline-block";
+          btnConfirm.onclick = () => {
+            window.location.href = apkUrl;
+            downloadModal.hide();
+          };
+
+          toastOk("APK lista ✅");
+
+        } catch (e) {
+          spinner.style.display = "none";
+          btnGenerate.disabled = false;
+          modalStatus.textContent = "Error al generar la app. Intentá nuevamente.";
+          modalStatus.classList.add("status-error");
+          toastErr("Error al generar la app.");
+        }
+      });
+
+      downloadModalEl.addEventListener("hidden.bs.modal", () => {
+        if (logoFileEl) logoFileEl.value = "";
+      });
+    })();
+  </script>
+
+  <script type="module" src="../static/js/app_config/main.js"></script>
 </body>
 </html>

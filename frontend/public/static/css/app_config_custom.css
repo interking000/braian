@@ -1,241 +1,317 @@
+/* =========================================================
+   app_config_custom.css — KING•VPN PRO (ARREGLADO)
+   ========================================================= */
+
+/* =========================
+   PALETA KING•VPN (solo visual)
+   ========================= */
+:root{
+  --kv-bg-0: #060a11;
+  --kv-bg-1: #0a1420;
+  --kv-card: rgba(10, 16, 28, .62);
+  --kv-card2: rgba(14, 22, 36, .72);
+
+  --kv-text: rgba(238,243,255,.95);
+  --kv-muted: rgba(238,243,255,.65);
+
+  --kv-gold: rgba(255, 211, 77, .70);
+  --kv-gold-b: rgba(255, 211, 77, .18);
+
+  --kv-cyan: rgba(34, 211, 238, .75);
+  --kv-cyan-b: rgba(34, 211, 238, .14);
+
+  --kv-shadow: 0 18px 55px rgba(0,0,0,.55);
+  --kv-shadow-soft: 0 12px 35px rgba(0,0,0,.40);
+}
+
+/* =========================
+   NO SCROLL HORIZONTAL (evita cosas raras)
+   ========================= */
+html, body, .content, .container-fluid, .card, .card-body{
+  overflow-x: hidden !important;
+}
+
+/* =========================================================
+   BASE ORIGINAL (mantener lógica / estructura)
+   ========================================================= */
 .app-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    padding: 0.5rem;
-    background: var(--bg-color);
-    cursor: pointer;
-    border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+  width: 100%;
+
+  padding: 0.5rem;
+  background: var(--bg-color);
+
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 .status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #FFF;
-    width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #FFF;
+  width: 100%;
 }
 
-.time {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.7rem;
-}
+.time { font-family: 'Roboto', sans-serif; font-size: 0.7rem; }
 
 .display {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 }
 
 .card-config {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 90%;
-    border-radius: 20px;
-    padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  border-radius: 20px;
+  padding: 5px;
 }
 
 .input-area {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    border-radius: 50px;
-    border: 2px solid #FFFFFF;
-    width: 100%;
-    margin: 3px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 50px;
+  border: 2px solid #FFFFFF;
+  width: 100%;
+  margin: 3px;
 }
 
 .app {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .app svg {
-    margin: 5px;
-    color: #FFFFFF;
-    width: 65px;
-    height: 45px;
-    background: #15161a81;
-    padding: 10px;
-    border: none;
-    border-radius: 10px;
+  margin: 5px;
+  color: #FFFFFF;
+  width: 65px;
+  height: 45px;
+  background: #15161a81;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
 }
 
-.app svg:hover {
-    background: #15161a;
-    box-shadow: 0 0 10px #15161a;
-}
+.app svg:hover { background: #15161a; box-shadow: 0 0 10px #15161a; }
+.app svg:active { background: #15161a; box-shadow: 0 0 10px #15161a; }
 
-.app svg:active {
-    background: #15161a;
-    box-shadow: 0 0 10px #15161a;
-}
-
-.config,
-.password {
-    display: flex;
-    justify-content: space-between;
-}
+.config, .password { display: flex; justify-content: space-between; }
 
 .buttons {
-    margin-top: 5px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    margin-bottom: 3px;
+  margin-top: 5px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 3px;
 }
 
 .buttons button {
-    padding: 5px;
-    border-radius: 50px;
-    border: none;
-    width: 100%;
-    background: var(--button-color);
-    color: var(--text-color);
-    font-weight: bold;
-    cursor: pointer;
+  padding: 5px;
+  border-radius: 50px;
+  border: none;
+  width: 100%;
+  background: var(--button-color);
+  color: var(--text-color);
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .buttons svg {
-    background: var(--button-color);
-    border-radius: 30px;
-    padding: 7px;
-    width: 55px;
-    height: 33px;
-    margin-left: 5px;
-    color: var(--icon-color);
+  background: var(--button-color);
+  border-radius: 30px;
+  padding: 7px;
+  width: 55px;
+  height: 33px;
+  margin-left: 5px;
+  color: var(--icon-color);
 }
 
 .status {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-    background: var(--card-config);
-    margin-top: 13px;
-    padding: 15px;
-    width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  background: var(--card-config);
+  margin-top: 13px;
+  padding: 15px;
+  width: 90%;
 }
 
-.navigation-bar span {
-    position: absolute;
-    transform: translateX(-50%);
-    left: 50%;
-    width: 50px;
-    border-radius: 50px;
-    height: 3px;
-    background: #FFF;
-    margin: 5px 0;
-    bottom: 0;
+/* =========================================================
+   LOOK KING•VPN (suave, pro, sin “ensuciar”)
+   ========================================================= */
+.app-container{
+  background:
+    radial-gradient(520px 240px at 18% 10%, rgba(255,211,77,.08), transparent 65%),
+    radial-gradient(520px 240px at 88% 18%, rgba(34,211,238,.07), transparent 65%),
+    linear-gradient(180deg, var(--kv-bg-0), var(--kv-bg-1)) !important;
+
+  border-radius: 18px !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  box-shadow: var(--kv-shadow-soft) !important;
+
+  overflow: hidden;
+  position: relative;
 }
 
-.background-svg {
-    background: #1d1c1c8c;
-    border-radius: 50px;
-    padding: 8px;
-    height: 35px;
-    width: 35px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* marco interno sutil (no exagerado) */
+.app-container::before{
+  content:"";
+  position:absolute;
+  inset: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  pointer-events:none;
 }
 
-.background-svg:hover {
-    background: #1d1c1cc9;
+/* inputs internos más finos */
+.input-area{
+  border: 1px solid rgba(255,255,255,.10) !important;
+  background: rgba(255,255,255,.03);
 }
 
-#gjs {
-    border: none;
+/* =========================================================
+   LISTADO DE PREVIEWS (#app) — ACA SE ARREGLA TODO
+   ========================================================= */
+
+/* ✅ (A) HACER MÁS ANCHO EL ÁREA (izq/der) SIN ROMPER */
+.content .card-body{
+  /* ANCHO GLOBAL del área donde vive #app
+     - más ancho → bajá padding (ej 4px)
+     - más fino  → subí padding (ej 12px) */
+  padding-left: 4px !important;
+  padding-right: 4px !important;
 }
 
-.gjs-devices-c {
-    padding: 0 !important;
+/* ✅ (B) GRID 2 COLUMNAS REAL (no 50vw raro) */
+#app{
+  display: grid !important;
+
+  /* 2 columnas SIEMPRE */
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+
+  /* SEPARACIÓN entre previews
+     - más juntos → 4px
+     - más separados → 10px */
+  gap: 8px !important;
+
+  /* MOVER IZQ/DER TODO EL GRID (para “estirar”)
+     - más hacia bordes → negativo (ej -6px)
+     - más hacia adentro → 0px */
+  margin-left: -4px !important;   /* <-- IZQUIERDA */
+  margin-right: -4px !important;  /* <-- DERECHA */
+
+  /* MOVER ARRIBA/ABAJO el bloque de previews */
+  margin-top: 0px !important;     /* <-- ARRIBA/ABAJO */
+
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-.gjs-one-bg {
-    background-color: #FFF !important;
-    color: #15161a;
+/* Neutraliza bootstrap row */
+#app.row{ margin-left: 0 !important; margin-right: 0 !important; }
+#app > *{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  flex: unset !important;
+  box-sizing: border-box !important;
 }
 
-.gjs-two-color {
-    color: #15161a !important;
+/* ✅ (C) “PANTALLA NORMAL”: no tan largo ni tan fino */
+#app .app-container{
+  /* ALTO del preview
+     - más corto → bajá el 320 / 260
+     - más largo → subí el 320 / 260 */
+  height: clamp(220px, 54vw, 300px) !important;
+
+  /* Bordes más “celu” */
+  border-radius: 20px !important;
+
+  /* Marco KING */
+  border: 1px solid rgba(255,211,77,.12) !important;
+  box-shadow: var(--kv-shadow) !important;
 }
 
-.gjs-three-bg {
-    background-color: #1a1f2b !important;
-    color: #ffffff;
+/* ✅ (D) Compacta el contenido interno para que no estire */
+#app .display{
+  /* más chico → 0.92
+     más grande → 0.98 / 1 */
+  transform: scale(.95);
+  transform-origin: top center;
 }
 
-.gjs-four-color,
-.gjs-four-color-h:hover {
-    color: #1a1f2b !important;
+/* =========================================================
+   BOTONES DEL PREVIEW (más pro)
+   ========================================================= */
+#app .app svg{
+  background: rgba(0,0,0,.22) !important;
+  border: 1px solid rgba(34,211,238,.12);
+  box-shadow: 0 12px 25px rgba(0,0,0,.35);
 }
 
-.code-editor {
-    width: 70%;
+/* =========================================================
+   RESPONSIVE (móvil)
+   ========================================================= */
+@media (max-width: 720px){
+
+  .content .card-body{
+    /* más ancho en móvil → 4px
+       más fino en móvil  → 10px */
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+  }
+
+  #app{
+    /* más juntos → 6px o 5px */
+    gap: 4px !important;
+
+    /* más hacia bordes → -6px
+       más hacia adentro → 0px */
+    margin-left: -4px !important;
+    margin-right: -4px !important;
+  }
+
+  #app .app-container{
+    /* ALTO móvil (pantalla normal)
+       más corto → 280/240
+       más largo → 340/260 */
+    height: clamp(100px, 58vw, 200px) !important;
+
+    border-radius: 22px !important;
+  }
+
+  #app .display{
+    transform: scale(.94);
+  }
+
+  .code-editor{ width: 100%; }
 }
 
-::-webkit-scrollbar {
-    width: 10px;
-    background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    width: 10px;
-    box-shadow: 0 0 0 12px rgb(59, 59, 59) inset;
-}
-
-.CodeMirror-hscrollbar {
-    height: 10px;
-}
-
+/* =========================================================
+   Scrollbar / CodeMirror (tu original)
+   ========================================================= */
+::-webkit-scrollbar { width: 10px; background-color: transparent; }
+::-webkit-scrollbar-thumb { width: 10px; box-shadow: 0 0 0 12px rgb(59, 59, 59) inset; }
+.CodeMirror-hscrollbar { height: 10px; }
 .platform-mac .CodeMirror-gutter-filler,
-.platform-mac .CodeMirror-scrollbar-filler {
-    background-color: transparent;
-    background-image: none;
-}
-
-.CodeMirror-scrollbar-filler {
-    box-shadow: 0 0 0 12px rgb(59, 59, 59) inset;
-    background-color: transparent;
-}
-
-.CodeMirror-hints {
-    z-index: 9999 !important;
-}
-
-@media screen and (max-width: 720px) {
-    .center-column {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .code-editor {
-        width: 100%;
-    }
-}
-
-@media screen and (min-width: 720px) {
-    .app-modal-content {
-        height: 720px;
-        width: 360px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-}
+.platform-mac .CodeMirror-scrollbar-filler { background-color: transparent; background-image: none; }
+.CodeMirror-scrollbar-filler { box-shadow: 0 0 0 12px rgb(59, 59, 59) inset; background-color: transparent; }
+.CodeMirror-hints { z-index: 9999 !important; }
