@@ -3,8 +3,14 @@
 import { InternalError } from "../common/errors.js";
 import { AppConfigAdvancedViewFooter, AppConfigViewFooter } from "./components/footer.js";
 import {
-  Column, InputBoolean, InputHtml,
-  InputImage, InputSelect, InputString, InputText, InputUrl
+  Column,
+  InputBoolean,
+  InputHtml,
+  InputImage,
+  InputSelect,
+  InputString,
+  InputText,
+  InputUrl
 } from "./components/form.js";
 
 import Pagination from "../common/pagination.js";
@@ -13,7 +19,8 @@ import AppCustomModal from "./modals/custom.js";
 import AppConfigExportModal from "./modals/export.js";
 import AppConfigImportModal from "./modals/import.js";
 import UpdateModal from "./modals/update.js";
-import ApkDownloadModal from "./modals/apkDownload.js";
+// ✅ NO usar ApkDownloadModal acá. El modal APK lo maneja tu HTML inline.
+// import ApkDownloadModal from "./modals/apkDownload.js";
 
 import AppConfig from "./models.js";
 import { AppConfigAdvancedView } from "./components/app.js";
@@ -24,11 +31,13 @@ import CodeEditorModal from "./modals/code.js";
 import { ComponentStyled } from "./components/core/base.js";
 
 /**
- * ✅ FIX DEFINITIVO:
+ * ✅ FIX:
  * - NO usa CardDefault (ni lo importa)
- * - NO renderiza ninguna card abajo
- * - Conecta los botones del index.html: .__create, .__import, .export-config
- * - Sigue cargando tus temas normalmente en #app
+ * - NO renderiza ninguna card extra abajo
+ * - Conecta botones del HTML: .__create, .__import
+ * - El botón .export-config (GENERAR APK) solo se habilita acá
+ *   y el HTML inline se encarga de abrir el modal (#downloadModal)
+ * - Sigue cargando temas en #app
  */
 
 class Observable {
@@ -41,11 +50,12 @@ class Observable {
   }
 
   removeObserve(callback) {
-    this.observers.splice(this.observers.indexOf(callback), 1);
+    const idx = this.observers.indexOf(callback);
+    if (idx >= 0) this.observers.splice(idx, 1);
   }
 
   notify(event, data) {
-    this.observers.forEach(callback => callback(event, data));
+    this.observers.forEach(cb => cb(event, data));
   }
 }
 
@@ -65,9 +75,14 @@ class AppConfigList extends Observable {
 
   toggle(id) {
     const item = this.get(id);
+    if (!item) return;
+
     const index = this.items.indexOf(item);
+    if (index < 0) return;
 
     const item2 = this.items[0];
+    if (!item2) return;
+
     item2.id = item.id;
 
     this.items[0] = item;
@@ -79,7 +94,11 @@ class AppConfigList extends Observable {
 
   remove(id) {
     const item = this.get(id);
+    if (!item) return;
+
     const index = this.items.indexOf(item);
+    if (index < 0) return;
+
     this.items.splice(index, 1);
     this.notify("delete", item);
   }
@@ -267,7 +286,7 @@ const createInputApp = (config) => {
   return columns;
 };
 
-// ✅ Render SOLO los temas (NO card)
+// ✅ Render SOLO los temas (NO card extra)
 const renderApp = (appConfigList) => {
   const root = document.querySelector("#app") || document.querySelector(".row");
   if (!root) return;
@@ -275,7 +294,6 @@ const renderApp = (appConfigList) => {
   root.innerHTML = "";
 
   if (appConfigList.items.length === 0) {
-    // No card. Solo mensaje opcional.
     const empty = document.createElement("div");
     empty.className = "text-center opacity-75 py-5";
     empty.innerHTML = `
@@ -293,7 +311,7 @@ const renderApp = (appConfigList) => {
       padding: "0 15px"
     });
 
-    const footer = createIconsFooter(item, appConfigList, app);
+    const footer = createIconsFooter(item, appConfigList);
     footer.setStyle({
       display: "flex",
       justifyContent: "space-between",
@@ -334,7 +352,7 @@ const showLoading = () => {
 
 let csrfToken = getCsrfTokenHead();
 
-// ✅ Bind de botones del INDEX (una sola vez)
+// ✅ Bind de botones del HTML (una sola vez)
 let topButtonsBound = false;
 
 const bindTopButtons = (appConfigList) => {
@@ -361,11 +379,10 @@ const bindTopButtons = (appConfigList) => {
     importModal.modal.hide();
   });
 
-  // APK (lo dejo ACTIVO y abre tu modal)
-  const apkModal = new ApkDownloadModal();
+  // ✅ APK: SOLO habilitar. El HTML inline abre el modal.
   if (btnApk) {
     btnApk.removeAttribute("disabled");
-    btnApk.addEventListener("click", () => apkModal.show());
+    // NO addEventListener acá
   }
 
   topButtonsBound = true;
@@ -567,4 +584,3 @@ const main = async () => {
 };
 
 main();
-
