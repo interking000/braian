@@ -4,7 +4,7 @@
 #  ✅ Lee PORT y dominio desde .env (sin hardcode)
 #  ✅ Arranca / reinicia por PM2 de forma limpia
 #  ✅ Opcional: build + prisma db push (con flags)
-#  ✅ NGINX: test + reload seguro
+#  ✅ NGINX: test + reload seguro (si no está activo -> start)
 # ============================================================
 
 set -euo pipefail
@@ -160,8 +160,29 @@ ok "PM2 OK"
 if command -v nginx >/dev/null 2>&1; then
   step "NGINX: test + reload..."
   nginx -t
-  systemctl reload nginx
-  ok "NGINX OK"
+
+  # ✅ FIX: si no está activo, lo iniciamos en vez de reload
+  if command -v systemctl >/dev/null 2>&1; then
+    if systemctl is-active --quiet nginx; then
+      systemctl reload nginx
+      ok "NGINX recargado"
+    else
+      warn "NGINX no estaba activo -> iniciando..."
+      systemctl start nginx
+      systemctl enable nginx >/dev/null 2>&1 || true
+      ok "NGINX iniciado"
+    fi
+  else
+    # fallback sin systemd
+    if service nginx status >/dev/null 2>&1; then
+      service nginx reload
+      ok "NGINX recargado (service)"
+    else
+      warn "NGINX no estaba activo -> iniciando (service)..."
+      service nginx start
+      ok "NGINX iniciado (service)"
+    fi
+  fi
 fi
 
 # --------------------------
