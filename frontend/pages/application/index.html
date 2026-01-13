@@ -1,400 +1,518 @@
 <!DOCTYPE html>
 <html lang="es" translate="no" data-bs-theme="light">
-
 <head>
   <base href="/" target="_blank">
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="google" content="notranslate">
   <link rel="shortcut icon" href="../static/img/favicon.svg" />
-
   <title>KING•VPN • Tu App y Tus Diseños</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <!-- Libs -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet" />
 
+  <!-- Tu CSS base -->
   <link rel="stylesheet" href="/static/css/styles.css">
   <link rel="stylesheet" href="/static/css/bootstrap.css">
   <link rel="stylesheet" href="/static/css/sidebar.css">
   <link rel="stylesheet" href="/static/css/header.css">
   <link rel="stylesheet" href="/static/css/app_config_custom.css">
 
+  <!-- (opcional) CodeMirror -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror-one-dark-theme@1.1.1/one-dark.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
-
-  <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet" />
-  <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
 
   <meta name="csrf-token" content="<%= it.csrfToken %>">
 
   <!-- Ocultar selector de estado SIN eliminar -->
   <style>
-    #app_config_status,
-    #app_config_status * {
-      display: none !important;
-    }
+    #app_config_status, #app_config_status * { display: none !important; }
   </style>
 
   <!-- =========================================================
-       KING•VPN UI (solo para esta página)
-       - Fondo pro
-       - Header título pro
-       - Panel botones pro
+       KING•VPN SUPER UI (red/rose/blue/white + efectos)
        ========================================================= -->
   <style>
     :root{
+      /* Futurista (pedido) */
+      --fx-red:#ff3455;
+      --fx-rose:#ff79a6;
+      --fx-blue:#4da3ff;
+      --fx-white:#f7fbff;
+
+      --fx-red-10: rgba(255,52,85,.10);
+      --fx-red-20: rgba(255,52,85,.20);
+      --fx-rose-12: rgba(255,121,166,.12);
+      --fx-rose-25: rgba(255,121,166,.25);
+      --fx-blue-12: rgba(77,163,255,.12);
+      --fx-blue-30: rgba(77,163,255,.30);
+      --fx-white-08: rgba(247,251,255,.08);
+      --fx-white-12: rgba(247,251,255,.12);
+      --fx-white-18: rgba(247,251,255,.18);
+
+      /* Base */
       --kv-bg0:#060a11;
       --kv-bg1:#0a1420;
-      --kv-card:rgba(12,18,30,.66);
-      --kv-card2:rgba(16,26,40,.72);
-      --kv-b:rgba(255,255,255,.08);
       --kv-text:rgba(238,243,255,.95);
       --kv-muted:rgba(238,243,255,.66);
-      --kv-gold:rgba(255,211,77,.80);
-      --kv-gold-b:rgba(255,211,77,.16);
-      --kv-cyan:rgba(34,211,238,.80);
-      --kv-cyan-b:rgba(34,211,238,.14);
-      --kv-shadow:0 22px 70px rgba(0,0,0,.55);
-      --kv-shadow2:0 12px 35px rgba(0,0,0,.40);
+      --shadow-1: 0 22px 70px rgba(0,0,0,.55);
+      --shadow-2: 0 12px 35px rgba(0,0,0,.40);
     }
 
-    /* Fondo general (chau gris) */
+    /* Fondo general con efectos */
     body{
-      background:
-        radial-gradient(900px 520px at 12% 0%, rgba(255,211,77,.10), transparent 62%),
-        radial-gradient(900px 520px at 92% 10%, rgba(34,211,238,.08), transparent 60%),
-        linear-gradient(180deg, var(--kv-bg0), var(--kv-bg1)) !important;
+      min-height:100vh;
       color: var(--kv-text);
+      background:
+        radial-gradient(900px 520px at 10% 0%, var(--fx-blue-12), transparent 62%),
+        radial-gradient(900px 520px at 92% 12%, var(--fx-rose-12), transparent 60%),
+        radial-gradient(700px 420px at 20% 90%, var(--fx-red-10), transparent 62%),
+        linear-gradient(180deg, var(--kv-bg0), var(--kv-bg1)) !important;
+      overflow-x:hidden;
     }
 
-    /* Contenedor principal de contenido */
-    .kv-page{
-      padding: 12px 10px 18px;
+    /* capa de “grid” futurista */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background:
+        linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 52px 52px;
+      opacity:.06;
+      pointer-events:none;
+      z-index:0;
+      transform: translateZ(0);
+      mask-image: radial-gradient(1000px 600px at 50% 10%, #000 40%, transparent 85%);
+      -webkit-mask-image: radial-gradient(1000px 600px at 50% 10%, #000 40%, transparent 85%);
     }
 
-    /* Card general pro */
+    /* capas de “aurora” */
+    body::after{
+      content:"";
+      position:fixed; inset:-120px;
+      background:
+        radial-gradient(800px 520px at 20% 20%, rgba(77,163,255,.22), transparent 60%),
+        radial-gradient(700px 520px at 85% 30%, rgba(255,121,166,.18), transparent 58%),
+        radial-gradient(700px 520px at 55% 90%, rgba(255,52,85,.15), transparent 58%);
+      filter: blur(28px);
+      opacity:.65;
+      pointer-events:none;
+      z-index:0;
+      animation: auroraMove 10s ease-in-out infinite alternate;
+    }
+    @keyframes auroraMove{
+      from{ transform: translate3d(-10px,-8px,0) scale(1); }
+      to  { transform: translate3d(10px,8px,0) scale(1.02); }
+    }
+
+    /* Asegurar contenido arriba */
+    main, .container-fluid, .content, .kv-page{ position:relative; z-index:1; }
+
+    .kv-page{ padding: 12px 10px 18px; }
+
+    /* Card principal */
     .kv-card{
-      background: rgba(10,16,28,.30) !important;
-      border: 1px solid rgba(255,255,255,.06) !important;
-      box-shadow: var(--kv-shadow2);
+      background: rgba(10,16,28,.34) !important;
+      border: 1px solid rgba(255,255,255,.08) !important;
+      box-shadow: var(--shadow-2);
       border-radius: 18px !important;
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
+      position: relative;
     }
 
-    /* Título pro */
+    /* borde “neon” suave */
+    .kv-card::before{
+      content:"";
+      position:absolute; inset:-1px;
+      border-radius: 20px;
+      background:
+        conic-gradient(from 0deg,
+          rgba(77,163,255,.9),
+          rgba(255,121,166,.9),
+          rgba(255,52,85,.9),
+          rgba(247,251,255,.9),
+          rgba(77,163,255,.9)
+        );
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      padding:1px;
+      opacity:.18;
+      filter: blur(.4px);
+      animation: kvSpin 9s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes kvSpin{ to{ transform: rotate(360deg);} }
+
+    /* Titlebar */
     .kv-titlebar{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      padding: 14px 14px 10px;
-      margin: 0 0 10px;
+      display:flex; align-items:center; gap:10px;
+      padding: 14px 14px 10px; margin:0 0 10px;
     }
     .kv-title-icon{
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      width: 42px; height: 42px;
+      border-radius: 16px;
+      display:flex; align-items:center; justify-content:center;
       background:
-        radial-gradient(16px 16px at 28% 30%, rgba(255,211,77,.26), transparent 65%),
-        radial-gradient(16px 16px at 70% 70%, rgba(34,211,238,.18), transparent 65%),
-        rgba(10,16,28,.55);
-      border: 1px solid rgba(255,211,77,.16);
-      box-shadow: 0 0 0 1px rgba(34,211,238,.08), 0 12px 28px rgba(0,0,0,.35);
+        radial-gradient(16px 16px at 30% 30%, rgba(247,251,255,.20), transparent 65%),
+        radial-gradient(18px 18px at 70% 70%, rgba(255,121,166,.16), transparent 65%),
+        rgba(12,16,28,.70);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 0 28px rgba(77,163,255,.12), 0 12px 28px rgba(0,0,0,.35);
+      color: var(--fx-blue);
+      text-shadow: 0 0 14px rgba(77,163,255,.35);
     }
-    .kv-title-icon i{ color: var(--kv-gold); font-size: 1.1rem; }
     .kv-title{
       font-weight: 950;
       letter-spacing: .10em;
       text-transform: uppercase;
       margin: 0;
       font-size: 1.05rem;
-      color: rgba(238,243,255,.96);
+      color: rgba(247,251,255,.95);
     }
     .kv-subtitle{
       margin: 2px 0 0;
       font-size: .88rem;
-      color: var(--kv-muted);
+      color: rgba(247,251,255,.70);
       letter-spacing: .04em;
     }
 
-    /* Panel de botones (fondo aparte) */
+    /* Panel botones */
     .kv-actions{
       background:
-        radial-gradient(750px 260px at 10% 0%, rgba(255,211,77,.08), transparent 62%),
-        radial-gradient(750px 260px at 90% 10%, rgba(34,211,238,.06), transparent 60%),
-        rgba(8,12,20,.55);
-      border: 1px solid rgba(255,255,255,.06);
+        radial-gradient(750px 260px at 10% 0%, rgba(77,163,255,.10), transparent 62%),
+        radial-gradient(750px 260px at 90% 10%, rgba(255,121,166,.10), transparent 60%),
+        rgba(10,14,24,.62);
+      border: 1px solid rgba(255,255,255,.08);
       border-radius: 16px;
       padding: 10px;
       box-shadow: 0 10px 28px rgba(0,0,0,.30);
+      position: relative;
+      overflow:hidden;
+    }
+    .kv-actions::after{
+      content:"";
+      position:absolute; inset:-40px;
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(255,255,255,.07) 0 10px,
+        rgba(255,255,255,0) 10px 22px
+      );
+      opacity:.07;
+      animation: shimmer 2.6s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes shimmer{
+      from{ transform: translateX(-40px); }
+      to  { transform: translateX(40px); }
     }
 
-    /* Botón KING pro (reemplaza ese btn-dark feo visualmente) */
     .kv-btn{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap: 8px;
+      display:flex; align-items:center; justify-content:center; gap:8px;
       width: 100%;
       border-radius: 999px !important;
-
-      /* más chico */
-      padding: .52rem .90rem !important;
-      font-weight: 900 !important;
+      padding: .55rem .95rem !important;
+      font-weight: 950 !important;
       letter-spacing: .12em !important;
       text-transform: uppercase;
-
-      color: rgba(238,243,255,.95) !important;
-      border: 1px solid rgba(255,211,77,.14) !important;
-
+      color: rgba(247,251,255,.95) !important;
+      border: 1px solid rgba(255,255,255,.14) !important;
       background:
-        radial-gradient(140px 80px at 20% 30%, rgba(255,211,77,.16), transparent 60%),
-        radial-gradient(140px 80px at 80% 30%, rgba(34,211,238,.10), transparent 60%),
-        linear-gradient(135deg, rgba(7,10,18,.70), rgba(10,16,28,.92)) !important;
-
-      box-shadow: 0 0 0 1px rgba(255,211,77,.06), 0 14px 30px rgba(0,0,0,.42) !important;
+        radial-gradient(140px 80px at 20% 30%, rgba(77,163,255,.16), transparent 60%),
+        radial-gradient(140px 80px at 80% 30%, rgba(255,121,166,.14), transparent 60%),
+        linear-gradient(135deg, rgba(7,10,18,.72), rgba(10,16,28,.92)) !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 14px 30px rgba(0,0,0,.42) !important;
       transition: transform .14s ease, filter .14s ease, box-shadow .14s ease;
+      position:relative;
+      overflow:hidden;
+      z-index:1;
     }
-    .kv-btn i{ opacity: .95; font-size: 1.05rem; }
+    .kv-btn::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(90deg, rgba(255,52,85,.0), rgba(255,121,166,.18), rgba(77,163,255,.18), rgba(255,52,85,.0));
+      transform: translateX(-60%);
+      transition: transform .35s ease;
+      opacity:.75;
+      z-index:-1;
+    }
+    .kv-btn:hover::before{ transform: translateX(60%); }
     .kv-btn:hover{
       transform: translateY(-1px);
-      box-shadow: 0 0 0 1px rgba(34,211,238,.10), 0 18px 40px rgba(0,0,0,.50) !important;
-      filter: brightness(1.05);
+      filter: brightness(1.06);
+      box-shadow: 0 0 0 1px rgba(77,163,255,.14), 0 18px 40px rgba(0,0,0,.50) !important;
     }
-    .kv-btn:active{
-      transform: translateY(0px);
-      filter: brightness(.98);
-    }
-    .kv-btn:disabled{
-      opacity: .55;
-      cursor: not-allowed !important;
-      transform:none !important;
-      box-shadow:none !important;
-    }
+    .kv-btn:active{ transform: translateY(0px); filter: brightness(.99); }
+    .kv-btn:disabled{ opacity: .55; cursor: not-allowed !important; transform:none !important; box-shadow:none !important; }
 
-    /* botón principal destacado (generar APK) */
     .kv-btn-primary{
-      border: 1px solid rgba(34,211,238,.16) !important;
+      border: 1px solid rgba(77,163,255,.20) !important;
       background:
-        radial-gradient(160px 90px at 20% 30%, rgba(34,211,238,.16), transparent 60%),
-        radial-gradient(160px 90px at 80% 30%, rgba(255,211,77,.14), transparent 60%),
-        linear-gradient(135deg, rgba(7,10,18,.66), rgba(10,16,28,.96)) !important;
+        radial-gradient(160px 90px at 20% 30%, rgba(77,163,255,.18), transparent 60%),
+        radial-gradient(160px 90px at 80% 30%, rgba(255,52,85,.16), transparent 60%),
+        linear-gradient(135deg, rgba(7,10,18,.70), rgba(10,16,28,.96)) !important;
     }
 
-    /* Ajustes del área “content” para que todo se vea pro */
-    .content{
-      background: transparent !important;
-    }
-    .card.h-100.border-0.overflow-auto{
-      background: transparent !important;
-    }
+    /* Content */
+    .content{ background: transparent !important; }
+    .card.h-100.border-0.overflow-auto{ background: transparent !important; }
+
     #loading .spinner-border{
-      color: rgba(255,211,77,.85);
-      border-top-color: rgba(34,211,238,.95);
+      color: rgba(255,121,166,.85);
+      border-top-color: rgba(77,163,255,.95);
     }
   </style>
 
-  <!-- ✅ ESTILOS SOLO DEL MODAL (scoped, ya pro) -->
+  <!-- =========================================================
+       MODAL APK — SUPER FUTURISTA (red/rose/blue/white)
+       ========================================================= -->
   <style>
     #downloadModal .modal-content{
-      background: rgba(6,6,16,.94) !important;
-      color: #eef3ff !important;
-      border-radius: 24px !important;
-      border: 1px solid rgba(255,211,77,.22) !important;
-      box-shadow: 0 45px 140px rgba(0,0,0,.78) !important;
+      position: relative;
+      background:
+        radial-gradient(1100px 600px at 10% -10%, rgba(77,163,255,.26), transparent 60%),
+        radial-gradient(1100px 600px at 110% -10%, rgba(255,121,166,.22), transparent 60%),
+        radial-gradient(900px 520px at 50% 120%, rgba(255,52,85,.16), transparent 55%),
+        linear-gradient(180deg, rgba(6,8,18,.97), rgba(5,7,14,.93));
+      color: var(--fx-white);
+      border-radius: 26px !important;
+      border: 1px solid rgba(247,251,255,.16);
       overflow: hidden;
-      backdrop-filter: blur(12px);
+      box-shadow: 0 40px 140px rgba(0,0,0,.75);
+      backdrop-filter: blur(14px);
+      isolation: isolate;
     }
+
+    #downloadModal .modal-content::before{
+      content:"";
+      position:absolute; inset:-1px;
+      border-radius: 28px;
+      background:
+        conic-gradient(from 0deg,
+          rgba(77,163,255,.95),
+          rgba(255,121,166,.95),
+          rgba(255,52,85,.95),
+          rgba(247,251,255,.95),
+          rgba(77,163,255,.95)
+        );
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      padding:1.4px;
+      filter: blur(.6px);
+      animation: kvSpin2 6.5s linear infinite;
+      opacity:.55;
+      z-index:-1;
+      pointer-events:none;
+    }
+    @keyframes kvSpin2{ to{ transform: rotate(360deg);} }
 
     #downloadModal .modal-header,
     #downloadModal .modal-footer{
-      background:
-        radial-gradient(900px 420px at 8% 0%, rgba(255,211,77,.18), transparent 60%),
-        radial-gradient(900px 420px at 92% 10%, rgba(34,211,238,.14), transparent 60%),
-        linear-gradient(180deg, rgba(6,6,16,.92), rgba(6,6,16,.88)) !important;
-      border-color: rgba(255,211,77,.12) !important;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+      border-color: rgba(255,255,255,.06) !important;
     }
 
     #downloadModal .king-badge{
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:
-        radial-gradient(18px 18px at 30% 30%, rgba(255,211,77,.35), transparent 60%),
-        radial-gradient(18px 18px at 70% 60%, rgba(34,211,238,.25), transparent 60%),
-        rgba(10,10,24,.65);
-      border: 1px solid rgba(255,211,77,.20);
-      box-shadow: 0 0 0 1px rgba(255,211,77,.08), 0 14px 30px rgba(0,0,0,.45);
+      width: 44px; height: 44px; border-radius: 16px;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 0 25px rgba(77,163,255,.12), 0 12px 28px rgba(0,0,0,.35);
+      color: var(--fx-blue);
+      text-shadow: 0 0 12px rgba(77,163,255,.35);
     }
-    #downloadModal .king-badge i{ color:#ffd34d; font-size: 1.1rem; }
-
-    #downloadModal .king-title{
-      font-weight: 950;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      font-size: .95rem !important;
-    }
-    #downloadModal .king-sub{
-      color: rgba(238,243,255,.70);
-      letter-spacing: .06em;
-    }
+    #downloadModal .king-title{ font-weight: 950; letter-spacing:.14em; text-transform: uppercase; font-size: .98rem; }
+    #downloadModal .king-sub{ color: rgba(247,251,255,.70); letter-spacing: .06em; }
 
     #downloadModal .btn-close{ filter: invert(1) brightness(1.2); opacity: .85; }
     #downloadModal .btn-close:hover{ opacity: 1; }
 
     #downloadModal .form-control{
-      background: rgba(10,10,24,.65) !important;
-      color: rgba(238,243,255,.95) !important;
-      border: 1px solid rgba(255,211,77,.16) !important;
+      background: rgba(14,16,28,.74) !important;
+      color: rgba(247,251,255,.96) !important;
+      border: 1px solid rgba(247,251,255,.14) !important;
       border-radius: 14px !important;
     }
     #downloadModal .form-control:focus{
-      box-shadow: 0 0 0 3px rgba(255,211,77,.18) !important;
-      border-color: rgba(255,183,3,.35) !important;
+      box-shadow: 0 0 0 3px rgba(77,163,255,.18) !important;
+      border-color: rgba(77,163,255,.35) !important;
     }
 
-    #downloadModal .app-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    @media (max-width: 520px){
-      #downloadModal .app-grid{ grid-template-columns: 1fr; }
-    }
+    #downloadModal .app-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 520px){ #downloadModal .app-grid{ grid-template-columns: 1fr; } }
 
     #downloadModal .logo-preview{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      padding: 10px;
-      border-radius: 16px;
-      border: 1px dashed rgba(255,211,77,.22);
-      background: rgba(10,10,24,.45);
+      display:flex; align-items:center; gap: 10px;
+      padding: 10px; border-radius: 16px;
+      border: 1px dashed rgba(247,251,255,.18);
+      background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
     }
-
     #downloadModal .logo-bubble{
-      width: 56px;
-      height: 56px;
-      flex: 0 0 56px;
+      width: 56px; height: 56px; flex:0 0 56px;
       border-radius: 18px;
-      border: 1px solid rgba(255,211,77,.18);
-      box-shadow: 0 0 0 1px rgba(34,211,238,.10), 0 14px 28px rgba(0,0,0,.45);
-      background: rgba(7,10,18,.85);
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      border: 1px solid rgba(247,251,255,.18);
+      background: rgba(9,12,22,.85);
+      display:flex; align-items:center; justify-content:center;
       overflow:hidden;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 14px 28px rgba(0,0,0,.45);
+      color: var(--fx-rose);
     }
     #downloadModal .logo-bubble img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display:none;
+      width:100%; height:100%; object-fit:cover; object-position:center; display:none;
     }
-    #downloadModal .logo-bubble i{
-      color: rgba(255,211,77,.95);
-      font-size: 1.1rem;
-    }
+    #downloadModal .logo-meta .t1{ font-weight: 950; letter-spacing: .06em; font-size: .82rem; text-transform: uppercase; }
+    #downloadModal .logo-meta .t2{ font-size: .85rem; color: rgba(247,251,255,.72); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
 
-    #downloadModal .logo-meta .t1{
-      font-weight: 950;
-      letter-spacing: .06em;
-      font-size: .82rem;
-      text-transform: uppercase;
-    }
-    #downloadModal .logo-meta .t2{
-      font-size: .85rem;
-      color: rgba(238,243,255,.72);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 240px;
-    }
-
-    #downloadModal .king-status{
-      margin: 8px 0 0;
-      color: rgba(238,243,255,.72);
-    }
-
-    #downloadModal .king-btn-cancel{
-      background: rgba(255,211,77,.10) !important;
-      border: 1px solid rgba(255,211,77,.18) !important;
+    .king-btn-cancel{
+      background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02)) !important;
+      border: 1px solid rgba(247,251,255,.18) !important;
       border-radius: 999px !important;
-      color: rgba(238,243,255,.92) !important;
-      font-weight: 950 !important;
-      letter-spacing: .10em;
+      color: rgba(247,251,255,.96) !important;
+      font-weight: 900 !important; letter-spacing:.10em;
       padding: .60rem 1.1rem;
     }
-
-    #downloadModal .king-btn-generate{
-      background:
-        radial-gradient(120px 70px at 20% 30%, rgba(255,211,77,.22), transparent 62%),
-        radial-gradient(140px 70px at 75% 30%, rgba(34,211,238,.18), transparent 65%),
-        linear-gradient(135deg, rgba(7,10,18,.82), rgba(11,16,32,.94)) !important;
-      border: 1px solid rgba(255,211,77,.24) !important;
+    .king-btn-generate{
+      background: linear-gradient(135deg, rgba(77,163,255,.25), rgba(255,121,166,.20)) !important;
+      border: 1px solid rgba(77,163,255,.24) !important;
       border-radius: 999px !important;
-      color: rgba(238,243,255,.96) !important;
+      color: rgba(247,251,255,.97) !important;
       font-weight: 950 !important;
       letter-spacing: .12em;
       padding: .60rem 1.2rem;
-      box-shadow: 0 0 0 1px rgba(255,211,77,.10), 0 14px 30px rgba(0,0,0,.55) !important;
+      box-shadow: 0 0 0 1px rgba(247,251,255,.08), 0 14px 30px rgba(0,0,0,.55) !important;
     }
-    #downloadModal .king-btn-generate:disabled{
-      opacity: .65;
-      cursor:not-allowed;
-      box-shadow:none !important;
-    }
+    .king-btn-generate:disabled{ opacity:.65; cursor:not-allowed; box-shadow:none !important; }
 
-    #downloadModal .king-btn-download{
-      background: linear-gradient(90deg, rgba(255,211,77,.98), rgba(34,211,238,.92)) !important;
-      border: none !important;
-      border-radius: 999px !important;
-      color: #06101f !important;
+    .king-btn-download{
+      background: linear-gradient(90deg, var(--fx-rose), var(--fx-blue)) !important;
+      border:none !important;
+      border-radius:999px !important;
+      color:#06101f !important;
       font-weight: 999 !important;
-      letter-spacing: .12em;
-      padding: .60rem 1.2rem;
+      letter-spacing:.12em;
+      padding:.60rem 1.2rem;
       box-shadow: 0 14px 34px rgba(0,0,0,.45);
     }
 
-    #downloadModal #spinnerContainer{
+    /* Futurista: Generando */
+    #spinnerContainer{
       display:none;
-      justify-content:center;
-      margin: 10px 0 4px;
-    }
-    #downloadModal .spinner-border{
-      width: 2rem;
-      height: 2rem;
-      border-width:0.35em;
-      color: rgba(255,211,77,.85);
-      border-top-color: rgba(34,211,238,.95);
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+      margin: 12px 0 8px;
     }
 
+    .kv-orb{
+      position: relative;
+      width: 86px; height: 86px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), rgba(255,255,255,0) 55%),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,.18), rgba(255,255,255,0) 65%),
+        radial-gradient(60px 60px at 50% 50%, rgba(77,163,255,.25), rgba(255,121,166,.18), rgba(255,52,85,.16));
+      box-shadow: inset 0 0 22px rgba(77,163,255,.25), 0 0 40px rgba(77,163,255,.18);
+    }
+    .kv-orb::before{
+      content:"";
+      position:absolute; inset:-6px; border-radius: 50%;
+      background:
+        conic-gradient(from 0deg,
+          transparent 0 20deg,
+          rgba(77,163,255,.95) 20deg 120deg,
+          transparent 120deg 160deg,
+          rgba(255,121,166,.95) 160deg 300deg,
+          transparent 300deg 340deg,
+          rgba(255,52,85,.95) 340deg 360deg
+        );
+      -webkit-mask: radial-gradient(circle 43px at 50% 50%, transparent 41px, #000 41px);
+      mask: radial-gradient(circle 43px at 50% 50%, transparent 41px, #000 41px);
+      filter: blur(.6px);
+      animation: kvRing 1.6s linear infinite;
+      opacity:.95;
+    }
+    @keyframes kvRing{ to{ transform: rotate(360deg); } }
+
+    .kv-progress{
+      width: 100%;
+      max-width: 380px;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      position:relative;
+    }
+    .kv-progress .kv-progress-fill{
+      position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(255,52,85,.35), rgba(255,121,166,.45), rgba(77,163,255,.55));
+      transform-origin:left center;
+      animation: kvFill 1.8s ease-in-out infinite;
+    }
+    @keyframes kvFill{
+      0%{ transform: scaleX(.08); }
+      50%{ transform: scaleX(.88); }
+      100%{ transform: scaleX(.08); }
+    }
+    .kv-progress::after{
+      content:"";
+      position:absolute; inset:0;
+      background: repeating-linear-gradient(-45deg, rgba(255,255,255,.06) 0 10px, rgba(255,255,255,0) 10px 20px);
+      mix-blend-mode: screen;
+      animation: kvShimmer 1.6s linear infinite;
+      opacity:.55;
+    }
+    @keyframes kvShimmer{ from{ background-position:0 0; } to{ background-position:60px 0; } }
+
+    .kv-dots{
+      display:flex; align-items:center; gap:6px;
+      opacity:.85;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color: rgba(247,251,255,.92);
+    }
+    .kv-dots i{
+      display:inline-block; width:8px; height:8px; border-radius:50%;
+      box-shadow: 0 0 10px rgba(255,255,255,.35);
+      animation: kvDot 1.4s ease-in-out infinite;
+    }
+    .kv-dots i:nth-child(1){ animation-delay:0s; background: var(--fx-blue); }
+    .kv-dots i:nth-child(2){ animation-delay:.15s; background: var(--fx-rose); }
+    .kv-dots i:nth-child(3){ animation-delay:.30s; background: var(--fx-red); }
+    @keyframes kvDot{
+      0%,100%{ transform: translateY(0); opacity:.85; }
+      50%{ transform: translateY(-6px); opacity:1; }
+    }
+
+    #downloadModal .king-status{
+      margin: 10px 0 0;
+      color: rgba(247,251,255,.78);
+      text-align:center;
+      letter-spacing:.03em;
+    }
     #downloadModal .app-ready{
-      color: rgba(34,211,238,.96) !important;
-      text-shadow: 0 0 10px rgba(34,211,238,.25);
+      color: rgba(77,163,255,.98) !important;
+      text-shadow: 0 0 10px rgba(77,163,255,.25);
       font-weight: 950;
     }
     #downloadModal .status-error{
-      color: #ff4d4d !important;
+      color: rgba(255,52,85,.98) !important;
+      text-shadow: 0 0 10px rgba(255,52,85,.25);
       font-weight: 950;
     }
   </style>
 </head>
 
 <body>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-
   <main class="d-flex">
     <%~ include("./sidebar", it) %>
 
@@ -403,11 +521,10 @@
 
       <div class="content pt-1 overflow-auto">
         <div class="kv-page">
-
           <div class="card kv-card h-100 border-0 overflow-auto">
             <div class="card-body m-0">
 
-              <!-- ✅ TITULO PRO (KING•VPN) -->
+              <!-- Título -->
               <div class="kv-titlebar">
                 <div class="kv-title-icon">
                   <i class="bi bi-lightning-charge-fill"></i>
@@ -418,7 +535,7 @@
                 </div>
               </div>
 
-              <!-- ✅ PANEL BOTONES PRO -->
+              <!-- Panel Botones -->
               <div class="kv-actions mb-3">
                 <div class="d-flex gap-2">
                   <button type="button" class="__create kv-btn flex-fill">
@@ -433,7 +550,6 @@
                 </div>
 
                 <div class="mt-2">
-                  <!-- OJO: mantiene export-config y disabled -->
                   <button type="button" class="export-config kv-btn kv-btn-primary w-100" disabled>
                     <i class="bi bi-android"></i>
                     <span>GENERAR APK</span>
@@ -441,7 +557,7 @@
                 </div>
               </div>
 
-              <!-- selector oculto pero existente -->
+              <!-- Selector oculto -->
               <div class="col-md-2 mb-2" style="display:none !important;">
                 <select class="form-select" id="app_config_status">
                   <option value="ACTIVE">ACTIVO</option>
@@ -450,8 +566,10 @@
                 </select>
               </div>
 
+              <!-- Temas -->
               <div class="row m-auto mb-3 center-column" id="app"></div>
 
+              <!-- Loading -->
               <div class="d-flex justify-content-center align-items-center mt-5" id="loading">
                 <div class="spinner-border p-5" role="status">
                   <span class="sr-only"></span>
@@ -460,21 +578,20 @@
 
             </div>
           </div>
-
         </div>
       </div>
+
     </div>
   </main>
 
-  <!-- ✅ MODAL GENERAR APK (INLINE) -->
+  <!-- MODAL APK -->
   <div class="modal fade" id="downloadModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
       <div class="modal-content">
+
         <div class="modal-header border-0">
           <div class="d-flex align-items-center gap-2">
-            <div class="king-badge">
-              <i class="bi bi-android2"></i>
-            </div>
+            <div class="king-badge"><i class="bi bi-android2"></i></div>
             <div class="d-flex flex-column">
               <h5 class="modal-title king-title m-0">Generar APK</h5>
               <small class="king-sub">KING•VPN • build seguro</small>
@@ -517,11 +634,14 @@
             </div>
           </div>
 
+          <!-- Futurista “Generando…” -->
           <div id="spinnerContainer">
-            <div class="spinner-border" role="status"></div>
+            <div class="kv-orb"></div>
+            <div class="kv-progress"><div class="kv-progress-fill"></div></div>
+            <div class="kv-dots"><i></i><i></i><i></i></div>
           </div>
 
-          <p id="modalStatus" class="text-center king-status">
+          <p id="modalStatus" class="king-status">
             Completá los campos y presioná <strong>Generar APK</strong>.
           </p>
         </div>
@@ -540,19 +660,23 @@
             </button>
           </div>
         </div>
+
       </div>
     </div>
   </div>
 
+  <!-- JS libs -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+  <!-- Tu JS base -->
   <script src="../static/js/sidebar.js"></script>
   <script src="../static/js/utils.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+  <!-- (opcional) editores -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
@@ -563,7 +687,7 @@
   <script src="../static/js/jscolor.js"></script>
   <script src="/static/js/dark_light.js"></script>
 
-  <!-- ✅ Creds -->
+  <!-- Credenciales server -->
   <script>
     window.__APK_CREDS__ = {
       user_id: "<%= it.user.id %>",
@@ -571,21 +695,22 @@
     };
   </script>
 
-  <!-- ✅ JS MODAL (inline) -->
+  <!-- APK Generator inline (manda al API) -->
   <script>
     (function () {
       let csrfToken = (typeof getCsrfTokenHead === "function") ? getCsrfTokenHead() : null;
 
       function toastErr(msg) {
         if (typeof showToastError === "function") return showToastError(msg);
-        try { toastr.error(msg); } catch {}
+        try { toastr.error(msg); } catch (e) {}
       }
       function toastOk(msg) {
         if (typeof showToastSuccess === "function") return showToastSuccess(msg);
-        try { toastr.success(msg); } catch {}
+        try { toastr.success(msg); } catch (e) {}
       }
 
       const downloadModalEl = document.getElementById("downloadModal");
+      if (!downloadModalEl) return;
       const downloadModal = new bootstrap.Modal(downloadModalEl);
 
       const modalStatus = document.getElementById("modalStatus");
@@ -607,14 +732,19 @@
       let logoBase64 = null;
       let logoFilename = null;
 
+      function setStatus(text, cls) {
+        modalStatus.classList.remove("app-ready", "status-error");
+        if (cls) modalStatus.classList.add(cls);
+        modalStatus.textContent = text;
+      }
+
       function resetModalUI() {
         apkUrl = null;
         spinner.style.display = "none";
         btnConfirm.style.display = "none";
         btnGenerate.disabled = false;
 
-        modalStatus.classList.remove("app-ready", "status-error");
-        modalStatus.textContent = "Completá los campos y presioná Generar APK.";
+        setStatus("Completá los campos y presioná Generar APK.");
 
         logoBase64 = null;
         logoFilename = null;
@@ -629,134 +759,130 @@
         const ct = (response.headers.get("content-type") || "").toLowerCase();
         if (ct.includes("application/json")) {
           const data = await response.json();
-          return data.url || data.apkUrl || data.path || null;
+          return data.url || data.apkUrl || data.path || (data.data && (data.data.url || data.data.apkUrl || data.data.path)) || null;
         }
         return (await response.text()).trim();
       }
 
-      function bindOpenButton() {
+      // Abrir modal (desde el botón del header)
+      (function bindOpenButton() {
         const btnOpen = document.querySelector(".export-config");
         if (!btnOpen) return;
-
         btnOpen.addEventListener("click", () => {
           resetModalUI();
           downloadModal.show();
         });
+      })();
+
+      // Preview URL
+      if (logoUrlEl) {
+        logoUrlEl.addEventListener("input", () => {
+          const url = (logoUrlEl.value || "").trim();
+          if (!url) return;
+          if (!logoBase64) {
+            logoImg.src = url;
+            logoImg.style.display = "block";
+            if (logoIcon) logoIcon.style.display = "none";
+            logoHint.textContent = url;
+          }
+        });
       }
-      bindOpenButton();
 
-      logoUrlEl.addEventListener("input", () => {
-        const url = (logoUrlEl.value || "").trim();
-        if (!url) return;
-        if (!logoBase64) {
-          logoImg.src = url;
-          logoImg.style.display = "block";
-          if (logoIcon) logoIcon.style.display = "none";
-          logoHint.textContent = url;
-        }
-      });
+      // Preview file PNG
+      if (logoFileEl) {
+        logoFileEl.addEventListener("change", () => {
+          const file = logoFileEl.files && logoFileEl.files[0];
+          if (!file) return;
 
-      logoFileEl.addEventListener("change", () => {
-        const file = logoFileEl.files && logoFileEl.files[0];
-        if (!file) return;
-
-        if (file.type !== "image/png") {
-          toastErr("El logo debe ser PNG.");
-          logoFileEl.value = "";
-          return;
-        }
-
-        logoFilename = file.name;
-
-        const reader = new FileReader();
-        reader.onload = () => {
-          logoBase64 = reader.result;
-          logoImg.src = logoBase64;
-          logoImg.style.display = "block";
-          if (logoIcon) logoIcon.style.display = "none";
-          logoHint.textContent = file.name;
-        };
-        reader.readAsDataURL(file);
-      });
-
-      btnGenerate.addEventListener("click", async () => {
-        const appName = (appNameEl.value || "").trim() || "KING VPN";
-        const packageName = (packageNameEl.value || "").trim() || null;
-        const logo_url = (logoUrlEl.value || "").trim() || null;
-
-        const creds = window.__APK_CREDS__ || {};
-        const user_id = (creds.user_id || "").toString().trim();
-        const token = (creds.token || "").toString().trim();
-
-        if (!user_id) {
-          modalStatus.classList.add("status-error");
-          modalStatus.textContent = "Faltan credenciales (user_id).";
-          toastErr("Faltan credenciales (user_id).");
-          return;
-        }
-        if (!token) {
-          modalStatus.classList.add("status-error");
-          modalStatus.textContent = "Faltan credenciales (token).";
-          toastErr("Faltan credenciales (token).");
-          return;
-        }
-
-        const payload = {
-          user_id,
-          token,
-          appName,
-          packageName,
-          logo_url,
-          logo_base64: logoBase64 || null,
-          logo_filename: logoFilename || null
-        };
-
-        spinner.style.display = "flex";
-        btnGenerate.disabled = true;
-        btnConfirm.style.display = "none";
-        modalStatus.classList.remove("app-ready", "status-error");
-        modalStatus.textContent = "Generando tu aplicación…";
-
-        try {
-          const response = await fetch("/download-app", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...(csrfToken ? { "csrf-token": csrfToken } : {})
-            },
-            body: JSON.stringify(payload)
-          });
-
-          if (typeof getCsrfTokenRefresh === "function") {
-            const refreshed = getCsrfTokenRefresh(response);
-            if (refreshed) csrfToken = refreshed;
+          if (file.type !== "image/png") {
+            toastErr("El logo debe ser PNG.");
+            logoFileEl.value = "";
+            return;
           }
 
-          if (!response.ok) throw new Error("Error generando APK");
+          logoFilename = file.name;
+          const reader = new FileReader();
+          reader.onload = () => {
+            logoBase64 = reader.result; // data:image/png;base64,...
+            logoImg.src = logoBase64;
+            logoImg.style.display = "block";
+            if (logoIcon) logoIcon.style.display = "none";
+            logoHint.textContent = file.name;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
 
-          apkUrl = await readResponseUrl(response);
-          if (!apkUrl) throw new Error("URL inválida");
+      // Generar
+      if (btnGenerate) {
+        btnGenerate.addEventListener("click", async () => {
+          const appName = (appNameEl.value || "").trim() || "KING VPN";
+          const packageName = (packageNameEl.value || "").trim() || null;
+          const logo_url = (logoUrlEl.value || "").trim() || null;
 
-          spinner.style.display = "none";
-          modalStatus.textContent = "¡Tu APK está listo!";
-          modalStatus.classList.add("app-ready");
+          const creds = window.__APK_CREDS__ || {};
+          const user_id = (creds.user_id || "").toString().trim();
+          const token = (creds.token || "").toString().trim();
 
-          btnConfirm.style.display = "inline-block";
-          btnConfirm.onclick = () => {
-            window.location.href = apkUrl;
-            downloadModal.hide();
+          if (!user_id) { setStatus("Faltan credenciales (user_id).", "status-error"); toastErr("Faltan credenciales (user_id)."); return; }
+          if (!token)   { setStatus("Faltan credenciales (token).", "status-error"); toastErr("Faltan credenciales (token)."); return; }
+
+          const payload = {
+            user_id,
+            token,
+            appName,
+            packageName,
+            logo_url,
+            logo_base64: logoBase64 || null,
+            logo_filename: logoFilename || null
           };
 
-          toastOk("APK lista ✅");
+          spinner.style.display = "flex";
+          btnGenerate.disabled = true;
+          btnConfirm.style.display = "none";
+          setStatus("Generando tu aplicación…");
 
-        } catch (e) {
-          spinner.style.display = "none";
-          btnGenerate.disabled = false;
-          modalStatus.textContent = "Error al generar la app. Intentá nuevamente.";
-          modalStatus.classList.add("status-error");
-          toastErr("Error al generar la app.");
-        }
-      });
+          try {
+            const response = await fetch("/download-app", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(csrfToken ? { "csrf-token": csrfToken } : {})
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (typeof getCsrfTokenRefresh === "function") {
+              const refreshed = getCsrfTokenRefresh(response);
+              if (refreshed) csrfToken = refreshed;
+            }
+
+            if (!response.ok) {
+              const txt = await response.text().catch(() => "");
+              throw new Error("HTTP " + response.status + " " + txt);
+            }
+
+            apkUrl = await readResponseUrl(response);
+            if (!apkUrl) throw new Error("Respuesta sin URL");
+
+            spinner.style.display = "none";
+            setStatus("¡Tu APK está listo!", "app-ready");
+
+            btnConfirm.style.display = "inline-block";
+            btnConfirm.onclick = () => {
+              window.location.href = apkUrl;
+              downloadModal.hide();
+            };
+
+            toastOk("APK lista ✅");
+          } catch (e) {
+            spinner.style.display = "none";
+            btnGenerate.disabled = false;
+            setStatus("Error al generar la app. Intentá nuevamente.", "status-error");
+            toastErr("Error al generar la app.");
+          }
+        });
+      }
 
       downloadModalEl.addEventListener("hidden.bs.modal", () => {
         if (logoFileEl) logoFileEl.value = "";
@@ -764,6 +890,7 @@
     })();
   </script>
 
+  <!-- App config (temas / create / import / export config) -->
   <script type="module" src="../static/js/app_config/main.js"></script>
 </body>
 </html>
