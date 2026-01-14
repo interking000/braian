@@ -6,8 +6,8 @@
 #   ✅ Genera SSL con TU dominio (CN = tu dominio)
 #   ✅ Configura NGINX con TU dominio + TU puerto
 #   ✅ Idempotente (no rompe si lo corrés 2 veces)
-#   ✅ Crea/actualiza el PLAN (plan_1m) preguntando precio
-#   ✅ Crea tablas con prisma db push
+#   ✅ Instala herramientas APK (apktool + java + utilidades)
+#   ✅ Crea/actualiza plan en DB (precio configurable)
 # ============================================================
 
 set -euo pipefail
@@ -75,15 +75,18 @@ ask_port () {
   done
 }
 
-ask_price () {
-  local p
+ask_int () {
+  local prompt="$1"
+  local min="${2:-1}"
+  local max="${3:-999999999}"
+  local v
   while true; do
-    p="$(ask_required "Precio del plan mensual (ARS) ej: 7000 o 100 para test")"
-    if [[ "$p" =~ ^[0-9]+$ ]] && [ "$p" -ge 1 ] && [ "$p" -le 99999999 ]; then
-      echo "$p"
+    v="$(ask_required "$prompt")"
+    if [[ "$v" =~ ^[0-9]+$ ]] && [ "$v" -ge "$min" ] && [ "$v" -le "$max" ]; then
+      echo "$v"
       return 0
     fi
-    echo -e "${YEL}⚠ Precio inválido (número entero)${RST}"
+    echo -e "${YEL}⚠ Valor inválido (debe ser número entre $min y $max)${RST}"
   done
 }
 
@@ -146,15 +149,21 @@ title "CONFIGURACIÓN OBLIGATORIA"
 PANEL_PORT="$(ask_port)"
 PANEL_DOMAIN="$(ask_domain)"
 APP_BASE_URL="$(ask_url)"
+
 MP_ACCESS_TOKEN="$(ask_required "Pegá tu Access Token de Mercado Pago (ej: APP_USR-292459445257292-010909-ad9da859bf8eb657422b278edbbef85f-517943228)")"
-PLAN_PRICE_ARS="$(ask_price)"
+
+# ✅ Plan configurable
+PLAN_CODE="$(ask_required "Código del plan (ej: plan_1m)")"
+PLAN_NAME="$(ask_required "Nombre del plan (ej: Acceso mensual KING•VPN)")"
+PLAN_MONTHS="$(ask_int "Meses del plan (ej: 1)" 1 60)"
+PLAN_PRICE_ARS="$(ask_int "Precio ARS del plan (ej: 7000 o 100 para test)" 1 99999999)"
 
 echo
 ok "Puerto: $PANEL_PORT"
 ok "Dominio: $PANEL_DOMAIN"
 ok "APP_BASE_URL: $APP_BASE_URL"
 ok "MP_ACCESS_TOKEN: (cargado)"
-ok "PLAN plan_1m: $PLAN_PRICE_ARS ARS"
+ok "Plan: $PLAN_CODE | $PLAN_NAME | ${PLAN_MONTHS}m | ARS $PLAN_PRICE_ARS"
 echo
 
 title "INSTALANDO DEPENDENCIAS"
@@ -204,12 +213,42 @@ else
   ok "TypeScript ya instalado: $(tsc -v)"
 fi
 
-# Java (opcional)
+# Java (necesario para apktool / jarsigner)
 if ! command -v java >/dev/null 2>&1; then
   step "Instalando OpenJDK 11..."
   apt install -y openjdk-11-jdk
 else
   ok "Java ya instalado"
+fi
+
+echo
+title "HERRAMIENTAS APK (APKTOOL / SIGN)"
+
+# apktool
+if ! command -v apktool >/dev/null 2>&1; then
+  step "Instalando apktool..."
+  apt install -y apktool || warn "apktool no disponible en repo. Si lo necesitás, lo instalamos manual."
+else
+  ok "apktool ya instalado"
+fi
+
+# aapt / zipalign / apksigner (depende distro)
+if command -v zipalign >/dev/null 2>&1; then
+  ok "zipalign OK"
+else
+  apt install -y android-sdk-build-tools >/dev/null 2>&1 || warn "zipalign/apksigner no disponibles (android-sdk-build-tools no instalado)."
+fi
+
+if command -v apksigner >/dev/null 2>&1; then
+  ok "apksigner OK"
+else
+  warn "apksigner no encontrado (si tu flujo lo necesita, instalamos build-tools o lo agregamos manual)."
+fi
+
+if command -v jarsigner >/dev/null 2>&1; then
+  ok "jarsigner OK (JDK)"
+else
+  warn "jarsigner no encontrado (raro). Revisar Java/JDK."
 fi
 
 echo
@@ -232,7 +271,7 @@ CSRF_SECRET="$(openssl rand -hex 16)"
 JWT_SECRET_KEY="$(openssl rand -hex 32)"
 JWT_SECRET_REFRESH="$(openssl rand -hex 32)"
 
-# ✅ heredoc safe: sin expansión accidental rara
+# ✅ heredoc seguro (evita EOF)
 cat > "$ENV_FILE" <<EOF
 # ===============================
 # SERVIDOR
@@ -270,23 +309,24 @@ fi
 step "Prisma: sincronizando base de datos (NO borra tu DB)..."
 npx prisma db push
 
-# ✅ Seed plan (plan_1m) en SQLite (si no existe lo crea, si existe actualiza)
-step "Creando/actualizando plan mensual (plan_1m) en la DB..."
+# ✅ Seed/Upsert plan (arregla NOT NULL updated_at)
+step "Creando/actualizando plan en DB (plans)..."
 mkdir -p "$(dirname "$DB_FILE")"
 touch "$DB_FILE"
 
+# si updated_at es NOT NULL sin default, lo seteamos SI O SI
 sqlite3 "$DB_FILE" <<SQL
 INSERT INTO plans (code, name, months, price_ars, is_active, updated_at)
-VALUES ('plan_1m', 'Acceso mensual KING•VPN', 1, $PLAN_PRICE_ARS, 1, CURRENT_TIMESTAMP)
+VALUES ('$PLAN_CODE', '$PLAN_NAME', $PLAN_MONTHS, $PLAN_PRICE_ARS, 1, CURRENT_TIMESTAMP)
 ON CONFLICT(code) DO UPDATE SET
-  name='Acceso mensual KING•VPN',
-  months=1,
+  name=excluded.name,
+  months=excluded.months,
   price_ars=excluded.price_ars,
   is_active=1,
   updated_at=CURRENT_TIMESTAMP;
 SQL
 
-ok "Plan plan_1m listo (precio ARS $PLAN_PRICE_ARS)"
+ok "Plan listo: $PLAN_CODE (ARS $PLAN_PRICE_ARS)"
 
 step "Build: npm run build"
 npm run build
@@ -294,6 +334,7 @@ npm run build
 echo
 title "SSL + NGINX (CON TU DOMINIO)"
 
+# SSL
 step "Generando certificados SSL (autofirmados) para $PANEL_DOMAIN..."
 openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
@@ -303,6 +344,7 @@ openssl req -x509 -nodes -days 365 \
 
 ok "SSL generado en $NGINX_DIR"
 
+# Nginx config (heredoc seguro)
 step "Escribiendo config NGINX..."
 cat > "$NGINX_CONF" <<EOF
 server {
@@ -330,8 +372,10 @@ server {
 }
 EOF
 
+# enable site
 ln -sf "$NGINX_CONF" /etc/nginx/sites-enabled/dtunnel.conf
 
+# disable default if exists
 if [ -e /etc/nginx/sites-enabled/default ]; then
   rm -f /etc/nginx/sites-enabled/default
 fi
@@ -347,6 +391,7 @@ ok "NGINX OK"
 echo
 title "INICIAR PANEL (PM2)"
 
+# Si existe ecosystem.config.js lo usamos, si no intentamos start.sh
 if [ -f "$PROJECT_DIR/ecosystem.config.js" ]; then
   step "Iniciando con PM2 (ecosystem.config.js)..."
   pm2 start "$PROJECT_DIR/ecosystem.config.js" --update-env || true
@@ -369,8 +414,8 @@ echo -e "${BOX_MID} ${GRN}✔${RST} .env:                  ${WHT}$ENV_FILE${RST}
 echo -e "${BOX_MID} ${GRN}✔${RST} Prisma DB:             ${WHT}$PROJECT_DIR/prisma/database.db${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} Dominio:               ${WHT}$PANEL_DOMAIN${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} Puerto interno:        ${WHT}$PANEL_PORT${RST}"
-echo -e "${BOX_MID} ${GRN}✔${RST} Plan mensual (ARS):    ${WHT}$PLAN_PRICE_ARS${RST}"
-echo -e "${BOX_MID} ${CYA}➜${RST} Logs PM2:              ${WHT}pm2 logs${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} Plan:                  ${WHT}$PLAN_CODE | ${PLAN_MONTHS}m | ARS $PLAN_PRICE_ARS${RST}"
+echo -e "${BOX_MID} ${CYA}➜${RST} Logs PM2:              ${WHT}pm2 logs DTunnel${RST}"
 echo -e "${MAG}${BOX_BOT}${RST}"
 echo
 ok "Listo."
