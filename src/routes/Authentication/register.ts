@@ -74,3 +74,4 @@ export default {
     reply.status(201).send();
   },
 } as RouteOptions;
+

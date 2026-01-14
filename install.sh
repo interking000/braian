@@ -2,9 +2,12 @@
 # ============================================================
 #   KING•VPN — INSTALADOR COMPLETO DTunnel (LIMPIO + PERSONALIZADO)
 #   ✅ Pregunta TODO lo importante (sin defaults)
-#   ✅ Genera .env correcto (prisma/database.db)
+#   ✅ Genera .env correcto (DB ABSOLUTA para evitar DB fantasma)
+#   ✅ Prisma: crea DB real (si queda 0 bytes -> force-reset)
+#   ✅ Instala Mercado Pago deps (SDK opcional) + sharp (con libvips)
 #   ✅ Genera SSL con TU dominio (CN = tu dominio)
 #   ✅ Configura NGINX con TU dominio + TU puerto
+#   ✅ Muestra tabla .tables al final (verificación)
 #   ✅ Idempotente (no rompe si lo corrés 2 veces)
 # ============================================================
 
@@ -98,13 +101,10 @@ ask_url () {
   local u
   while true; do
     u="$(ask_required "Agregá la URL pública del panel (sin / final)")"
-    # normalizamos: si no trae protocolo, le ponemos https por coherencia (solo para guardar)
     if [[ "$u" != http*://* ]]; then
       u="https://$u"
     fi
-    # quitar slash final
     u="${u%/}"
-    # validar mínimo
     if [[ "$u" =~ ^https?://[A-Za-z0-9.-]+\.[A-Za-z]{2,}(:[0-9]+)?$ ]]; then
       echo "$u"
       return 0
@@ -134,7 +134,7 @@ title "CONFIGURACIÓN OBLIGATORIA"
 PANEL_PORT="$(ask_port)"
 PANEL_DOMAIN="$(ask_domain)"
 APP_BASE_URL="$(ask_url)"
-MP_ACCESS_TOKEN="$(ask_required "Pegá tu Access Token de Mercado Pago")"
+MP_ACCESS_TOKEN="$(ask_required "Pegá tu Access Token de Mercado Pago (sin << >>)")"
 
 echo
 ok "Puerto: $PANEL_PORT"
@@ -160,7 +160,15 @@ apt install -y \
   ca-certificates \
   software-properties-common \
   nginx \
-  ufw
+  ufw \
+  sqlite3 \
+  pkg-config
+
+# deps para sharp (libvips) — evita que falle compilación
+step "Instalando dependencias para Sharp (libvips)..."
+apt install -y \
+  libvips \
+  libvips-dev
 
 # Node 18
 if ! command -v node >/dev/null 2>&1 || ! node -v | grep -qE '^v18\.'; then
@@ -189,7 +197,7 @@ else
   ok "TypeScript ya instalado: $(tsc -v)"
 fi
 
-# Java (opcional para tu ecosistema)
+# Java (opcional)
 if ! command -v java >/dev/null 2>&1; then
   step "Instalando OpenJDK 11..."
   apt install -y openjdk-11-jdk
@@ -211,8 +219,15 @@ cd "$PROJECT_DIR"
 step "Instalando dependencias del proyecto (npm install)..."
 npm install
 
+step "Instalando dependencias adicionales (Mercado Pago + Sharp)..."
+# SDK mercadopago es opcional (tu código actual usa fetch). Igual lo dejo instalado.
+npm install mercadopago sharp --save || npm install sharp --save
+
 step "Generando archivo .env (LIMPIO)..."
-DATABASE_PATH='file:./prisma/database.db'
+
+# ✅ CAMBIO CLAVE: DB ABSOLUTA (evita 'DB fantasma' por cwd/pm2)
+DATABASE_PATH="file:${PROJECT_DIR}/prisma/database.db"
+
 CSRF_SECRET="$(openssl rand -hex 16)"
 JWT_SECRET_KEY="$(openssl rand -hex 32)"
 JWT_SECRET_REFRESH="$(openssl rand -hex 32)"
@@ -242,6 +257,9 @@ JWT_SECRET_REFRESH=$JWT_SECRET_REFRESH
 MP_ACCESS_TOKEN=$MP_ACCESS_TOKEN
 APP_BASE_URL=$APP_BASE_URL
 FRONTEND_RETURN_URL=$APP_BASE_URL
+
+# (Opcional recomendado) Webhook signature secret
+MP_WEBHOOK_SECRET=
 EOF
 
 ok ".env generado en $ENV_FILE"
@@ -252,8 +270,26 @@ if [ ! -d "$PROJECT_DIR/prisma" ]; then
   exit 1
 fi
 
-step "Prisma: sincronizando base de datos (NO borra tu DB)..."
-npx prisma db push
+# ✅ asegurar archivo DB
+step "Asegurando archivo DB: $PROJECT_DIR/prisma/database.db"
+mkdir -p "$PROJECT_DIR/prisma"
+touch "$PROJECT_DIR/prisma/database.db"
+chmod 600 "$PROJECT_DIR/prisma/database.db" || true
+
+DB_FILE="$PROJECT_DIR/prisma/database.db"
+DB_SIZE="$(stat -c%s "$DB_FILE" 2>/dev/null || echo 0)"
+
+# ✅ si está vacía (0 bytes), forzamos reset (porque no hay nada útil)
+if [ "$DB_SIZE" -eq 0 ]; then
+  warn "database.db está vacía (0 bytes). Creando tablas con Prisma (--force-reset)..."
+  npx prisma db push --force-reset
+else
+  step "Prisma: sincronizando base de datos..."
+  npx prisma db push
+fi
+
+step "Prisma: generando client..."
+npx prisma generate
 
 step "Build: npm run build"
 npm run build
@@ -299,10 +335,7 @@ server {
 }
 EOF
 
-# enable site
 ln -sf "$NGINX_CONF" /etc/nginx/sites-enabled/dtunnel.conf
-
-# disable default if exists
 if [ -e /etc/nginx/sites-enabled/default ]; then
   rm -f /etc/nginx/sites-enabled/default
 fi
@@ -318,7 +351,6 @@ ok "NGINX OK"
 echo
 title "INICIAR PANEL (PM2)"
 
-# Si existe ecosystem.config.js lo usamos, si no intentamos start.sh
 if [ -f "$PROJECT_DIR/ecosystem.config.js" ]; then
   step "Iniciando con PM2 (ecosystem.config.js)..."
   pm2 start "$PROJECT_DIR/ecosystem.config.js" --update-env || pm2 restart kingvpn-panel --update-env || true
@@ -334,6 +366,15 @@ else
 fi
 
 echo
+title "VERIFICACIÓN FINAL (DB + TABLAS)"
+
+step "DB file:"
+ls -la "$PROJECT_DIR/prisma/database.db" || true
+
+step "Tablas SQLite:"
+sqlite3 "$PROJECT_DIR/prisma/database.db" ".tables" || true
+
+echo
 title "FINALIZADO"
 echo -e "${BOX_MID} ${GRN}✔${RST} Proyecto:              ${WHT}$PROJECT_DIR${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} .env:                  ${WHT}$ENV_FILE${RST}"
@@ -344,3 +385,4 @@ echo -e "${BOX_MID} ${CYA}➜${RST} Logs PM2:              ${WHT}pm2 logs${RST}"
 echo -e "${MAG}${BOX_BOT}${RST}"
 echo
 ok "Listo."
+

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest, RouteOptions } from 'fastify';
 import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
+import sharp from 'sharp';
 
 const activeBuilds = new Map<
   string,
@@ -16,7 +17,7 @@ type Body = {
   packageName?: string;
 
   logo_url?: string;
-  logo_base64?: string; // data:image/png;base64,...
+  logo_base64?: string; // data:image/*;base64,...
   logo_filename?: string;
 
   cancel?: boolean;
@@ -97,16 +98,38 @@ function runCmd(
   });
 }
 
-async function downloadToBuffer(url: string) {
+/** ✅ Descarga a Buffer (URL) */
+async function downloadToBufferWithMime(url: string) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`No se pudo descargar logo: ${res.status}`);
-  return Buffer.from(await res.arrayBuffer());
+  const mime = (res.headers.get('content-type') || '').toLowerCase();
+  const buf = Buffer.from(await res.arrayBuffer());
+  return { mime, buf };
 }
 
-function bufferFromBase64Png(dataUrl: string) {
-  const m = dataUrl.match(/^data:image\/png;base64,(.+)$/i);
-  if (!m) throw new Error('logo_base64 inválido (debe ser data:image/png;base64,...)');
-  return Buffer.from(m[1], 'base64');
+/** ✅ DataURL: acepta cualquier image/* en base64 */
+function bufferFromDataUrlAny(dataUrl: string) {
+  const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/i);
+  if (!m) throw new Error('logo_base64 inválido (debe ser data:image/*;base64,...)');
+  return {
+    mime: m[1].toLowerCase(),
+    buf: Buffer.from(m[2], 'base64'),
+  };
+}
+
+/** ✅ Protege el server */
+function assertImageSize(buf: Buffer, maxBytes = 6 * 1024 * 1024) {
+  if (!buf || !buf.length) throw new Error('Logo vacío');
+  if (buf.length > maxBytes) throw new Error('Logo demasiado pesado (máx 6MB)');
+}
+
+/** ✅ Convierte cualquier imagen soportada a PNG real 512x512 */
+async function toPngBuffer(input: Buffer) {
+  // fit cover para no deformar: recorta al cuadrado
+  return await sharp(input)
+    .resize(512, 512, { fit: 'cover' })
+    .png({ compressionLevel: 9 })
+    .toBuffer();
 }
 
 function ensureDir(p: string) {
@@ -252,7 +275,7 @@ function getAppIconRefsFromManifest(manifestPath: string) {
   };
 }
 
-function replaceResourceFiles(decompiledDir: string, type: string, name: string, png: Buffer) {
+function replaceResourceFiles(decompiledDir: string, _type: string, name: string, png: Buffer) {
   const resDir = path.join(decompiledDir, 'res');
   if (!fs.existsSync(resDir)) return;
 
@@ -347,6 +370,7 @@ export default {
     };
 
     try {
+      // Cancel build
       if (body.cancel && safeTrim(body.build_id) && activeBuilds.has(body.build_id!)) {
         const st = activeBuilds.get(body.build_id!)!;
         for (const p of st.procs) {
@@ -424,19 +448,38 @@ export default {
         setApktoolYmlRenamePackage(decompiledDir, packageName);
       }
 
-      let logoBuf: Buffer | null = null;
+      // ✅ LOGO: acepta cualquier tipo y lo convierte a PNG real
+      let logoPng: Buffer | null = null;
 
       if (safeTrim(body.logo_base64)) {
-        console.log('[APK] Logo desde base64...');
-        logoBuf = bufferFromBase64Png(body.logo_base64!);
+        console.log('[APK] Logo desde base64 (any)...');
+        const parsed = bufferFromDataUrlAny(body.logo_base64!);
+        assertImageSize(parsed.buf);
+        try {
+          logoPng = await toPngBuffer(parsed.buf);
+        } catch (e) {
+          console.error('[APK] Error convirtiendo logo_base64:', e);
+          reply.status(400).send('Logo inválido (no pude convertir la imagen). Probá con otra imagen.');
+          cleanAll();
+          return;
+        }
       } else if (safeTrim(body.logo_url)) {
-        console.log('[APK] Logo desde URL...');
-        logoBuf = await downloadToBuffer(body.logo_url!);
+        console.log('[APK] Logo desde URL (any)...');
+        const dl = await downloadToBufferWithMime(body.logo_url!);
+        assertImageSize(dl.buf);
+        try {
+          logoPng = await toPngBuffer(dl.buf);
+        } catch (e) {
+          console.error('[APK] Error convirtiendo logo_url:', e);
+          reply.status(400).send('Logo inválido desde URL (no pude convertir la imagen). Probá otra URL.');
+          cleanAll();
+          return;
+        }
       }
 
-      if (logoBuf) {
-        console.log('[APK] Aplicando icono REAL (reemplazando recurso existente del APK)...');
-        applyLauncherIconKeepResourceName(decompiledDir, logoBuf);
+      if (logoPng) {
+        console.log('[APK] Aplicando icono (PNG convertido)...');
+        applyLauncherIconKeepResourceName(decompiledDir, logoPng);
       }
 
       console.log('[APK] Recompilando...');
@@ -480,3 +523,4 @@ export default {
     }
   },
 } as RouteOptions;
+

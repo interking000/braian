@@ -1,518 +1,488 @@
 <!DOCTYPE html>
 <html lang="es" translate="no" data-bs-theme="light">
 <head>
-  <base href="/" target="_blank">
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="google" content="notranslate">
-  <link rel="shortcut icon" href="../static/img/favicon.svg" />
-  <title>KING•VPN • Tu App y Tus Diseños</title>
+  <link rel="shortcut icon" href="/static/img/favicon.svg" />
+
+  <title>KING•VPN</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Libs -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet" />
 
-  <!-- Tu CSS base -->
   <link rel="stylesheet" href="/static/css/styles.css">
   <link rel="stylesheet" href="/static/css/bootstrap.css">
   <link rel="stylesheet" href="/static/css/sidebar.css">
   <link rel="stylesheet" href="/static/css/header.css">
   <link rel="stylesheet" href="/static/css/app_config_custom.css">
 
-  <!-- (opcional) CodeMirror -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror-one-dark-theme@1.1.1/one-dark.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
 
   <meta name="csrf-token" content="<%= it.csrfToken %>">
 
-  <!-- Ocultar selector de estado SIN eliminar -->
   <style>
-    #app_config_status, #app_config_status * { display: none !important; }
+    #app_config_status, #app_config_status * { display:none !important; }
   </style>
 
-  <!-- =========================================================
-       KING•VPN SUPER UI (red/rose/blue/white + efectos)
-       ========================================================= -->
+  <!-- ✅ UI PRO página (igual) -->
   <style>
     :root{
-      /* Futurista (pedido) */
-      --fx-red:#ff3455;
-      --fx-rose:#ff79a6;
-      --fx-blue:#4da3ff;
-      --fx-white:#f7fbff;
-
-      --fx-red-10: rgba(255,52,85,.10);
-      --fx-red-20: rgba(255,52,85,.20);
-      --fx-rose-12: rgba(255,121,166,.12);
-      --fx-rose-25: rgba(255,121,166,.25);
-      --fx-blue-12: rgba(77,163,255,.12);
-      --fx-blue-30: rgba(77,163,255,.30);
-      --fx-white-08: rgba(247,251,255,.08);
-      --fx-white-12: rgba(247,251,255,.12);
-      --fx-white-18: rgba(247,251,255,.18);
-
-      /* Base */
       --kv-bg0:#060a11;
       --kv-bg1:#0a1420;
       --kv-text:rgba(238,243,255,.95);
       --kv-muted:rgba(238,243,255,.66);
-      --shadow-1: 0 22px 70px rgba(0,0,0,.55);
-      --shadow-2: 0 12px 35px rgba(0,0,0,.40);
+      --kv-gold:rgba(255,211,77,.80);
+      --kv-cyan:rgba(34,211,238,.80);
+      --kv-shadow2:0 12px 35px rgba(0,0,0,.40);
+
+      --fx-blue:#3bb2ff;
+      --fx-cyan:#22d3ee;
+      --fx-rose:#ff4fd8;
+      --fx-red:#ff2b4a;
+      --fx-white:#eef3ff;
+      --fx-border:rgba(255,255,255,.10);
+      --fx-glow: 0 0 30px rgba(59,178,255,.22), 0 0 40px rgba(255,79,216,.18), 0 0 50px rgba(255,43,74,.10);
     }
 
-    /* Fondo general con efectos */
     body{
-      min-height:100vh;
-      color: var(--kv-text);
       background:
-        radial-gradient(900px 520px at 10% 0%, var(--fx-blue-12), transparent 62%),
-        radial-gradient(900px 520px at 92% 12%, var(--fx-rose-12), transparent 60%),
-        radial-gradient(700px 420px at 20% 90%, var(--fx-red-10), transparent 62%),
+        radial-gradient(900px 520px at 12% 0%, rgba(255,211,77,.10), transparent 62%),
+        radial-gradient(900px 520px at 92% 10%, rgba(34,211,238,.08), transparent 60%),
         linear-gradient(180deg, var(--kv-bg0), var(--kv-bg1)) !important;
-      overflow-x:hidden;
+      color: var(--kv-text);
     }
-
-    /* capa de “grid” futurista */
-    body::before{
-      content:"";
-      position:fixed; inset:0;
-      background:
-        linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 52px 52px;
-      opacity:.06;
-      pointer-events:none;
-      z-index:0;
-      transform: translateZ(0);
-      mask-image: radial-gradient(1000px 600px at 50% 10%, #000 40%, transparent 85%);
-      -webkit-mask-image: radial-gradient(1000px 600px at 50% 10%, #000 40%, transparent 85%);
-    }
-
-    /* capas de “aurora” */
-    body::after{
-      content:"";
-      position:fixed; inset:-120px;
-      background:
-        radial-gradient(800px 520px at 20% 20%, rgba(77,163,255,.22), transparent 60%),
-        radial-gradient(700px 520px at 85% 30%, rgba(255,121,166,.18), transparent 58%),
-        radial-gradient(700px 520px at 55% 90%, rgba(255,52,85,.15), transparent 58%);
-      filter: blur(28px);
-      opacity:.65;
-      pointer-events:none;
-      z-index:0;
-      animation: auroraMove 10s ease-in-out infinite alternate;
-    }
-    @keyframes auroraMove{
-      from{ transform: translate3d(-10px,-8px,0) scale(1); }
-      to  { transform: translate3d(10px,8px,0) scale(1.02); }
-    }
-
-    /* Asegurar contenido arriba */
-    main, .container-fluid, .content, .kv-page{ position:relative; z-index:1; }
 
     .kv-page{ padding: 12px 10px 18px; }
-
-    /* Card principal */
     .kv-card{
-      background: rgba(10,16,28,.34) !important;
-      border: 1px solid rgba(255,255,255,.08) !important;
-      box-shadow: var(--shadow-2);
+      background: rgba(10,16,28,.30) !important;
+      border: 1px solid rgba(255,255,255,.06) !important;
+      box-shadow: var(--kv-shadow2);
       border-radius: 18px !important;
       overflow: hidden;
-      backdrop-filter: blur(12px);
-      position: relative;
+      backdrop-filter: blur(10px);
     }
 
-    /* borde “neon” suave */
-    .kv-card::before{
-      content:"";
-      position:absolute; inset:-1px;
-      border-radius: 20px;
-      background:
-        conic-gradient(from 0deg,
-          rgba(77,163,255,.9),
-          rgba(255,121,166,.9),
-          rgba(255,52,85,.9),
-          rgba(247,251,255,.9),
-          rgba(77,163,255,.9)
-        );
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor; mask-composite: exclude;
-      padding:1px;
-      opacity:.18;
-      filter: blur(.4px);
-      animation: kvSpin 9s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes kvSpin{ to{ transform: rotate(360deg);} }
-
-    /* Titlebar */
-    .kv-titlebar{
-      display:flex; align-items:center; gap:10px;
-      padding: 14px 14px 10px; margin:0 0 10px;
-    }
+    .kv-titlebar{ display:flex; align-items:center; gap:10px; padding:14px 14px 10px; margin:0 0 10px; }
     .kv-title-icon{
-      width: 42px; height: 42px;
-      border-radius: 16px;
-      display:flex; align-items:center; justify-content:center;
+      width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;
       background:
-        radial-gradient(16px 16px at 30% 30%, rgba(247,251,255,.20), transparent 65%),
-        radial-gradient(18px 18px at 70% 70%, rgba(255,121,166,.16), transparent 65%),
-        rgba(12,16,28,.70);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: inset 0 0 28px rgba(77,163,255,.12), 0 12px 28px rgba(0,0,0,.35);
-      color: var(--fx-blue);
-      text-shadow: 0 0 14px rgba(77,163,255,.35);
+        radial-gradient(16px 16px at 28% 30%, rgba(255,211,77,.26), transparent 65%),
+        radial-gradient(16px 16px at 70% 70%, rgba(34,211,238,.18), transparent 65%),
+        rgba(10,16,28,.55);
+      border:1px solid rgba(255,211,77,.16);
+      box-shadow:0 0 0 1px rgba(34,211,238,.08), 0 12px 28px rgba(0,0,0,.35);
     }
-    .kv-title{
-      font-weight: 950;
-      letter-spacing: .10em;
-      text-transform: uppercase;
-      margin: 0;
-      font-size: 1.05rem;
-      color: rgba(247,251,255,.95);
-    }
-    .kv-subtitle{
-      margin: 2px 0 0;
-      font-size: .88rem;
-      color: rgba(247,251,255,.70);
-      letter-spacing: .04em;
-    }
+    .kv-title-icon i{ color: var(--kv-gold); font-size: 1.1rem; }
+    .kv-title{ font-weight:950; letter-spacing:.10em; text-transform:uppercase; margin:0; font-size:1.05rem; color: rgba(238,243,255,.96); }
+    .kv-subtitle{ margin:2px 0 0; font-size:.88rem; color: var(--kv-muted); letter-spacing:.04em; }
 
-    /* Panel botones */
     .kv-actions{
       background:
-        radial-gradient(750px 260px at 10% 0%, rgba(77,163,255,.10), transparent 62%),
-        radial-gradient(750px 260px at 90% 10%, rgba(255,121,166,.10), transparent 60%),
-        rgba(10,14,24,.62);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 16px;
-      padding: 10px;
-      box-shadow: 0 10px 28px rgba(0,0,0,.30);
-      position: relative;
-      overflow:hidden;
-    }
-    .kv-actions::after{
-      content:"";
-      position:absolute; inset:-40px;
-      background: repeating-linear-gradient(
-        -45deg,
-        rgba(255,255,255,.07) 0 10px,
-        rgba(255,255,255,0) 10px 22px
-      );
-      opacity:.07;
-      animation: shimmer 2.6s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes shimmer{
-      from{ transform: translateX(-40px); }
-      to  { transform: translateX(40px); }
+        radial-gradient(750px 260px at 10% 0%, rgba(255,211,77,.08), transparent 62%),
+        radial-gradient(750px 260px at 90% 10%, rgba(34,211,238,.06), transparent 60%),
+        rgba(8,12,20,.55);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:16px; padding:10px;
+      box-shadow:0 10px 28px rgba(0,0,0,.30);
     }
 
     .kv-btn{
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      width: 100%;
-      border-radius: 999px !important;
-      padding: .55rem .95rem !important;
-      font-weight: 950 !important;
-      letter-spacing: .12em !important;
-      text-transform: uppercase;
-      color: rgba(247,251,255,.95) !important;
-      border: 1px solid rgba(255,255,255,.14) !important;
+      display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+      border-radius:999px !important;
+      padding:.52rem .90rem !important;
+      font-weight:900 !important;
+      letter-spacing:.12em !important;
+      text-transform:uppercase;
+      color: rgba(238,243,255,.95) !important;
+      border:1px solid rgba(255,211,77,.14) !important;
       background:
-        radial-gradient(140px 80px at 20% 30%, rgba(77,163,255,.16), transparent 60%),
-        radial-gradient(140px 80px at 80% 30%, rgba(255,121,166,.14), transparent 60%),
-        linear-gradient(135deg, rgba(7,10,18,.72), rgba(10,16,28,.92)) !important;
-      box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 14px 30px rgba(0,0,0,.42) !important;
+        radial-gradient(140px 80px at 20% 30%, rgba(255,211,77,.16), transparent 60%),
+        radial-gradient(140px 80px at 80% 30%, rgba(34,211,238,.10), transparent 60%),
+        linear-gradient(135deg, rgba(7,10,18,.70), rgba(10,16,28,.92)) !important;
+      box-shadow:0 0 0 1px rgba(255,211,77,.06), 0 14px 30px rgba(0,0,0,.42) !important;
       transition: transform .14s ease, filter .14s ease, box-shadow .14s ease;
-      position:relative;
-      overflow:hidden;
-      z-index:1;
+      cursor: pointer;
     }
-    .kv-btn::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: linear-gradient(90deg, rgba(255,52,85,.0), rgba(255,121,166,.18), rgba(77,163,255,.18), rgba(255,52,85,.0));
-      transform: translateX(-60%);
-      transition: transform .35s ease;
-      opacity:.75;
-      z-index:-1;
-    }
-    .kv-btn:hover::before{ transform: translateX(60%); }
-    .kv-btn:hover{
-      transform: translateY(-1px);
-      filter: brightness(1.06);
-      box-shadow: 0 0 0 1px rgba(77,163,255,.14), 0 18px 40px rgba(0,0,0,.50) !important;
-    }
-    .kv-btn:active{ transform: translateY(0px); filter: brightness(.99); }
-    .kv-btn:disabled{ opacity: .55; cursor: not-allowed !important; transform:none !important; box-shadow:none !important; }
+    .kv-btn i{ opacity:.95; font-size:1.05rem; }
+    .kv-btn:hover{ transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(34,211,238,.10), 0 18px 40px rgba(0,0,0,.50) !important; filter: brightness(1.05); }
+    .kv-btn:active{ transform: translateY(0px); filter: brightness(.98); }
+    .kv-btn:disabled{ opacity:.55; cursor:not-allowed !important; transform:none !important; box-shadow:none !important; pointer-events:none !important; }
 
     .kv-btn-primary{
-      border: 1px solid rgba(77,163,255,.20) !important;
+      border:1px solid rgba(34,211,238,.16) !important;
       background:
-        radial-gradient(160px 90px at 20% 30%, rgba(77,163,255,.18), transparent 60%),
-        radial-gradient(160px 90px at 80% 30%, rgba(255,52,85,.16), transparent 60%),
-        linear-gradient(135deg, rgba(7,10,18,.70), rgba(10,16,28,.96)) !important;
+        radial-gradient(160px 90px at 20% 30%, rgba(34,211,238,.16), transparent 60%),
+        radial-gradient(160px 90px at 80% 30%, rgba(255,211,77,.14), transparent 60%),
+        linear-gradient(135deg, rgba(7,10,18,.66), rgba(10,16,28,.96)) !important;
     }
 
-    /* Content */
     .content{ background: transparent !important; }
     .card.h-100.border-0.overflow-auto{ background: transparent !important; }
-
-    #loading .spinner-border{
-      color: rgba(255,121,166,.85);
-      border-top-color: rgba(77,163,255,.95);
-    }
   </style>
 
-  <!-- =========================================================
-       MODAL APK — SUPER FUTURISTA (red/rose/blue/white)
-       ========================================================= -->
+  <!-- ✅ MODALES (los mismos del mensaje anterior, sin tocar lógica) -->
   <style>
-    #downloadModal .modal-content{
-      position: relative;
+    .modal-backdrop.show{ opacity:.78; }
+
+    /* FORM */
+    #apkFormModal .modal-content{
       background:
-        radial-gradient(1100px 600px at 10% -10%, rgba(77,163,255,.26), transparent 60%),
-        radial-gradient(1100px 600px at 110% -10%, rgba(255,121,166,.22), transparent 60%),
-        radial-gradient(900px 520px at 50% 120%, rgba(255,52,85,.16), transparent 55%),
-        linear-gradient(180deg, rgba(6,8,18,.97), rgba(5,7,14,.93));
-      color: var(--fx-white);
-      border-radius: 26px !important;
-      border: 1px solid rgba(247,251,255,.16);
+        radial-gradient(900px 420px at 8% 0%, rgba(255,79,216,.10), transparent 60%),
+        radial-gradient(900px 420px at 92% 10%, rgba(59,178,255,.12), transparent 60%),
+        linear-gradient(180deg, rgba(8,10,18,.96), rgba(8,10,18,.90)) !important;
+      color: #eef3ff;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 35px 120px rgba(0,0,0,.75);
       overflow: hidden;
-      box-shadow: 0 40px 140px rgba(0,0,0,.75);
-      backdrop-filter: blur(14px);
-      isolation: isolate;
+      backdrop-filter: blur(12px);
     }
-
-    #downloadModal .modal-content::before{
-      content:"";
-      position:absolute; inset:-1px;
-      border-radius: 28px;
-      background:
-        conic-gradient(from 0deg,
-          rgba(77,163,255,.95),
-          rgba(255,121,166,.95),
-          rgba(255,52,85,.95),
-          rgba(247,251,255,.95),
-          rgba(77,163,255,.95)
-        );
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor; mask-composite: exclude;
-      padding:1.4px;
-      filter: blur(.6px);
-      animation: kvSpin2 6.5s linear infinite;
-      opacity:.55;
-      z-index:-1;
-      pointer-events:none;
-    }
-    @keyframes kvSpin2{ to{ transform: rotate(360deg);} }
-
-    #downloadModal .modal-header,
-    #downloadModal .modal-footer{
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
-      border-color: rgba(255,255,255,.06) !important;
-    }
-
-    #downloadModal .king-badge{
-      width: 44px; height: 44px; border-radius: 16px;
+    #apkFormModal .kv-badge{
+      width: 42px; height: 42px; border-radius: 16px;
       display:flex; align-items:center; justify-content:center;
-      background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: inset 0 0 25px rgba(77,163,255,.12), 0 12px 28px rgba(0,0,0,.35);
-      color: var(--fx-blue);
-      text-shadow: 0 0 12px rgba(77,163,255,.35);
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(59,178,255,.30), transparent 60%),
+        radial-gradient(18px 18px at 70% 60%, rgba(255,79,216,.26), transparent 60%),
+        rgba(12,14,26,.70);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: var(--fx-glow);
     }
-    #downloadModal .king-title{ font-weight: 950; letter-spacing:.14em; text-transform: uppercase; font-size: .98rem; }
-    #downloadModal .king-sub{ color: rgba(247,251,255,.70); letter-spacing: .06em; }
+    #apkFormModal .kv-badge i{ color: #eef3ff; font-size: 1.15rem; }
+    #apkFormModal .kv-title{
+      font-weight: 999; letter-spacing: .14em; text-transform: uppercase;
+      font-size: .95rem !important;
+    }
+    #apkFormModal .kv-sub{ color: rgba(238,243,255,.72); letter-spacing: .06em; }
+    #apkFormModal .btn-close{ filter: invert(1) brightness(1.2); opacity:.9; }
 
-    #downloadModal .btn-close{ filter: invert(1) brightness(1.2); opacity: .85; }
-    #downloadModal .btn-close:hover{ opacity: 1; }
-
-    #downloadModal .form-control{
-      background: rgba(14,16,28,.74) !important;
-      color: rgba(247,251,255,.96) !important;
-      border: 1px solid rgba(247,251,255,.14) !important;
+    #apkFormModal .form-control{
+      background: rgba(8,10,18,.65) !important;
+      color: rgba(238,243,255,.95) !important;
+      border: 1px solid rgba(255,255,255,.12) !important;
       border-radius: 14px !important;
     }
-    #downloadModal .form-control:focus{
-      box-shadow: 0 0 0 3px rgba(77,163,255,.18) !important;
-      border-color: rgba(77,163,255,.35) !important;
+    #apkFormModal .form-control:focus{
+      box-shadow: 0 0 0 3px rgba(59,178,255,.18) !important;
+      border-color: rgba(59,178,255,.35) !important;
     }
 
-    #downloadModal .app-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    @media (max-width: 520px){ #downloadModal .app-grid{ grid-template-columns: 1fr; } }
+    #apkFormModal .kv-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 520px){ #apkFormModal .kv-grid{ grid-template-columns:1fr; } }
 
-    #downloadModal .logo-preview{
-      display:flex; align-items:center; gap: 10px;
-      padding: 10px; border-radius: 16px;
-      border: 1px dashed rgba(247,251,255,.18);
-      background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    #apkFormModal .kv-logo-preview{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255,255,255,.16);
+      background: rgba(8,10,18,.45);
     }
-    #downloadModal .logo-bubble{
-      width: 56px; height: 56px; flex:0 0 56px;
+    #apkFormModal .kv-logo-bubble{
+      width: 56px; height: 56px;
+      flex:0 0 56px;
       border-radius: 18px;
-      border: 1px solid rgba(247,251,255,.18);
-      background: rgba(9,12,22,.85);
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(7,10,18,.85);
       display:flex; align-items:center; justify-content:center;
       overflow:hidden;
-      box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 14px 28px rgba(0,0,0,.45);
-      color: var(--fx-rose);
+      box-shadow: var(--fx-glow);
     }
-    #downloadModal .logo-bubble img{
-      width:100%; height:100%; object-fit:cover; object-position:center; display:none;
-    }
-    #downloadModal .logo-meta .t1{ font-weight: 950; letter-spacing: .06em; font-size: .82rem; text-transform: uppercase; }
-    #downloadModal .logo-meta .t2{ font-size: .85rem; color: rgba(247,251,255,.72); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+    #apkFormModal .kv-logo-bubble img{ width:100%; height:100%; object-fit:cover; object-position:center; display:none; }
+    #apkFormModal .kv-logo-bubble i{ color: rgba(255,255,255,.95); font-size: 1.1rem; }
 
-    .king-btn-cancel{
-      background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02)) !important;
-      border: 1px solid rgba(247,251,255,.18) !important;
+    #apkFormModal .kv-logo-meta .t1{ font-weight: 950; letter-spacing: .08em; font-size: .80rem; text-transform: uppercase; }
+    #apkFormModal .kv-logo-meta .t2{
+      font-size: .85rem;
+      color: rgba(238,243,255,.72);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+
+    #apkFormModal .kv-btn-cancel{
+      background: rgba(255,255,255,.06) !important;
+      border: 1px solid rgba(255,255,255,.14) !important;
       border-radius: 999px !important;
-      color: rgba(247,251,255,.96) !important;
-      font-weight: 900 !important; letter-spacing:.10em;
+      color: rgba(238,243,255,.92) !important;
+      font-weight: 950 !important;
+      letter-spacing: .10em;
       padding: .60rem 1.1rem;
     }
-    .king-btn-generate{
-      background: linear-gradient(135deg, rgba(77,163,255,.25), rgba(255,121,166,.20)) !important;
-      border: 1px solid rgba(77,163,255,.24) !important;
+
+    #apkFormModal .kv-btn-generate{
+      background:
+        radial-gradient(120px 70px at 20% 30%, rgba(255,79,216,.22), transparent 62%),
+        radial-gradient(140px 70px at 75% 30%, rgba(59,178,255,.20), transparent 65%),
+        linear-gradient(135deg, rgba(10,10,24,.82), rgba(11,16,32,.94)) !important;
+      border: 1px solid rgba(255,255,255,.18) !important;
       border-radius: 999px !important;
-      color: rgba(247,251,255,.97) !important;
-      font-weight: 950 !important;
-      letter-spacing: .12em;
-      padding: .60rem 1.2rem;
-      box-shadow: 0 0 0 1px rgba(247,251,255,.08), 0 14px 30px rgba(0,0,0,.55) !important;
-    }
-    .king-btn-generate:disabled{ opacity:.65; cursor:not-allowed; box-shadow:none !important; }
-
-    .king-btn-download{
-      background: linear-gradient(90deg, var(--fx-rose), var(--fx-blue)) !important;
-      border:none !important;
-      border-radius:999px !important;
-      color:#06101f !important;
+      color: rgba(238,243,255,.96) !important;
       font-weight: 999 !important;
-      letter-spacing:.12em;
-      padding:.60rem 1.2rem;
-      box-shadow: 0 14px 34px rgba(0,0,0,.45);
+      letter-spacing: .14em;
+      padding: .60rem 1.2rem;
+      box-shadow: var(--fx-glow) !important;
     }
+    #apkFormModal .kv-btn-generate:disabled{ opacity:.65; cursor:not-allowed; box-shadow:none !important; }
 
-    /* Futurista: Generando */
-    #spinnerContainer{
-      display:none;
-      flex-direction:column;
-      align-items:center;
-      gap:14px;
-      margin: 12px 0 8px;
-    }
-
-    .kv-orb{
+    /* PROGRESS */
+    #apkProgressModal{ z-index: 20000; }
+    #apkProgressModal .modal-dialog{ max-width: 520px; }
+    #apkProgressModal .modal-content{
+      background:
+        radial-gradient(900px 420px at 10% 0%, rgba(255,43,74,.16), transparent 62%),
+        radial-gradient(900px 420px at 90% 10%, rgba(255,79,216,.14), transparent 60%),
+        radial-gradient(900px 420px at 60% 90%, rgba(59,178,255,.14), transparent 60%),
+        linear-gradient(180deg, rgba(7,8,16,.97), rgba(7,8,16,.92)) !important;
+      color: #eef3ff;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 60px 160px rgba(0,0,0,.85);
+      overflow:hidden;
+      backdrop-filter: blur(14px);
       position: relative;
-      width: 86px; height: 86px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), rgba(255,255,255,0) 55%),
-        radial-gradient(circle at 70% 70%, rgba(255,255,255,.18), rgba(255,255,255,0) 65%),
-        radial-gradient(60px 60px at 50% 50%, rgba(77,163,255,.25), rgba(255,121,166,.18), rgba(255,52,85,.16));
-      box-shadow: inset 0 0 22px rgba(77,163,255,.25), 0 0 40px rgba(77,163,255,.18);
     }
-    .kv-orb::before{
+    #apkProgressModal .modal-content::before{
       content:"";
-      position:absolute; inset:-6px; border-radius: 50%;
+      position:absolute; inset:-2px;
       background:
-        conic-gradient(from 0deg,
-          transparent 0 20deg,
-          rgba(77,163,255,.95) 20deg 120deg,
-          transparent 120deg 160deg,
-          rgba(255,121,166,.95) 160deg 300deg,
-          transparent 300deg 340deg,
-          rgba(255,52,85,.95) 340deg 360deg
-        );
-      -webkit-mask: radial-gradient(circle 43px at 50% 50%, transparent 41px, #000 41px);
-      mask: radial-gradient(circle 43px at 50% 50%, transparent 41px, #000 41px);
-      filter: blur(.6px);
-      animation: kvRing 1.6s linear infinite;
-      opacity:.95;
+        linear-gradient(90deg, transparent, rgba(255,79,216,.35), transparent),
+        linear-gradient(180deg, transparent, rgba(59,178,255,.25), transparent);
+      opacity:.18;
+      pointer-events:none;
+      transform: rotate(6deg);
     }
-    @keyframes kvRing{ to{ transform: rotate(360deg); } }
-
-    .kv-progress{
-      width: 100%;
-      max-width: 380px;
-      height: 12px;
+    .fx-head{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 16px 16px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .fx-brand{ display:flex; align-items:center; gap:10px; }
+    .fx-chip{
+      width: 46px; height: 46px; border-radius: 18px;
+      display:flex; align-items:center; justify-content:center;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(255,43,74,.35), transparent 60%),
+        radial-gradient(18px 18px at 70% 60%, rgba(59,178,255,.30), transparent 60%),
+        rgba(12,14,26,.70);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--fx-glow);
+    }
+    .fx-chip i{ font-size: 1.15rem; color: #eef3ff; }
+    .fx-title{ margin:0; font-weight: 999; letter-spacing: .16em; text-transform: uppercase; font-size: .88rem; }
+    .fx-sub{ margin:2px 0 0; color: rgba(238,243,255,.72); letter-spacing: .06em; font-size: .82rem; }
+    .fx-body{ padding: 16px; }
+    .fx-indicator{
+      display:flex; align-items:center; gap:14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .fx-ring{
+      width: 86px; height: 86px; border-radius: 999px;
+      position: relative;
+      display:flex; align-items:center; justify-content:center;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,43,74,.22), transparent 55%),
+        radial-gradient(circle at 70% 60%, rgba(59,178,255,.22), transparent 55%),
+        rgba(10,10,18,.55);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--fx-glow);
+      overflow:hidden;
+    }
+    .fx-ring::before{
+      content:"";
+      position:absolute; inset:-22px;
+      background: conic-gradient(
+        from 180deg,
+        rgba(59,178,255,.00),
+        rgba(59,178,255,.45),
+        rgba(255,79,216,.45),
+        rgba(255,43,74,.45),
+        rgba(59,178,255,.00)
+      );
+      animation: fxSpin 1.15s linear infinite;
+      opacity:.9;
+    }
+    .fx-ring::after{
+      content:"";
+      position:absolute; inset:8px;
+      background: rgba(7,8,16,.92);
       border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 0 18px rgba(0,0,0,.55);
+    }
+    .fx-percent{
+      position: relative;
+      z-index: 2;
+      font-weight: 999;
+      font-size: 1.05rem;
+      letter-spacing: .08em;
+      color: rgba(238,243,255,.96);
+      text-shadow: 0 0 12px rgba(59,178,255,.22);
+    }
+    @keyframes fxSpin{ to { transform: rotate(360deg); } }
+
+    .fx-info{ flex:1; }
+    .fx-status{ margin:0; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; }
+    .fx-detail{ margin:4px 0 0; color: rgba(238,243,255,.72); font-size: .88rem; }
+
+    .fx-bar{
+      margin-top: 12px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
       border: 1px solid rgba(255,255,255,.12);
       overflow:hidden;
-      position:relative;
+      box-shadow: inset 0 0 12px rgba(0,0,0,.45);
     }
-    .kv-progress .kv-progress-fill{
-      position:absolute; inset:0;
-      background: linear-gradient(90deg, rgba(255,52,85,.35), rgba(255,121,166,.45), rgba(77,163,255,.55));
-      transform-origin:left center;
-      animation: kvFill 1.8s ease-in-out infinite;
+    .fx-bar > div{
+      height: 100%;
+      width: 15%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,43,74,.95), rgba(255,79,216,.95), rgba(59,178,255,.95), rgba(238,243,255,.92));
+      box-shadow: 0 0 22px rgba(59,178,255,.18);
+      animation: fxLoad 1.05s ease-in-out infinite;
     }
-    @keyframes kvFill{
-      0%{ transform: scaleX(.08); }
-      50%{ transform: scaleX(.88); }
-      100%{ transform: scaleX(.08); }
+    @keyframes fxLoad{
+      0%   { transform: translateX(-20%); width: 18%; }
+      50%  { transform: translateX(45%); width: 55%; }
+      100% { transform: translateX(120%); width: 18%; }
     }
-    .kv-progress::after{
-      content:"";
-      position:absolute; inset:0;
-      background: repeating-linear-gradient(-45deg, rgba(255,255,255,.06) 0 10px, rgba(255,255,255,0) 10px 20px);
-      mix-blend-mode: screen;
-      animation: kvShimmer 1.6s linear infinite;
-      opacity:.55;
-    }
-    @keyframes kvShimmer{ from{ background-position:0 0; } to{ background-position:60px 0; } }
 
-    .kv-dots{
-      display:flex; align-items:center; gap:6px;
-      opacity:.85;
-      font-weight:800;
-      letter-spacing:.12em;
+    /* DONE */
+    #apkDoneModal{ z-index: 21000; }
+    #apkDoneModal .modal-dialog{ max-width: 600px; }
+    #apkDoneModal .modal-content{
+      background:
+        radial-gradient(900px 420px at 12% 0%, rgba(59,178,255,.16), transparent 60%),
+        radial-gradient(900px 420px at 90% 10%, rgba(255,79,216,.14), transparent 60%),
+        radial-gradient(900px 420px at 60% 90%, rgba(255,43,74,.12), transparent 60%),
+        linear-gradient(180deg, rgba(7,8,16,.98), rgba(7,8,16,.94)) !important;
+      color: #eef3ff;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 60px 180px rgba(0,0,0,.90);
+      overflow:hidden;
+      backdrop-filter: blur(14px);
+    }
+    .done-top{
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .done-brand{ display:flex; align-items:center; gap:12px; }
+    .done-logo{
+      width: 66px; height: 66px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.20);
+      box-shadow: var(--fx-glow);
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      flex:0 0 66px;
+    }
+    .done-logo img{ width:100%; height:100%; object-fit: cover; object-position:center; display:none; }
+    .done-logo i{ font-size: 1.25rem; color: rgba(238,243,255,.92); }
+    .done-title{
+      margin:0; font-weight: 999; letter-spacing: .16em; text-transform: uppercase; font-size: .95rem;
+    }
+    .done-sub{ margin:2px 0 0; color: rgba(238,243,255,.72); letter-spacing: .06em; font-size: .86rem; }
+    .done-hero{ padding: 14px 16px 0; }
+    .done-hero h3{
+      margin: 0; font-weight: 999; letter-spacing: .06em; line-height: 1.1; font-size: 1.15rem;
+      text-shadow: 0 0 18px rgba(59,178,255,.16);
+    }
+    .done-hero .spark{
+      background: linear-gradient(90deg, rgba(255,43,74,.95), rgba(255,79,216,.95), rgba(59,178,255,.95), rgba(238,243,255,.92));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .done-hero p{ margin: 8px 0 0; color: rgba(238,243,255,.72); font-size: .92rem; }
+    .done-body{ padding: 16px; }
+    .done-card{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .done-row{
+      display:flex; justify-content:space-between; gap:10px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255,255,255,.10);
+      flex-wrap: wrap;
+    }
+    .done-row:last-child{ border-bottom: none; padding-bottom: 0; }
+    .done-k{
+      color: rgba(238,243,255,.70);
+      letter-spacing: .06em;
+      font-size: .82rem;
       text-transform: uppercase;
-      color: rgba(247,251,255,.92);
+      font-weight: 900;
     }
-    .kv-dots i{
-      display:inline-block; width:8px; height:8px; border-radius:50%;
-      box-shadow: 0 0 10px rgba(255,255,255,.35);
-      animation: kvDot 1.4s ease-in-out infinite;
+    .done-v{
+      color: rgba(238,243,255,.94);
+      font-size: .94rem;
+      font-weight: 900;
+      max-width: 380px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .kv-dots i:nth-child(1){ animation-delay:0s; background: var(--fx-blue); }
-    .kv-dots i:nth-child(2){ animation-delay:.15s; background: var(--fx-rose); }
-    .kv-dots i:nth-child(3){ animation-delay:.30s; background: var(--fx-red); }
-    @keyframes kvDot{
-      0%,100%{ transform: translateY(0); opacity:.85; }
-      50%{ transform: translateY(-6px); opacity:1; }
+    .done-badges{ display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px; }
+    .done-badge{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      font-weight: 900;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: .72rem;
+      color: rgba(238,243,255,.92);
     }
-
-    #downloadModal .king-status{
-      margin: 10px 0 0;
-      color: rgba(247,251,255,.78);
-      text-align:center;
-      letter-spacing:.03em;
+    .done-badge.blue{ border-color: rgba(59,178,255,.25); box-shadow: 0 0 20px rgba(59,178,255,.10); }
+    .done-badge.rose{ border-color: rgba(255,79,216,.22); box-shadow: 0 0 20px rgba(255,79,216,.10); }
+    .done-badge.red{ border-color: rgba(255,43,74,.22); box-shadow: 0 0 20px rgba(255,43,74,.10); }
+    .done-footer{
+      padding: 12px 16px 16px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
     }
-    #downloadModal .app-ready{
-      color: rgba(77,163,255,.98) !important;
-      text-shadow: 0 0 10px rgba(77,163,255,.25);
-      font-weight: 950;
+    .done-btn{
+      border-radius: 999px !important;
+      font-weight: 999 !important;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: .62rem 1.15rem !important;
+      border: 1px solid rgba(255,255,255,.16) !important;
+      background: rgba(255,255,255,.06) !important;
+      color: rgba(238,243,255,.95) !important;
     }
-    #downloadModal .status-error{
-      color: rgba(255,52,85,.98) !important;
-      text-shadow: 0 0 10px rgba(255,52,85,.25);
-      font-weight: 950;
+    .done-btn-primary{
+      border: none !important;
+      background: linear-gradient(90deg, rgba(255,43,74,.96), rgba(255,79,216,.96), rgba(59,178,255,.96), rgba(238,243,255,.92)) !important;
+      color: #06101f !important;
+      box-shadow: var(--fx-glow);
     }
   </style>
 </head>
 
 <body>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+
   <main class="d-flex">
     <%~ include("./sidebar", it) %>
 
@@ -521,10 +491,10 @@
 
       <div class="content pt-1 overflow-auto">
         <div class="kv-page">
+
           <div class="card kv-card h-100 border-0 overflow-auto">
             <div class="card-body m-0">
 
-              <!-- Título -->
               <div class="kv-titlebar">
                 <div class="kv-title-icon">
                   <i class="bi bi-lightning-charge-fill"></i>
@@ -535,7 +505,6 @@
                 </div>
               </div>
 
-              <!-- Panel Botones -->
               <div class="kv-actions mb-3">
                 <div class="d-flex gap-2">
                   <button type="button" class="__create kv-btn flex-fill">
@@ -550,14 +519,14 @@
                 </div>
 
                 <div class="mt-2">
-                  <button type="button" class="export-config kv-btn kv-btn-primary w-100" disabled>
+                  <!-- ✅ FIX: NO dejarlo permanently disabled -->
+                  <button type="button" id="btnOpenApk" class="export-config kv-btn kv-btn-primary w-100">
                     <i class="bi bi-android"></i>
                     <span>GENERAR APK</span>
                   </button>
                 </div>
               </div>
 
-              <!-- Selector oculto -->
               <div class="col-md-2 mb-2" style="display:none !important;">
                 <select class="form-select" id="app_config_status">
                   <option value="ACTIVE">ACTIVO</option>
@@ -566,10 +535,8 @@
                 </select>
               </div>
 
-              <!-- Temas -->
               <div class="row m-auto mb-3 center-column" id="app"></div>
 
-              <!-- Loading -->
               <div class="d-flex justify-content-center align-items-center mt-5" id="loading">
                 <div class="spinner-border p-5" role="status">
                   <span class="sr-only"></span>
@@ -578,30 +545,31 @@
 
             </div>
           </div>
+
         </div>
       </div>
-
     </div>
   </main>
 
-  <!-- MODAL APK -->
-  <div class="modal fade" id="downloadModal" tabindex="-1" aria-hidden="true">
+  <!-- ✅ MODAL A: FORM -->
+  <div class="modal fade" id="apkFormModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
       <div class="modal-content">
-
         <div class="modal-header border-0">
           <div class="d-flex align-items-center gap-2">
-            <div class="king-badge"><i class="bi bi-android2"></i></div>
+            <div class="kv-badge">
+              <i class="bi bi-android2"></i>
+            </div>
             <div class="d-flex flex-column">
-              <h5 class="modal-title king-title m-0">Generar APK</h5>
-              <small class="king-sub">KING•VPN • build seguro</small>
+              <h5 class="modal-title kv-title m-0">Generar APK</h5>
+              <small class="kv-sub">Configurá el nombre, paquete y logo</small>
             </div>
           </div>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
 
-        <div class="modal-body position-relative">
-          <div class="app-grid mb-2">
+        <div class="modal-body">
+          <div class="kv-grid mb-2">
             <div>
               <label class="form-label mb-1">Nombre de la app</label>
               <input class="form-control" id="appName" placeholder="Ej: KING VPN" value="KING VPN">
@@ -612,71 +580,163 @@
             </div>
           </div>
 
-          <div class="app-grid mb-2">
+          <div class="kv-grid mb-2">
             <div>
-              <label class="form-label mb-1">URL del logo (opcional)</label>
+              <label class="form-label mb-1">URL del logo</label>
               <input class="form-control" id="logoUrl" placeholder="https://.../logo.png">
             </div>
             <div>
-              <label class="form-label mb-1">Importar logo PNG (opcional)</label>
-              <input class="form-control" id="logoFile" type="file" accept="image/png">
+              <label class="form-label mb-1">Logo (cualquier imagen)</label>
+              <input class="form-control" id="logoFile" type="file" accept="image/*">
             </div>
           </div>
 
-          <div class="logo-preview mb-2">
-            <div class="logo-bubble" id="logoBubble">
+          <div class="kv-logo-preview mb-2">
+            <div class="kv-logo-bubble" id="logoBubble">
               <i class="bi bi-image"></i>
               <img id="logoImg" alt="Logo preview">
             </div>
-            <div class="logo-meta">
-              <div class="t1">Preview del logo</div>
-              <div class="t2" id="logoHint">Elegí un PNG o poné una URL</div>
+            <div class="kv-logo-meta">
+              <div class="t1">Preview</div>
+              <div class="t2" id="logoHint">Elegí un archivo o poné una URL</div>
             </div>
           </div>
 
-          <!-- Futurista “Generando…” -->
-          <div id="spinnerContainer">
-            <div class="kv-orb"></div>
-            <div class="kv-progress"><div class="kv-progress-fill"></div></div>
-            <div class="kv-dots"><i></i><i></i><i></i></div>
-          </div>
-
-          <p id="modalStatus" class="king-status">
-            Completá los campos y presioná <strong>Generar APK</strong>.
+          <p class="text-center" style="margin:0;color:rgba(238,243,255,.72)">
+            Cuando estés listo, tocá <b>Generar</b>.
           </p>
         </div>
 
         <div class="modal-footer border-0 d-flex justify-content-between">
-          <button type="button" class="btn king-btn-cancel" data-bs-dismiss="modal">
+          <button type="button" class="btn kv-btn-cancel" data-bs-dismiss="modal">
             <i class="bi bi-x-lg"></i> Cancelar
           </button>
+          <button type="button" class="btn kv-btn-generate" id="btnGenerateApp">
+            <i class="bi bi-gear-fill"></i> Generar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-          <div class="d-flex gap-2">
-            <button type="button" class="btn king-btn-generate" id="btnGenerateApp">
-              <i class="bi bi-gear-fill"></i> Generar
-            </button>
-            <button type="button" class="btn king-btn-download" id="btnConfirmDownload" style="display:none;">
-              <i class="bi bi-download"></i> Descargar APK
-            </button>
+  <!-- ✅ MODAL B: PROGRESS -->
+  <div class="modal fade" id="apkProgressModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="fx-head">
+          <div class="fx-brand">
+            <div class="fx-chip"><i class="bi bi-cpu-fill"></i></div>
+            <div class="d-flex flex-column">
+              <h6 class="fx-title" id="fxTitle">Generando APK</h6>
+              <div class="fx-sub" id="fxSub">Inicializando proceso…</div>
+            </div>
           </div>
+          <button type="button" class="btn-close btn-close-white" id="fxCloseX" style="opacity:.85" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="fx-body">
+          <div class="fx-indicator">
+            <div class="fx-ring">
+              <div class="fx-percent" id="fxPercent">0%</div>
+            </div>
+            <div class="fx-info">
+              <p class="fx-status" id="fxStatus">EN PROCESO</p>
+              <p class="fx-detail" id="fxDetail">Estamos compilando, firmando y armando tu APK.</p>
+              <div class="fx-bar"><div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-3 pb-3" style="color:rgba(238,243,255,.70);font-size:.88rem;">
+          No cierres esta ventana mientras se genera.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ MODAL C: DONE -->
+  <div class="modal fade" id="apkDoneModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="done-top">
+          <div class="done-brand">
+            <div class="done-logo" id="doneLogoBox">
+              <i class="bi bi-shield-check"></i>
+              <img id="doneLogoImg" alt="Logo final">
+            </div>
+            <div>
+              <h6 class="done-title m-0">APK Lista</h6>
+              <div class="done-sub" id="doneSubtitle">Compilación completada con éxito</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="done-hero">
+          <h3 id="doneCongrats">
+            <span class="spark">Felicidades</span>, tu app ha sido creada con éxito ✅
+          </h3>
+          <p>
+            Todo quedó aplicado con tus diseños y configuraciones. Descargá tu APK cuando quieras.
+          </p>
+        </div>
+
+        <div class="done-body">
+          <div class="done-card">
+            <div class="done-row">
+              <div class="done-k">Usuario</div>
+              <div class="done-v" id="doneUser">-</div>
+            </div>
+            <div class="done-row">
+              <div class="done-k">Nombre de la app</div>
+              <div class="done-v" id="doneAppName">-</div>
+            </div>
+            <div class="done-row">
+              <div class="done-k">Paquete</div>
+              <div class="done-v" id="donePackage">-</div>
+            </div>
+            <div class="done-row">
+              <div class="done-k">Logo</div>
+              <div class="done-v" id="doneLogoInfo">-</div>
+            </div>
+            <div class="done-row">
+              <div class="done-k">Diseños</div>
+              <div class="done-v" id="doneDesigns">Aplicados (tema + layout + colores) ✅</div>
+            </div>
+
+            <div class="done-badges">
+              <div class="done-badge blue"><i class="bi bi-lightning-charge"></i> build</div>
+              <div class="done-badge rose"><i class="bi bi-palette2"></i> diseños</div>
+              <div class="done-badge red"><i class="bi bi-shield-lock"></i> firma</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="done-footer">
+          <button type="button" class="btn done-btn" data-bs-dismiss="modal">
+            <i class="bi bi-check2"></i> Listo
+          </button>
+
+          <button type="button" class="btn done-btn-primary" id="doneDownloadBtn">
+            <i class="bi bi-download"></i> Descargar APK
+          </button>
         </div>
 
       </div>
     </div>
   </div>
 
-  <!-- JS libs -->
+  <!-- libs -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!-- Tu JS base -->
-  <script src="../static/js/sidebar.js"></script>
-  <script src="../static/js/utils.js"></script>
+  <script src="/static/js/sidebar.js"></script>
+  <script src="/static/js/utils.js"></script>
 
-  <!-- (opcional) editores -->
+  <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
@@ -684,39 +744,47 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.js"></script>
 
-  <script src="../static/js/jscolor.js"></script>
+  <script src="/static/js/jscolor.js"></script>
   <script src="/static/js/dark_light.js"></script>
 
-  <!-- Credenciales server -->
+  <!-- ✅ Creds + Usuario -->
   <script>
     window.__APK_CREDS__ = {
       user_id: "<%= it.user.id %>",
-      token: "<%= it.user.id %>" // si tu token real es otro, cambiá acá
+      token: "<%= it.user.id %>"
+    };
+
+    window.__USER__ = {
+      display_name: "<%= (it.user && (it.user.name || it.user.username || it.user.email)) || it.user.id %>"
     };
   </script>
 
-  <!-- APK Generator inline (manda al API) -->
+  <!-- ✅ JS: bind del botón + modales (FIX incluido) -->
   <script>
     (function () {
       let csrfToken = (typeof getCsrfTokenHead === "function") ? getCsrfTokenHead() : null;
 
-      function toastErr(msg) {
+      function toastErr(msg){
         if (typeof showToastError === "function") return showToastError(msg);
-        try { toastr.error(msg); } catch (e) {}
+        try { toastr.error(msg); } catch {}
       }
-      function toastOk(msg) {
+      function toastOk(msg){
         if (typeof showToastSuccess === "function") return showToastSuccess(msg);
-        try { toastr.success(msg); } catch (e) {}
+        try { toastr.success(msg); } catch {}
       }
 
-      const downloadModalEl = document.getElementById("downloadModal");
-      if (!downloadModalEl) return;
-      const downloadModal = new bootstrap.Modal(downloadModalEl);
+      const formEl = document.getElementById("apkFormModal");
+      const progressEl = document.getElementById("apkProgressModal");
+      const doneEl = document.getElementById("apkDoneModal");
 
-      const modalStatus = document.getElementById("modalStatus");
-      const spinner = document.getElementById("spinnerContainer");
+      const formModal = new bootstrap.Modal(formEl);
+      const progressModal = new bootstrap.Modal(progressEl);
+      const doneModal = new bootstrap.Modal(doneEl);
+
+      const btnOpenById = document.getElementById("btnOpenApk");
+      const btnOpenByClass = document.querySelector(".export-config");
+
       const btnGenerate = document.getElementById("btnGenerateApp");
-      const btnConfirm = document.getElementById("btnConfirmDownload");
 
       const appNameEl = document.getElementById("appName");
       const packageNameEl = document.getElementById("packageName");
@@ -728,58 +796,74 @@
       const logoBubble = document.getElementById("logoBubble");
       const logoIcon = logoBubble ? logoBubble.querySelector("i") : null;
 
-      let apkUrl = null;
+      const fxSub = document.getElementById("fxSub");
+      const fxPercent = document.getElementById("fxPercent");
+      const fxDetail = document.getElementById("fxDetail");
+      const fxCloseX = document.getElementById("fxCloseX");
+
+      const doneLogoBox = document.getElementById("doneLogoBox");
+      const doneLogoImg = document.getElementById("doneLogoImg");
+      const doneSubtitle = document.getElementById("doneSubtitle");
+      const doneCongrats = document.getElementById("doneCongrats");
+      const doneUser = document.getElementById("doneUser");
+      const doneAppName = document.getElementById("doneAppName");
+      const donePackage = document.getElementById("donePackage");
+      const doneLogoInfo = document.getElementById("doneLogoInfo");
+      const doneDownloadBtn = document.getElementById("doneDownloadBtn");
+
       let logoBase64 = null;
       let logoFilename = null;
+      let logoMime = null;
+      let apkUrl = null;
+      let lastFormData = null;
 
-      function setStatus(text, cls) {
-        modalStatus.classList.remove("app-ready", "status-error");
-        if (cls) modalStatus.classList.add(cls);
-        modalStatus.textContent = text;
+      function enableOpenButton(){
+        const btn = btnOpenById || btnOpenByClass;
+        if (!btn) return;
+        btn.removeAttribute("disabled");
+        btn.style.pointerEvents = "auto";
       }
 
-      function resetModalUI() {
-        apkUrl = null;
-        spinner.style.display = "none";
-        btnConfirm.style.display = "none";
-        btnGenerate.disabled = false;
+      function bindOpenButton(){
+        const btn = btnOpenById || btnOpenByClass;
+        if (!btn) return;
 
-        setStatus("Completá los campos y presioná Generar APK.");
+        // evitar doble bind
+        if (btn.dataset.bound === "1") return;
+        btn.dataset.bound = "1";
 
+        btn.addEventListener("click", (ev) => {
+          ev.preventDefault();
+          enableOpenButton();
+          resetLogo();
+          formModal.show();
+        });
+      }
+
+      function resetLogo(){
         logoBase64 = null;
         logoFilename = null;
-
+        logoMime = null;
         if (logoImg) logoImg.style.display = "none";
         if (logoIcon) logoIcon.style.display = "inline-block";
-        if (logoHint) logoHint.textContent = "Elegí un PNG o poné una URL";
+        if (logoHint) logoHint.textContent = "Elegí un archivo o poné una URL";
         if (logoFileEl) logoFileEl.value = "";
       }
 
-      async function readResponseUrl(response) {
-        const ct = (response.headers.get("content-type") || "").toLowerCase();
-        if (ct.includes("application/json")) {
-          const data = await response.json();
-          return data.url || data.apkUrl || data.path || (data.data && (data.data.url || data.data.apkUrl || data.data.path)) || null;
-        }
-        return (await response.text()).trim();
-      }
+      // ✅ FIX: asegurar habilitar y bindear siempre
+      enableOpenButton();
+      bindOpenButton();
+      document.addEventListener("DOMContentLoaded", () => {
+        enableOpenButton();
+        bindOpenButton();
+      });
 
-      // Abrir modal (desde el botón del header)
-      (function bindOpenButton() {
-        const btnOpen = document.querySelector(".export-config");
-        if (!btnOpen) return;
-        btnOpen.addEventListener("click", () => {
-          resetModalUI();
-          downloadModal.show();
-        });
-      })();
-
-      // Preview URL
-      if (logoUrlEl) {
+      // preview por URL
+      if (logoUrlEl){
         logoUrlEl.addEventListener("input", () => {
           const url = (logoUrlEl.value || "").trim();
           if (!url) return;
-          if (!logoBase64) {
+          if (!logoBase64){
             logoImg.src = url;
             logoImg.style.display = "block";
             if (logoIcon) logoIcon.style.display = "none";
@@ -788,22 +872,24 @@
         });
       }
 
-      // Preview file PNG
-      if (logoFileEl) {
+      // ✅ aceptar cualquier imagen
+      if (logoFileEl){
         logoFileEl.addEventListener("change", () => {
           const file = logoFileEl.files && logoFileEl.files[0];
           if (!file) return;
 
-          if (file.type !== "image/png") {
-            toastErr("El logo debe ser PNG.");
+          if (!file.type || !file.type.startsWith("image/")){
+            toastErr("El logo debe ser una imagen (JPG/PNG/WEBP/etc).");
             logoFileEl.value = "";
             return;
           }
 
           logoFilename = file.name;
+          logoMime = file.type;
+
           const reader = new FileReader();
           reader.onload = () => {
-            logoBase64 = reader.result; // data:image/png;base64,...
+            logoBase64 = reader.result;
             logoImg.src = logoBase64;
             logoImg.style.display = "block";
             if (logoIcon) logoIcon.style.display = "none";
@@ -813,84 +899,168 @@
         });
       }
 
-      // Generar
-      if (btnGenerate) {
-        btnGenerate.addEventListener("click", async () => {
-          const appName = (appNameEl.value || "").trim() || "KING VPN";
-          const packageName = (packageNameEl.value || "").trim() || null;
-          const logo_url = (logoUrlEl.value || "").trim() || null;
+      // progress steps
+      const steps = [
+        { sub: "Validando datos…", detail: "Chequeando nombre, paquete y logo." },
+        { sub: "Compilando y firmando…", detail: "Construyendo la app y aplicando firma." },
+        { sub: "Aplicando tus diseños…", detail: "Tema, layout y recursos visuales." },
+        { sub: "Finalizando…", detail: "Preparando la descarga." }
+      ];
+      let stepTimer = null;
+      let pctTimer = null;
 
-          const creds = window.__APK_CREDS__ || {};
-          const user_id = (creds.user_id || "").toString().trim();
-          const token = (creds.token || "").toString().trim();
+      function startProgressUX(){
+        fxSub.textContent = steps[0].sub;
+        fxDetail.textContent = steps[0].detail;
+        fxPercent.textContent = "0%";
 
-          if (!user_id) { setStatus("Faltan credenciales (user_id).", "status-error"); toastErr("Faltan credenciales (user_id)."); return; }
-          if (!token)   { setStatus("Faltan credenciales (token).", "status-error"); toastErr("Faltan credenciales (token)."); return; }
+        let i = 0;
+        clearInterval(stepTimer);
+        stepTimer = setInterval(() => {
+          i = (i + 1) % steps.length;
+          fxSub.textContent = steps[i].sub;
+          fxDetail.textContent = steps[i].detail;
+        }, 1400);
 
-          const payload = {
-            user_id,
-            token,
-            appName,
-            packageName,
-            logo_url,
-            logo_base64: logoBase64 || null,
-            logo_filename: logoFilename || null
-          };
-
-          spinner.style.display = "flex";
-          btnGenerate.disabled = true;
-          btnConfirm.style.display = "none";
-          setStatus("Generando tu aplicación…");
-
-          try {
-            const response = await fetch("/download-app", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...(csrfToken ? { "csrf-token": csrfToken } : {})
-              },
-              body: JSON.stringify(payload)
-            });
-
-            if (typeof getCsrfTokenRefresh === "function") {
-              const refreshed = getCsrfTokenRefresh(response);
-              if (refreshed) csrfToken = refreshed;
-            }
-
-            if (!response.ok) {
-              const txt = await response.text().catch(() => "");
-              throw new Error("HTTP " + response.status + " " + txt);
-            }
-
-            apkUrl = await readResponseUrl(response);
-            if (!apkUrl) throw new Error("Respuesta sin URL");
-
-            spinner.style.display = "none";
-            setStatus("¡Tu APK está listo!", "app-ready");
-
-            btnConfirm.style.display = "inline-block";
-            btnConfirm.onclick = () => {
-              window.location.href = apkUrl;
-              downloadModal.hide();
-            };
-
-            toastOk("APK lista ✅");
-          } catch (e) {
-            spinner.style.display = "none";
-            btnGenerate.disabled = false;
-            setStatus("Error al generar la app. Intentá nuevamente.", "status-error");
-            toastErr("Error al generar la app.");
-          }
-        });
+        let p = 0;
+        clearInterval(pctTimer);
+        pctTimer = setInterval(() => {
+          p += Math.floor(Math.random()*7) + 2;
+          if (p >= 92) p = 92;
+          fxPercent.textContent = p + "%";
+        }, 520);
       }
 
-      downloadModalEl.addEventListener("hidden.bs.modal", () => {
+      function stopProgressUX(){
+        clearInterval(stepTimer);
+        clearInterval(pctTimer);
+        stepTimer = null;
+        pctTimer = null;
+      }
+
+      fxCloseX.addEventListener("click", () => { /* bloqueado */ });
+
+      async function readResponseUrl(response){
+        const ct = (response.headers.get("content-type") || "").toLowerCase();
+        if (ct.includes("application/json")){
+          const data = await response.json();
+          return data.url || data.apkUrl || data.path || null;
+        }
+        return (await response.text()).trim();
+      }
+
+      function escapeHtml(str){
+        return String(str).replace(/[&<>"']/g, s => ({
+          "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+        }[s]));
+      }
+
+      function fillDoneModal({ appName, packageName, logoUrl, usedFile }){
+        const user = (window.__USER__ && window.__USER__.display_name) ? window.__USER__.display_name : "Usuario";
+
+        doneCongrats.innerHTML = `<span class="spark">Felicidades ${escapeHtml(user)}</span>, tu app ha sido creada con éxito ✅`;
+        doneUser.textContent = user;
+
+        doneAppName.textContent = appName || "-";
+        donePackage.textContent = packageName || "-";
+
+        const info = usedFile ? `Archivo: ${usedFile}` : (logoUrl ? `URL: ${logoUrl}` : "Sin logo");
+        doneLogoInfo.textContent = info;
+
+        const urlToPreview = logoBase64 || (logoUrl ? logoUrl : null);
+        if (urlToPreview){
+          doneLogoImg.src = urlToPreview;
+          doneLogoImg.style.display = "block";
+          const icon = doneLogoBox.querySelector("i");
+          if (icon) icon.style.display = "none";
+        } else {
+          doneLogoImg.style.display = "none";
+          const icon = doneLogoBox.querySelector("i");
+          if (icon) icon.style.display = "inline-block";
+        }
+
+        doneSubtitle.textContent = "Tu APK ya está lista para descargar";
+      }
+
+      doneDownloadBtn.addEventListener("click", () => {
+        if (!apkUrl) return;
+        window.location.href = apkUrl;
+        doneModal.hide();
+      });
+
+      btnGenerate.addEventListener("click", async () => {
+        const appName = (appNameEl.value || "").trim() || "KING VPN";
+        const packageName = (packageNameEl.value || "").trim() || null;
+        const logo_url = (logoUrlEl.value || "").trim() || null;
+
+        const creds = window.__APK_CREDS__ || {};
+        const user_id = (creds.user_id || "").toString().trim();
+        const token = (creds.token || "").toString().trim();
+
+        if (!user_id){ toastErr("Faltan credenciales (user_id)."); return; }
+        if (!token){ toastErr("Faltan credenciales (token)."); return; }
+
+        lastFormData = { appName, packageName, logoUrl: logo_url, usedFile: logoFilename || null };
+
+        const payload = {
+          user_id,
+          token,
+          appName,
+          packageName,
+          logo_url,
+          logo_base64: logoBase64 || null,
+          logo_filename: logoFilename || null,
+          logo_mime: logoMime || null
+        };
+
+        formModal.hide();
+        progressModal.show();
+        startProgressUX();
+
+        try{
+          const response = await fetch("/download-app", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(csrfToken ? { "csrf-token": csrfToken } : {})
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (typeof getCsrfTokenRefresh === "function"){
+            const refreshed = getCsrfTokenRefresh(response);
+            if (refreshed) csrfToken = refreshed;
+          }
+
+          if (!response.ok) throw new Error("Error generando APK");
+
+          apkUrl = await readResponseUrl(response);
+          if (!apkUrl) throw new Error("URL inválida");
+
+          stopProgressUX();
+          fxPercent.textContent = "100%";
+          progressModal.hide();
+
+          fillDoneModal(lastFormData);
+          doneModal.show();
+          toastOk("APK lista ✅");
+
+        } catch(e){
+          stopProgressUX();
+          progressModal.hide();
+          toastErr("Error al generar la app.");
+          formModal.show();
+        }
+      });
+
+      formEl.addEventListener("hidden.bs.modal", () => {
         if (logoFileEl) logoFileEl.value = "";
       });
+      progressEl.addEventListener("hidden.bs.modal", () => stopProgressUX());
     })();
   </script>
 
-  <!-- App config (temas / create / import / export config) -->
-  <script type="module" src="../static/js/app_config/main.js"></script>
+  <!-- ✅ main.js (tu versión parchada) -->
+  <script type="module" src="/static/js/app_config/main.js"></script>
 </body>
 </html>
