@@ -1,13 +1,11 @@
 #!/bin/bash
 # ============================================================
-#   KING•VPN — INSTALADOR COMPLETO DTunnel (LIMPIO + PERSONALIZADO)
+#   KING•VPN — INSTALADOR COMPLETO DTunnel (LIMPIO + PRO)
 #   ✅ Pregunta TODO lo importante (sin defaults)
-#   ✅ Genera .env correcto (DB ABSOLUTA para evitar DB fantasma)
-#   ✅ Prisma: crea DB real (si queda 0 bytes -> force-reset)
-#   ✅ Instala Mercado Pago deps (SDK opcional) + sharp (con libvips)
+#   ✅ Genera .env correcto (prisma/database.db)
+#   ✅ Crea/actualiza el PLAN (tabla plans) en SQLite
 #   ✅ Genera SSL con TU dominio (CN = tu dominio)
 #   ✅ Configura NGINX con TU dominio + TU puerto
-#   ✅ Muestra tabla .tables al final (verificación)
 #   ✅ Idempotente (no rompe si lo corrés 2 veces)
 # ============================================================
 
@@ -40,6 +38,7 @@ title () {
 step () { echo -e "${CYA}➜${RST} ${WHT}$1${RST}"; }
 ok ()   { echo -e "${GRN}✔${RST} ${WHT}$1${RST}"; }
 warn () { echo -e "${YEL}⚠${RST} ${WHT}$1${RST}"; }
+die ()  { echo -e night's; echo -e "${RED}✖${RST} ${WHT}$1${RST}"; exit 1; }
 
 need_root () {
   if [ "$(id -u)" -ne 0 ]; then
@@ -61,6 +60,19 @@ ask_required () {
       return 0
     fi
     echo -e "${YEL}⚠ Este valor es obligatorio${RST}"
+  done
+}
+
+ask_int () {
+  local prompt="$1"
+  local v
+  while true; do
+    v="$(ask_required "$prompt")"
+    if [[ "$v" =~ ^[0-9]+$ ]]; then
+      echo "$v"
+      return 0
+    fi
+    echo -e "${YEL}⚠ Debe ser un número entero${RST}"
   done
 }
 
@@ -113,19 +125,32 @@ ask_url () {
   done
 }
 
+ask_plan_code () {
+  local c
+  while true; do
+    c="$(ask_required "Código del plan (ej: plan_1m)")"
+    if [[ "$c" =~ ^[A-Za-z0-9_-]+$ ]]; then
+      echo "$c"
+      return 0
+    fi
+    echo -e "${YEL}⚠ Código inválido (solo letras/números/_/-)${RST}"
+  done
+}
+
 # --------------------------
 # MAIN
 # --------------------------
 need_root
 clear || true
 title "Instalador KING•VPN — DTunnel"
-echo -e "${DIM}Sin defaults en dominio/puerto/tokens. Todo se carga limpio.${RST}"
+echo -e "${DIM}Instala, compila, configura NGINX+SSL, crea DB y crea/actualiza el plan.${RST}"
 echo
 
 PROJECT_DIR="/root/DTunnel"
 NGINX_DIR="$PROJECT_DIR/nginx"
 ENV_FILE="$PROJECT_DIR/.env"
 NGINX_CONF="/etc/nginx/sites-available/dtunnel.conf"
+DB_FILE="$PROJECT_DIR/prisma/database.db"
 
 mkdir -p "$PROJECT_DIR" "$NGINX_DIR"
 
@@ -134,13 +159,25 @@ title "CONFIGURACIÓN OBLIGATORIA"
 PANEL_PORT="$(ask_port)"
 PANEL_DOMAIN="$(ask_domain)"
 APP_BASE_URL="$(ask_url)"
-MP_ACCESS_TOKEN="$(ask_required "Pegá tu Access Token de Mercado Pago (sin << >>)")"
+
+echo
+echo -e "${WHT}Mercado Pago Access Token (ejemplo):${RST}"
+echo -e "${DIM}APP_USR-292459445257292-010909-ad9da859bf8eb657422b278edbbef85f-517943228${RST}"
+MP_ACCESS_TOKEN="$(ask_required "Pegá tu Access Token de Mercado Pago")"
+
+echo
+title "CONFIGURACIÓN DEL PLAN (EDITABLE)"
+PLAN_CODE="$(ask_plan_code)"
+PLAN_NAME="$(ask_required "Nombre del plan (ej: Acceso mensual KING•VPN)")"
+PLAN_MONTHS="$(ask_int "Meses que suma (ej: 1)")"
+PLAN_PRICE="$(ask_int "Precio en ARS (ej: 7000 o para test 100)")"
 
 echo
 ok "Puerto: $PANEL_PORT"
 ok "Dominio: $PANEL_DOMAIN"
 ok "APP_BASE_URL: $APP_BASE_URL"
 ok "MP_ACCESS_TOKEN: (cargado)"
+ok "PLAN: $PLAN_CODE | $PLAN_NAME | meses=$PLAN_MONTHS | $PLAN_PRICE ARS"
 
 echo
 title "INSTALANDO DEPENDENCIAS"
@@ -151,24 +188,8 @@ apt upgrade -y
 
 step "Instalando dependencias base..."
 apt install -y \
-  curl \
-  build-essential \
-  openssl \
-  git \
-  unzip \
-  zip \
-  ca-certificates \
-  software-properties-common \
-  nginx \
-  ufw \
-  sqlite3 \
-  pkg-config
-
-# deps para sharp (libvips) — evita que falle compilación
-step "Instalando dependencias para Sharp (libvips)..."
-apt install -y \
-  libvips \
-  libvips-dev
+  curl build-essential openssl git unzip zip ca-certificates software-properties-common \
+  nginx ufw sqlite3
 
 # Node 18
 if ! command -v node >/dev/null 2>&1 || ! node -v | grep -qE '^v18\.'; then
@@ -197,7 +218,7 @@ else
   ok "TypeScript ya instalado: $(tsc -v)"
 fi
 
-# Java (opcional)
+# Java opcional
 if ! command -v java >/dev/null 2>&1; then
   step "Instalando OpenJDK 11..."
   apt install -y openjdk-11-jdk
@@ -210,7 +231,7 @@ title "PROYECTO DTUNNEL"
 
 if [ ! -f "$PROJECT_DIR/package.json" ]; then
   warn "No existe package.json en $PROJECT_DIR"
-  echo -e "${YEL}Subí/cloná tu repo DTunnel en ${WHT}$PROJECT_DIR${YEL} y volvé a correr este install.${RST}"
+  echo -e "${YEL}Cloná/subí tu repo DTunnel en ${WHT}$PROJECT_DIR${YEL} y volvé a correr este install.${RST}"
   exit 1
 fi
 
@@ -219,15 +240,8 @@ cd "$PROJECT_DIR"
 step "Instalando dependencias del proyecto (npm install)..."
 npm install
 
-step "Instalando dependencias adicionales (Mercado Pago + Sharp)..."
-# SDK mercadopago es opcional (tu código actual usa fetch). Igual lo dejo instalado.
-npm install mercadopago sharp --save || npm install sharp --save
-
 step "Generando archivo .env (LIMPIO)..."
-
-# ✅ CAMBIO CLAVE: DB ABSOLUTA (evita 'DB fantasma' por cwd/pm2)
-DATABASE_PATH="file:${PROJECT_DIR}/prisma/database.db"
-
+DATABASE_PATH='file:./prisma/database.db'
 CSRF_SECRET="$(openssl rand -hex 16)"
 JWT_SECRET_KEY="$(openssl rand -hex 32)"
 JWT_SECRET_REFRESH="$(openssl rand -hex 32)"
@@ -257,47 +271,60 @@ JWT_SECRET_REFRESH=$JWT_SECRET_REFRESH
 MP_ACCESS_TOKEN=$MP_ACCESS_TOKEN
 APP_BASE_URL=$APP_BASE_URL
 FRONTEND_RETURN_URL=$APP_BASE_URL
-
-# (Opcional recomendado) Webhook signature secret
-MP_WEBHOOK_SECRET=
 EOF
 
 ok ".env generado en $ENV_FILE"
 
 # Prisma
 if [ ! -d "$PROJECT_DIR/prisma" ]; then
-  warn "No existe carpeta prisma/ en el proyecto."
-  exit 1
+  die "No existe carpeta prisma/ en el proyecto."
 fi
 
-# ✅ asegurar archivo DB
-step "Asegurando archivo DB: $PROJECT_DIR/prisma/database.db"
-mkdir -p "$PROJECT_DIR/prisma"
-touch "$PROJECT_DIR/prisma/database.db"
-chmod 600 "$PROJECT_DIR/prisma/database.db" || true
+step "Prisma: sincronizando base de datos (NO borra tu DB)..."
+npx prisma db push
 
-DB_FILE="$PROJECT_DIR/prisma/database.db"
-DB_SIZE="$(stat -c%s "$DB_FILE" 2>/dev/null || echo 0)"
-
-# ✅ si está vacía (0 bytes), forzamos reset (porque no hay nada útil)
-if [ "$DB_SIZE" -eq 0 ]; then
-  warn "database.db está vacía (0 bytes). Creando tablas con Prisma (--force-reset)..."
-  npx prisma db push --force-reset
-else
-  step "Prisma: sincronizando base de datos..."
-  npx prisma db push
+# Validar DB existe
+if [ ! -f "$DB_FILE" ]; then
+  die "No se creó la DB en $DB_FILE (algo falló con Prisma)."
 fi
 
-step "Prisma: generando client..."
-npx prisma generate
+echo
+title "SEED PRO — CREAR/ACTUALIZAR PLAN EN DB"
+
+step "Insert/Update plan en SQLite (idempotente)..."
+sqlite3 "$DB_FILE" <<SQL
+BEGIN;
+
+-- Si existe el plan, lo actualizamos
+UPDATE plans
+SET
+  name      = '$PLAN_NAME',
+  months    = $PLAN_MONTHS,
+  price_ars = $PLAN_PRICE,
+  is_active = 1,
+  updated_at = CURRENT_TIMESTAMP
+WHERE code = '$PLAN_CODE';
+
+-- Si NO existía (changes()==0), lo insertamos
+INSERT INTO plans (code, name, months, price_ars, is_active, created_at, updated_at)
+SELECT '$PLAN_CODE', '$PLAN_NAME', $PLAN_MONTHS, $PLAN_PRICE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+WHERE (SELECT changes() = 0);
+
+COMMIT;
+SQL
+
+ok "Plan listo en DB: $PLAN_CODE"
+
+step "Verificando plan..."
+sqlite3 "$DB_FILE" "SELECT id, code, name, months, price_ars, is_active FROM plans WHERE code='$PLAN_CODE' LIMIT 1;"
+
+echo
+title "BUILD + NGINX + SSL"
 
 step "Build: npm run build"
 npm run build
 
-echo
-title "SSL + NGINX (CON TU DOMINIO)"
-
-# SSL
+# SSL (autofirmado)
 step "Generando certificados SSL (autofirmados) para $PANEL_DOMAIN..."
 openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
@@ -328,6 +355,7 @@ server {
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -336,9 +364,7 @@ server {
 EOF
 
 ln -sf "$NGINX_CONF" /etc/nginx/sites-enabled/dtunnel.conf
-if [ -e /etc/nginx/sites-enabled/default ]; then
-  rm -f /etc/nginx/sites-enabled/default
-fi
+[ -e /etc/nginx/sites-enabled/default ] && rm -f /etc/nginx/sites-enabled/default || true
 
 step "Probando NGINX..."
 nginx -t
@@ -353,36 +379,24 @@ title "INICIAR PANEL (PM2)"
 
 if [ -f "$PROJECT_DIR/ecosystem.config.js" ]; then
   step "Iniciando con PM2 (ecosystem.config.js)..."
-  pm2 start "$PROJECT_DIR/ecosystem.config.js" --update-env || pm2 restart kingvpn-panel --update-env || true
+  pm2 start "$PROJECT_DIR/ecosystem.config.js" --update-env || pm2 restart DTunnel --update-env || true
   pm2 save || true
   ok "PM2 iniciado"
-elif [ -f "$PROJECT_DIR/start.sh" ]; then
-  step "start.sh detectado. Dándole permisos y ejecutando..."
-  chmod +x "$PROJECT_DIR/start.sh"
-  "$PROJECT_DIR/start.sh" || true
-  ok "start.sh ejecutado"
 else
-  warn "No encontré ecosystem.config.js ni start.sh. Iniciá tu panel manualmente."
+  warn "No encontré ecosystem.config.js. Intento iniciar con 'npm start' via PM2..."
+  pm2 start npm --name DTunnel -- start --update-env || true
+  pm2 save || true
 fi
-
-echo
-title "VERIFICACIÓN FINAL (DB + TABLAS)"
-
-step "DB file:"
-ls -la "$PROJECT_DIR/prisma/database.db" || true
-
-step "Tablas SQLite:"
-sqlite3 "$PROJECT_DIR/prisma/database.db" ".tables" || true
 
 echo
 title "FINALIZADO"
 echo -e "${BOX_MID} ${GRN}✔${RST} Proyecto:              ${WHT}$PROJECT_DIR${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} .env:                  ${WHT}$ENV_FILE${RST}"
-echo -e "${BOX_MID} ${GRN}✔${RST} Prisma DB:             ${WHT}$PROJECT_DIR/prisma/database.db${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} Prisma DB:             ${WHT}$DB_FILE${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} Dominio:               ${WHT}$PANEL_DOMAIN${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} Puerto interno:        ${WHT}$PANEL_PORT${RST}"
-echo -e "${BOX_MID} ${CYA}➜${RST} Logs PM2:              ${WHT}pm2 logs${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} Plan:                  ${WHT}$PLAN_CODE ($PLAN_PRICE ARS)${RST}"
+echo -e "${BOX_MID} ${CYA}➜${RST} Logs PM2:              ${WHT}pm2 logs DTunnel${RST}"
 echo -e "${MAG}${BOX_BOT}${RST}"
 echo
 ok "Listo."
-
