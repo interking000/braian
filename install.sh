@@ -1,12 +1,13 @@
 #!/bin/bash
 # ============================================================
-#   KING•VPN — INSTALADOR COMPLETO DTunnel (LIMPIO + PRO)
+#   KING•VPN — INSTALADOR COMPLETO DTunnel (LIMPIO + PERSONALIZADO)
 #   ✅ Pregunta TODO lo importante (sin defaults)
 #   ✅ Genera .env correcto (prisma/database.db)
-#   ✅ Crea/actualiza el PLAN (tabla plans) en SQLite
 #   ✅ Genera SSL con TU dominio (CN = tu dominio)
 #   ✅ Configura NGINX con TU dominio + TU puerto
 #   ✅ Idempotente (no rompe si lo corrés 2 veces)
+#   ✅ Crea/actualiza el PLAN (plan_1m) preguntando precio
+#   ✅ Crea tablas con prisma db push
 # ============================================================
 
 set -euo pipefail
@@ -38,12 +39,11 @@ title () {
 step () { echo -e "${CYA}➜${RST} ${WHT}$1${RST}"; }
 ok ()   { echo -e "${GRN}✔${RST} ${WHT}$1${RST}"; }
 warn () { echo -e "${YEL}⚠${RST} ${WHT}$1${RST}"; }
-die ()  { echo -e night's; echo -e "${RED}✖${RST} ${WHT}$1${RST}"; exit 1; }
+die ()  { echo -e "${RED}✖${RST} ${WHT}$1${RST}"; exit 1; }
 
 need_root () {
   if [ "$(id -u)" -ne 0 ]; then
-    echo -e "${RED}Este script debe ejecutarse como root${RST}"
-    exit 1
+    die "Este script debe ejecutarse como root"
   fi
 }
 
@@ -63,19 +63,6 @@ ask_required () {
   done
 }
 
-ask_int () {
-  local prompt="$1"
-  local v
-  while true; do
-    v="$(ask_required "$prompt")"
-    if [[ "$v" =~ ^[0-9]+$ ]]; then
-      echo "$v"
-      return 0
-    fi
-    echo -e "${YEL}⚠ Debe ser un número entero${RST}"
-  done
-}
-
 ask_port () {
   local p
   while true; do
@@ -85,6 +72,18 @@ ask_port () {
       return 0
     fi
     echo -e "${YEL}⚠ Puerto inválido (1-65535)${RST}"
+  done
+}
+
+ask_price () {
+  local p
+  while true; do
+    p="$(ask_required "Precio del plan mensual (ARS) ej: 7000 o 100 para test")"
+    if [[ "$p" =~ ^[0-9]+$ ]] && [ "$p" -ge 1 ] && [ "$p" -le 99999999 ]; then
+      echo "$p"
+      return 0
+    fi
+    echo -e "${YEL}⚠ Precio inválido (número entero)${RST}"
   done
 }
 
@@ -125,25 +124,13 @@ ask_url () {
   done
 }
 
-ask_plan_code () {
-  local c
-  while true; do
-    c="$(ask_required "Código del plan (ej: plan_1m)")"
-    if [[ "$c" =~ ^[A-Za-z0-9_-]+$ ]]; then
-      echo "$c"
-      return 0
-    fi
-    echo -e "${YEL}⚠ Código inválido (solo letras/números/_/-)${RST}"
-  done
-}
-
 # --------------------------
 # MAIN
 # --------------------------
 need_root
 clear || true
 title "Instalador KING•VPN — DTunnel"
-echo -e "${DIM}Instala, compila, configura NGINX+SSL, crea DB y crea/actualiza el plan.${RST}"
+echo -e "${DIM}Sin defaults en dominio/puerto/tokens. Todo se carga limpio.${RST}"
 echo
 
 PROJECT_DIR="/root/DTunnel"
@@ -159,27 +146,17 @@ title "CONFIGURACIÓN OBLIGATORIA"
 PANEL_PORT="$(ask_port)"
 PANEL_DOMAIN="$(ask_domain)"
 APP_BASE_URL="$(ask_url)"
-
-echo
-echo -e "${WHT}Mercado Pago Access Token (ejemplo):${RST}"
-echo -e "${DIM}APP_USR-292459445257292-010909-ad9da859bf8eb657422b278edbbef85f-517943228${RST}"
-MP_ACCESS_TOKEN="$(ask_required "Pegá tu Access Token de Mercado Pago")"
-
-echo
-title "CONFIGURACIÓN DEL PLAN (EDITABLE)"
-PLAN_CODE="$(ask_plan_code)"
-PLAN_NAME="$(ask_required "Nombre del plan (ej: Acceso mensual KING•VPN)")"
-PLAN_MONTHS="$(ask_int "Meses que suma (ej: 1)")"
-PLAN_PRICE="$(ask_int "Precio en ARS (ej: 7000 o para test 100)")"
+MP_ACCESS_TOKEN="$(ask_required "Pegá tu Access Token de Mercado Pago (ej: APP_USR-292459445257292-010909-ad9da859bf8eb657422b278edbbef85f-517943228)")"
+PLAN_PRICE_ARS="$(ask_price)"
 
 echo
 ok "Puerto: $PANEL_PORT"
 ok "Dominio: $PANEL_DOMAIN"
 ok "APP_BASE_URL: $APP_BASE_URL"
 ok "MP_ACCESS_TOKEN: (cargado)"
-ok "PLAN: $PLAN_CODE | $PLAN_NAME | meses=$PLAN_MONTHS | $PLAN_PRICE ARS"
-
+ok "PLAN plan_1m: $PLAN_PRICE_ARS ARS"
 echo
+
 title "INSTALANDO DEPENDENCIAS"
 
 step "Actualizando sistema..."
@@ -188,8 +165,17 @@ apt upgrade -y
 
 step "Instalando dependencias base..."
 apt install -y \
-  curl build-essential openssl git unzip zip ca-certificates software-properties-common \
-  nginx ufw sqlite3
+  curl \
+  build-essential \
+  openssl \
+  git \
+  unzip \
+  zip \
+  ca-certificates \
+  software-properties-common \
+  nginx \
+  ufw \
+  sqlite3
 
 # Node 18
 if ! command -v node >/dev/null 2>&1 || ! node -v | grep -qE '^v18\.'; then
@@ -218,7 +204,7 @@ else
   ok "TypeScript ya instalado: $(tsc -v)"
 fi
 
-# Java opcional
+# Java (opcional)
 if ! command -v java >/dev/null 2>&1; then
   step "Instalando OpenJDK 11..."
   apt install -y openjdk-11-jdk
@@ -231,7 +217,7 @@ title "PROYECTO DTUNNEL"
 
 if [ ! -f "$PROJECT_DIR/package.json" ]; then
   warn "No existe package.json en $PROJECT_DIR"
-  echo -e "${YEL}Cloná/subí tu repo DTunnel en ${WHT}$PROJECT_DIR${YEL} y volvé a correr este install.${RST}"
+  echo -e "${YEL}Subí/cloná tu repo DTunnel en ${WHT}$PROJECT_DIR${YEL} y volvé a correr este install.${RST}"
   exit 1
 fi
 
@@ -246,7 +232,8 @@ CSRF_SECRET="$(openssl rand -hex 16)"
 JWT_SECRET_KEY="$(openssl rand -hex 32)"
 JWT_SECRET_REFRESH="$(openssl rand -hex 32)"
 
-cat <<EOF > "$ENV_FILE"
+# ✅ heredoc safe: sin expansión accidental rara
+cat > "$ENV_FILE" <<EOF
 # ===============================
 # SERVIDOR
 # ===============================
@@ -283,48 +270,30 @@ fi
 step "Prisma: sincronizando base de datos (NO borra tu DB)..."
 npx prisma db push
 
-# Validar DB existe
-if [ ! -f "$DB_FILE" ]; then
-  die "No se creó la DB en $DB_FILE (algo falló con Prisma)."
-fi
+# ✅ Seed plan (plan_1m) en SQLite (si no existe lo crea, si existe actualiza)
+step "Creando/actualizando plan mensual (plan_1m) en la DB..."
+mkdir -p "$(dirname "$DB_FILE")"
+touch "$DB_FILE"
 
-echo
-title "SEED PRO — CREAR/ACTUALIZAR PLAN EN DB"
-
-step "Insert/Update plan en SQLite (idempotente)..."
 sqlite3 "$DB_FILE" <<SQL
-BEGIN;
-
--- Si existe el plan, lo actualizamos
-UPDATE plans
-SET
-  name      = '$PLAN_NAME',
-  months    = $PLAN_MONTHS,
-  price_ars = $PLAN_PRICE,
-  is_active = 1,
-  updated_at = CURRENT_TIMESTAMP
-WHERE code = '$PLAN_CODE';
-
--- Si NO existía (changes()==0), lo insertamos
-INSERT INTO plans (code, name, months, price_ars, is_active, created_at, updated_at)
-SELECT '$PLAN_CODE', '$PLAN_NAME', $PLAN_MONTHS, $PLAN_PRICE, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
-WHERE (SELECT changes() = 0);
-
-COMMIT;
+INSERT INTO plans (code, name, months, price_ars, is_active, updated_at)
+VALUES ('plan_1m', 'Acceso mensual KING•VPN', 1, $PLAN_PRICE_ARS, 1, CURRENT_TIMESTAMP)
+ON CONFLICT(code) DO UPDATE SET
+  name='Acceso mensual KING•VPN',
+  months=1,
+  price_ars=excluded.price_ars,
+  is_active=1,
+  updated_at=CURRENT_TIMESTAMP;
 SQL
 
-ok "Plan listo en DB: $PLAN_CODE"
-
-step "Verificando plan..."
-sqlite3 "$DB_FILE" "SELECT id, code, name, months, price_ars, is_active FROM plans WHERE code='$PLAN_CODE' LIMIT 1;"
-
-echo
-title "BUILD + NGINX + SSL"
+ok "Plan plan_1m listo (precio ARS $PLAN_PRICE_ARS)"
 
 step "Build: npm run build"
 npm run build
 
-# SSL (autofirmado)
+echo
+title "SSL + NGINX (CON TU DOMINIO)"
+
 step "Generando certificados SSL (autofirmados) para $PANEL_DOMAIN..."
 openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
@@ -334,9 +303,8 @@ openssl req -x509 -nodes -days 365 \
 
 ok "SSL generado en $NGINX_DIR"
 
-# Nginx config
 step "Escribiendo config NGINX..."
-cat <<EOF > "$NGINX_CONF"
+cat > "$NGINX_CONF" <<EOF
 server {
     listen 80;
     server_name $PANEL_DOMAIN;
@@ -355,7 +323,6 @@ server {
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -364,7 +331,10 @@ server {
 EOF
 
 ln -sf "$NGINX_CONF" /etc/nginx/sites-enabled/dtunnel.conf
-[ -e /etc/nginx/sites-enabled/default ] && rm -f /etc/nginx/sites-enabled/default || true
+
+if [ -e /etc/nginx/sites-enabled/default ]; then
+  rm -f /etc/nginx/sites-enabled/default
+fi
 
 step "Probando NGINX..."
 nginx -t
@@ -379,24 +349,28 @@ title "INICIAR PANEL (PM2)"
 
 if [ -f "$PROJECT_DIR/ecosystem.config.js" ]; then
   step "Iniciando con PM2 (ecosystem.config.js)..."
-  pm2 start "$PROJECT_DIR/ecosystem.config.js" --update-env || pm2 restart DTunnel --update-env || true
+  pm2 start "$PROJECT_DIR/ecosystem.config.js" --update-env || true
+  pm2 restart DTunnel --update-env || true
   pm2 save || true
   ok "PM2 iniciado"
+elif [ -f "$PROJECT_DIR/start.sh" ]; then
+  step "start.sh detectado. Dándole permisos y ejecutando..."
+  chmod +x "$PROJECT_DIR/start.sh"
+  "$PROJECT_DIR/start.sh" || true
+  ok "start.sh ejecutado"
 else
-  warn "No encontré ecosystem.config.js. Intento iniciar con 'npm start' via PM2..."
-  pm2 start npm --name DTunnel -- start --update-env || true
-  pm2 save || true
+  warn "No encontré ecosystem.config.js ni start.sh. Iniciá tu panel manualmente."
 fi
 
 echo
 title "FINALIZADO"
 echo -e "${BOX_MID} ${GRN}✔${RST} Proyecto:              ${WHT}$PROJECT_DIR${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} .env:                  ${WHT}$ENV_FILE${RST}"
-echo -e "${BOX_MID} ${GRN}✔${RST} Prisma DB:             ${WHT}$DB_FILE${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} Prisma DB:             ${WHT}$PROJECT_DIR/prisma/database.db${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} Dominio:               ${WHT}$PANEL_DOMAIN${RST}"
 echo -e "${BOX_MID} ${GRN}✔${RST} Puerto interno:        ${WHT}$PANEL_PORT${RST}"
-echo -e "${BOX_MID} ${GRN}✔${RST} Plan:                  ${WHT}$PLAN_CODE ($PLAN_PRICE ARS)${RST}"
-echo -e "${BOX_MID} ${CYA}➜${RST} Logs PM2:              ${WHT}pm2 logs DTunnel${RST}"
+echo -e "${BOX_MID} ${GRN}✔${RST} Plan mensual (ARS):    ${WHT}$PLAN_PRICE_ARS${RST}"
+echo -e "${BOX_MID} ${CYA}➜${RST} Logs PM2:              ${WHT}pm2 logs${RST}"
 echo -e "${MAG}${BOX_BOT}${RST}"
 echo
 ok "Listo."
