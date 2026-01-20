@@ -19,6 +19,7 @@ type Body = {
   logo_url?: string;
   logo_base64?: string; // data:image/*;base64,...
   logo_filename?: string;
+  logo_mime?: string;
 
   cancel?: boolean;
   build_id?: string;
@@ -44,9 +45,7 @@ function slugApkName(name: string) {
 }
 
 function uniqueApkName(publicDownloads: string, baseNameNoExt: string) {
-  const tryName = (n?: number) =>
-    n ? `${baseNameNoExt}-${n}.apk` : `${baseNameNoExt}.apk`;
-
+  const tryName = (n?: number) => (n ? `${baseNameNoExt}-${n}.apk` : `${baseNameNoExt}.apk`);
   let candidate = tryName();
   let i = 2;
 
@@ -67,13 +66,22 @@ function escapeXml(s: string) {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * ✅ runCmd con logs PRO:
+ * - imprime comando
+ * - imprime stdout y stderr en vivo con prefijo
+ * - junta stderr final para error
+ */
 function runCmd(
+  tag: string,
   cmd: string,
   args: string[],
   procs: Set<ReturnType<typeof spawn>>,
   opts?: { cwd?: string }
 ) {
   return new Promise<void>((resolve, reject) => {
+    console.log(`[${tag}] $ ${cmd} ${args.map((x) => (/\s/.test(x) ? JSON.stringify(x) : x)).join(' ')}`);
+
     const p = spawn(cmd, args, {
       cwd: opts?.cwd,
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -83,7 +91,17 @@ function runCmd(
     procs.add(p);
 
     let stderr = '';
-    p.stderr.on('data', (d) => (stderr += d.toString()));
+
+    p.stdout.on('data', (d) => {
+      const s = d.toString();
+      s.split('\n').filter(Boolean).forEach((line) => console.log(`[${tag}] ${line}`));
+    });
+
+    p.stderr.on('data', (d) => {
+      const s = d.toString();
+      stderr += s;
+      s.split('\n').filter(Boolean).forEach((line) => console.log(`[${tag}][ERR] ${line}`));
+    });
 
     p.on('error', (err) => {
       procs.delete(p);
@@ -93,39 +111,34 @@ function runCmd(
     p.on('close', (code) => {
       procs.delete(p);
       if (code === 0) return resolve();
-      reject(new Error(`[${cmd}] exit=${code} ${stderr.slice(-2000)}`));
+      reject(new Error(`[${tag}] exit=${code} ${stderr.slice(-4000)}`));
     });
   });
 }
 
 /** ✅ Descarga a Buffer (URL) */
-async function downloadToBufferWithMime(url: string) {
+async function downloadToBuffer(url: string) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`No se pudo descargar logo: ${res.status}`);
-  const mime = (res.headers.get('content-type') || '').toLowerCase();
   const buf = Buffer.from(await res.arrayBuffer());
-  return { mime, buf };
+  return buf;
 }
 
 /** ✅ DataURL: acepta cualquier image/* en base64 */
 function bufferFromDataUrlAny(dataUrl: string) {
   const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/i);
   if (!m) throw new Error('logo_base64 inválido (debe ser data:image/*;base64,...)');
-  return {
-    mime: m[1].toLowerCase(),
-    buf: Buffer.from(m[2], 'base64'),
-  };
+  return Buffer.from(m[2], 'base64');
 }
 
 /** ✅ Protege el server */
-function assertImageSize(buf: Buffer, maxBytes = 6 * 1024 * 1024) {
+function assertImageSize(buf: Buffer, maxBytes = 10 * 1024 * 1024) {
   if (!buf || !buf.length) throw new Error('Logo vacío');
-  if (buf.length > maxBytes) throw new Error('Logo demasiado pesado (máx 6MB)');
+  if (buf.length > maxBytes) throw new Error(`Logo demasiado pesado (máx ${(maxBytes / 1024 / 1024).toFixed(0)}MB)`);
 }
 
 /** ✅ Convierte cualquier imagen soportada a PNG real 512x512 */
-async function toPngBuffer(input: Buffer) {
-  // fit cover para no deformar: recorta al cuadrado
+async function toPng512(input: Buffer) {
   return await sharp(input)
     .resize(512, 512, { fit: 'cover' })
     .png({ compressionLevel: 9 })
@@ -236,23 +249,18 @@ function setAppLabel(decompiledDir: string, appName: string) {
         `<string name="app_name">${safeName}</string>`
       );
     } else {
-      xml = xml.replace(
-        /<\/resources>/,
-        `  <string name="app_name">${safeName}</string>\n</resources>`
-      );
+      xml = xml.replace(/<\/resources>/, `  <string name="app_name">${safeName}</string>\n</resources>`);
     }
     fs.writeFileSync(stringsPath, xml);
   }
 
   if (fs.existsSync(manifestPath)) {
     let manifest = fs.readFileSync(manifestPath, 'utf8');
-
     if (/android:label="/.test(manifest)) {
       manifest = manifest.replace(/android:label="[^"]*"/, `android:label="@string/app_name"`);
     } else {
       manifest = manifest.replace(/<application\b/, `<application android:label="@string/app_name"`);
     }
-
     fs.writeFileSync(manifestPath, manifest);
   }
 }
@@ -268,11 +276,7 @@ function getAppIconRefsFromManifest(manifestPath: string) {
   const manifest = fs.readFileSync(manifestPath, 'utf8');
   const iconMatch = manifest.match(/android:icon="([^"]+)"/);
   const roundMatch = manifest.match(/android:roundIcon="([^"]+)"/);
-
-  return {
-    icon: iconMatch?.[1] || '',
-    roundIcon: roundMatch?.[1] || '',
-  };
+  return { icon: iconMatch?.[1] || '', roundIcon: roundMatch?.[1] || '' };
 }
 
 function replaceResourceFiles(decompiledDir: string, _type: string, name: string, png: Buffer) {
@@ -280,13 +284,11 @@ function replaceResourceFiles(decompiledDir: string, _type: string, name: string
   if (!fs.existsSync(resDir)) return;
 
   const folders = fs.readdirSync(resDir).map((f) => path.join(resDir, f));
-
   for (const folder of folders) {
     if (!fs.existsSync(folder) || !fs.statSync(folder).isDirectory()) continue;
 
     const base = path.join(folder, `${name}`);
     const candidates = [`${base}.png`, `${base}.webp`];
-
     for (const c of candidates) {
       if (fs.existsSync(c)) fs.writeFileSync(c, png);
     }
@@ -335,12 +337,20 @@ function applyLauncherIconKeepResourceName(decompiledDir: string, png: Buffer) {
 export default {
   url: '/download-app',
   method: 'POST',
+
+  // ✅ IMPORTANTÍSIMO: permitir payload grande (logo_base64)
+  // Si tu Fastify ya tiene global bodyLimit, esto igual ayuda a nivel ruta.
+  // (En Fastify funciona cuando el plugin lo respeta; en la mayoría de setups sí.)
+  // @ts-ignore
+  bodyLimit: 20 * 1024 * 1024, // 20MB
+
   handler: async (req: FastifyRequest, reply: FastifyReply) => {
     const body = (req.body || {}) as Body;
 
     const build_id = safeTrim(body.build_id) || `${Date.now()}_${Math.random().toString(16).slice(2)}`;
-    const timestamp = Date.now().toString();
+    console.log(`[APK] build_id=${build_id}`);
 
+    const timestamp = Date.now().toString();
     const tempDir = path.join(__dirname, `../../../app/tmp_apk_${timestamp}`);
     const decompiledDir = path.join(tempDir, 'apk_decompiled');
 
@@ -360,12 +370,16 @@ export default {
     const keyAlias = 'mykey';
 
     const cleanTemp = () => {
-      if (fs.existsSync(tempDir)) fs.rmSync(tempDir, { recursive: true, force: true });
+      try {
+        if (fs.existsSync(tempDir)) fs.rmSync(tempDir, { recursive: true, force: true });
+      } catch {}
     };
 
     const cleanAll = () => {
       cleanTemp();
-      try { if (fs.existsSync(finalApkPath)) fs.unlinkSync(finalApkPath); } catch {}
+      try {
+        if (fs.existsSync(finalApkPath)) fs.unlinkSync(finalApkPath);
+      } catch {}
       activeBuilds.delete(build_id);
     };
 
@@ -388,13 +402,13 @@ export default {
       const token = safeTrim(body.token);
 
       if (!user_id || !token) {
-        reply.status(400).send('Credenciales faltantes');
+        reply.status(400).send(`Credenciales faltantes (user_id/token) build_id=${build_id}`);
         return;
       }
 
       const packageName = safeTrim(body.packageName);
       if (packageName && !isValidPackageName(packageName)) {
-        reply.status(400).send('Nombre de paquete inválido');
+        reply.status(400).send(`Nombre de paquete inválido build_id=${build_id}`);
         return;
       }
 
@@ -404,7 +418,9 @@ export default {
       if (!fs.existsSync(keystoreDir)) fs.mkdirSync(keystoreDir, { recursive: true });
 
       if (!fs.existsSync(keystorePath)) {
+        console.log('[APK] Creando keystore...');
         await runCmd(
+          'KEYTOOL',
           'keytool',
           [
             '-genkeypair',
@@ -423,13 +439,13 @@ export default {
       ensureDir(tempDir);
 
       if (!fs.existsSync(baseApkPath)) {
-        reply.status(500).send('No existe base.apk');
+        reply.status(500).send(`No existe base.apk build_id=${build_id}`);
         cleanAll();
         return;
       }
 
       console.log('[APK] Descompilando...');
-      await runCmd('apktool', ['d', '-f', baseApkPath, '-o', decompiledDir], procs);
+      await runCmd('APKTOOL-DECOMPILE', 'apktool', ['d', '-f', baseApkPath, '-o', decompiledDir], procs);
 
       const assetsDir = path.join(decompiledDir, 'assets');
       ensureDir(assetsDir);
@@ -443,51 +459,38 @@ export default {
       setAppLabel(decompiledDir, appName);
 
       if (packageName) {
-        console.log('[APK] Aplicando packageName REAL (manifest + res + smali + apktool.yml)...');
+        console.log('[APK] Aplicando packageName REAL...');
         applyPackageRename(decompiledDir, packageName);
         setApktoolYmlRenamePackage(decompiledDir, packageName);
       }
 
-      // ✅ LOGO: acepta cualquier tipo y lo convierte a PNG real
+      // ✅ LOGO: cualquier image/* -> PNG 512
       let logoPng: Buffer | null = null;
 
       if (safeTrim(body.logo_base64)) {
-        console.log('[APK] Logo desde base64 (any)...');
-        const parsed = bufferFromDataUrlAny(body.logo_base64!);
-        assertImageSize(parsed.buf);
-        try {
-          logoPng = await toPngBuffer(parsed.buf);
-        } catch (e) {
-          console.error('[APK] Error convirtiendo logo_base64:', e);
-          reply.status(400).send('Logo inválido (no pude convertir la imagen). Probá con otra imagen.');
-          cleanAll();
-          return;
-        }
+        console.log('[APK] Logo desde base64...');
+        const raw = bufferFromDataUrlAny(body.logo_base64!);
+        assertImageSize(raw);
+        logoPng = await toPng512(raw);
       } else if (safeTrim(body.logo_url)) {
-        console.log('[APK] Logo desde URL (any)...');
-        const dl = await downloadToBufferWithMime(body.logo_url!);
-        assertImageSize(dl.buf);
-        try {
-          logoPng = await toPngBuffer(dl.buf);
-        } catch (e) {
-          console.error('[APK] Error convirtiendo logo_url:', e);
-          reply.status(400).send('Logo inválido desde URL (no pude convertir la imagen). Probá otra URL.');
-          cleanAll();
-          return;
-        }
+        console.log('[APK] Logo desde URL...');
+        const raw = await downloadToBuffer(body.logo_url!);
+        assertImageSize(raw);
+        logoPng = await toPng512(raw);
       }
 
       if (logoPng) {
-        console.log('[APK] Aplicando icono (PNG convertido)...');
+        console.log('[APK] Aplicando icono...');
         applyLauncherIconKeepResourceName(decompiledDir, logoPng);
       }
 
       console.log('[APK] Recompilando...');
       const unsignedApk = path.join(tempDir, 'unsigned.apk');
-      await runCmd('apktool', ['b', decompiledDir, '-o', unsignedApk], procs);
+      await runCmd('APKTOOL-BUILD', 'apktool', ['b', decompiledDir, '-o', unsignedApk], procs);
 
       console.log('[APK] Firmando (V1+V2+V3)...');
       await runCmd(
+        'APKSIGNER',
         'apksigner',
         [
           'sign',
@@ -510,17 +513,17 @@ export default {
 
       cleanTemp();
 
-      // ✅ borrar APK a los 5 minutos
+      // borrar APK a los 5 minutos
       setTimeout(() => {
         try { if (fs.existsSync(finalApkPath)) fs.unlinkSync(finalApkPath); } catch {}
         activeBuilds.delete(build_id);
       }, 5 * 60 * 1000);
 
-    } catch (err) {
+    } catch (err: any) {
       console.error('[ERROR] /download-app:', err);
+      const msg = String(err?.message || err || 'unknown');
       cleanAll();
-      reply.status(500).send('Error al generar APK');
+      reply.status(500).send(`Error al generar APK (build_id=${build_id})\n${msg}`);
     }
   },
 } as RouteOptions;
-

@@ -6,7 +6,7 @@
   <meta name="google" content="notranslate">
   <link rel="shortcut icon" href="/static/img/favicon.svg" />
 
-  <title>KING•VPN</title>
+  <title>KING•VPN • Tu App y Tus Diseños</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
@@ -126,7 +126,7 @@
     .card.h-100.border-0.overflow-auto{ background: transparent !important; }
   </style>
 
-  <!-- ✅ MODALES (los mismos del mensaje anterior, sin tocar lógica) -->
+  <!-- ✅ MODALES -->
   <style>
     .modal-backdrop.show{ opacity:.78; }
 
@@ -477,6 +477,22 @@
       color: #06101f !important;
       box-shadow: var(--fx-glow);
     }
+
+    /* ✅ ERROR MODAL */
+    #apkErrorModal{ z-index: 22000; }
+    #apkErrorModal .modal-dialog{ max-width: 860px; }
+    #apkErrorModal pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      padding:12px;
+      border-radius:14px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.12);
+      color:rgba(238,243,255,.92);
+      max-height: 45vh;
+      overflow:auto;
+    }
   </style>
 </head>
 
@@ -491,7 +507,6 @@
 
       <div class="content pt-1 overflow-auto">
         <div class="kv-page">
-
           <div class="card kv-card h-100 border-0 overflow-auto">
             <div class="card-body m-0">
 
@@ -519,7 +534,6 @@
                 </div>
 
                 <div class="mt-2">
-                  <!-- ✅ FIX: NO dejarlo permanently disabled -->
                   <button type="button" id="btnOpenApk" class="export-config kv-btn kv-btn-primary w-100">
                     <i class="bi bi-android"></i>
                     <span>GENERAR APK</span>
@@ -545,7 +559,6 @@
 
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -727,6 +740,65 @@
     </div>
   </div>
 
+  <!-- ✅ MODAL D: ERROR EXACTO -->
+  <div class="modal fade" id="apkErrorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="
+        background:
+          radial-gradient(900px 420px at 12% 0%, rgba(255,43,74,.18), transparent 60%),
+          radial-gradient(900px 420px at 90% 10%, rgba(255,79,216,.14), transparent 60%),
+          linear-gradient(180deg, rgba(7,8,16,.98), rgba(7,8,16,.94));
+        color:#eef3ff;border-radius:26px;border:1px solid rgba(255,255,255,.16);
+        box-shadow:0 60px 180px rgba(0,0,0,.90);overflow:hidden;backdrop-filter:blur(14px);
+      ">
+        <div class="modal-header border-0" style="border-bottom:1px solid rgba(255,255,255,.10)!important;">
+          <div class="d-flex align-items-center gap-2">
+            <div class="fx-chip"><i class="bi bi-bug-fill"></i></div>
+            <div class="d-flex flex-column">
+              <h6 class="m-0" style="font-weight:999;letter-spacing:.16em;text-transform:uppercase;font-size:.88rem;">
+                Error exacto de compilación
+              </h6>
+              <small style="color:rgba(238,243,255,.72);letter-spacing:.06em;">
+                Copiá esto y pegalo tal cual para debug
+              </small>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <span class="done-badge red">status: <b id="errStatus">-</b></span>
+            <span class="done-badge rose">endpoint: <b>/download-app</b></span>
+            <span class="done-badge blue">request-id: <b id="errReqId">-</b></span>
+          </div>
+
+          <div class="done-card">
+            <div class="done-row">
+              <div class="done-k">Mensaje</div>
+              <div class="done-v" id="errMessage" style="white-space:normal;max-width:100%;">-</div>
+            </div>
+            <div class="done-row">
+              <div class="done-k">Detalles</div>
+              <div class="done-v" style="max-width:100%;white-space:normal;">
+                <pre id="errBody">-</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3 flex-wrap">
+            <button type="button" class="btn done-btn" id="errCopyBtn">
+              <i class="bi bi-clipboard"></i> Copiar
+            </button>
+            <button type="button" class="btn done-btn-primary" id="errBackBtn">
+              <i class="bi bi-arrow-left"></i> Volver
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- libs -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
@@ -759,7 +831,7 @@
     };
   </script>
 
-  <!-- ✅ JS: bind del botón + modales (FIX incluido) -->
+  <!-- ✅ JS: bind del botón + modales + ERROR EXACTO -->
   <script>
     (function () {
       let csrfToken = (typeof getCsrfTokenHead === "function") ? getCsrfTokenHead() : null;
@@ -776,10 +848,12 @@
       const formEl = document.getElementById("apkFormModal");
       const progressEl = document.getElementById("apkProgressModal");
       const doneEl = document.getElementById("apkDoneModal");
+      const errorEl = document.getElementById("apkErrorModal");
 
       const formModal = new bootstrap.Modal(formEl);
       const progressModal = new bootstrap.Modal(progressEl);
       const doneModal = new bootstrap.Modal(doneEl);
+      const errorModal = new bootstrap.Modal(errorEl);
 
       const btnOpenById = document.getElementById("btnOpenApk");
       const btnOpenByClass = document.querySelector(".export-config");
@@ -811,6 +885,14 @@
       const doneLogoInfo = document.getElementById("doneLogoInfo");
       const doneDownloadBtn = document.getElementById("doneDownloadBtn");
 
+      // ✅ ERROR UI fields
+      const errStatus = document.getElementById("errStatus");
+      const errReqId = document.getElementById("errReqId");
+      const errMessage = document.getElementById("errMessage");
+      const errBody = document.getElementById("errBody");
+      const errCopyBtn = document.getElementById("errCopyBtn");
+      const errBackBtn = document.getElementById("errBackBtn");
+
       let logoBase64 = null;
       let logoFilename = null;
       let logoMime = null;
@@ -828,7 +910,6 @@
         const btn = btnOpenById || btnOpenByClass;
         if (!btn) return;
 
-        // evitar doble bind
         if (btn.dataset.bound === "1") return;
         btn.dataset.bound = "1";
 
@@ -850,7 +931,6 @@
         if (logoFileEl) logoFileEl.value = "";
       }
 
-      // ✅ FIX: asegurar habilitar y bindear siempre
       enableOpenButton();
       bindOpenButton();
       document.addEventListener("DOMContentLoaded", () => {
@@ -872,7 +952,7 @@
         });
       }
 
-      // ✅ aceptar cualquier imagen
+      // aceptar cualquier imagen
       if (logoFileEl){
         logoFileEl.addEventListener("change", () => {
           const file = logoFileEl.files && logoFileEl.files[0];
@@ -988,6 +1068,71 @@
         doneModal.hide();
       });
 
+      // ✅ lee el body aunque NO sea JSON, y NO pisa el error real
+      async function readErrorBody(response){
+        const ct = (response.headers.get("content-type") || "").toLowerCase();
+        try{
+          if (ct.includes("application/json")){
+            const data = await response.json();
+            return { raw: JSON.stringify(data, null, 2), data };
+          }
+        } catch {}
+        try{
+          const t = await response.text();
+          return { raw: (t || "").trim() || "-", data: null };
+        } catch {
+          return { raw: "-", data: null };
+        }
+      }
+
+      function pickRequestId(headers){
+        return (
+          headers.get("x-request-id") ||
+          headers.get("x-correlation-id") ||
+          headers.get("cf-ray") ||
+          headers.get("x-amzn-trace-id") ||
+          "-"
+        );
+      }
+
+      function showExactError({ status, statusText, reqId, message, bodyRaw, payloadSent }){
+        errStatus.textContent = status ? (status + " " + (statusText || "")) : "-";
+        errReqId.textContent = reqId || "-";
+        errMessage.textContent = message || "Fallo al generar APK";
+        const dump = [
+          "=== ERROR DETALLADO /download-app ===",
+          "status: " + (status ? (status + " " + (statusText || "")) : "-"),
+          "request-id: " + (reqId || "-"),
+          "",
+          "=== BODY (backend) ===",
+          (bodyRaw || "-"),
+          "",
+          "=== PAYLOAD (frontend) ===",
+          JSON.stringify(payloadSent || {}, null, 2)
+        ].join("\n");
+        errBody.textContent = dump;
+
+        // cerrar otros modales y abrir error
+        try{ progressModal.hide(); }catch{}
+        try{ doneModal.hide(); }catch{}
+        try{ formModal.hide(); }catch{}
+        errorModal.show();
+      }
+
+      errBackBtn.addEventListener("click", () => {
+        errorModal.hide();
+        formModal.show();
+      });
+
+      errCopyBtn.addEventListener("click", async () => {
+        try{
+          await navigator.clipboard.writeText(errBody.textContent || "");
+          toastOk("Copiado ✅");
+        }catch{
+          toastErr("No pude copiar (el navegador bloqueó).");
+        }
+      });
+
       btnGenerate.addEventListener("click", async () => {
         const appName = (appNameEl.value || "").trim() || "KING VPN";
         const packageName = (packageNameEl.value || "").trim() || null;
@@ -1032,10 +1177,39 @@
             if (refreshed) csrfToken = refreshed;
           }
 
-          if (!response.ok) throw new Error("Error generando APK");
+          // ✅ si NO OK, mostrar error exacto (status + body)
+          if (!response.ok){
+            const reqId = pickRequestId(response.headers);
+            const { raw } = await readErrorBody(response);
+
+            stopProgressUX();
+            showExactError({
+              status: response.status,
+              statusText: response.statusText,
+              reqId,
+              message: "El backend rechazó la generación (ver detalle abajo).",
+              bodyRaw: raw,
+              payloadSent: payload
+            });
+
+            toastErr("Falló la generación ❌ (ver error exacto)");
+            return;
+          }
 
           apkUrl = await readResponseUrl(response);
-          if (!apkUrl) throw new Error("URL inválida");
+          if (!apkUrl){
+            stopProgressUX();
+            showExactError({
+              status: response.status,
+              statusText: response.statusText,
+              reqId: pickRequestId(response.headers),
+              message: "Respuesta OK pero no vino URL de APK (url/apkUrl/path vacío).",
+              bodyRaw: "Respuesta sin URL válida.",
+              payloadSent: payload
+            });
+            toastErr("Respuesta inválida ❌");
+            return;
+          }
 
           stopProgressUX();
           fxPercent.textContent = "100%";
@@ -1047,9 +1221,16 @@
 
         } catch(e){
           stopProgressUX();
-          progressModal.hide();
-          toastErr("Error al generar la app.");
-          formModal.show();
+          const msg = (e && e.message) ? e.message : String(e);
+          showExactError({
+            status: null,
+            statusText: "",
+            reqId: "-",
+            message: "Error de red / fetch (no llegó al backend).",
+            bodyRaw: msg,
+            payloadSent: payload
+          });
+          toastErr("Error de red ❌ (ver detalle)");
         }
       });
 
