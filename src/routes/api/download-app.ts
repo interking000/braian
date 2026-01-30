@@ -1,13 +1,26 @@
+// /download-app route (Fastify) — APK builder PRO
+// - Logs claros (captura stdout/stderr con tail)
+// - Zipalign BEFORE sign
+// - Apksigner verify AFTER sign (con print-certs)
+// - Errores devueltos con motivo real
+// - Cancel build (mata procesos)
+// - Limpieza segura
+//
+// Requisitos en el servidor (PATH):
+//   - apktool
+//   - zipalign (Android SDK build-tools)
+//   - apksigner (Android SDK build-tools)
+//   - keytool (Java JDK)
+//   - node >= 18 (para fetch)
+//
+// NOTA: Si el usuario ya tiene instalada una app con MISMO packageName pero OTRA firma,
+// Android mostrará "App no instalada". En ese caso: desinstalar la anterior o cambiar packageName.
+
 import { FastifyReply, FastifyRequest, RouteOptions } from 'fastify';
 import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
 import sharp from 'sharp';
-
-const activeBuilds = new Map<
-  string,
-  { tempDir: string; finalApkPath?: string; procs: Set<ReturnType<typeof spawn>> }
->();
 
 type Body = {
   user_id?: string;
@@ -19,17 +32,22 @@ type Body = {
   logo_url?: string;
   logo_base64?: string; // data:image/*;base64,...
   logo_filename?: string;
-  logo_mime?: string;
 
   cancel?: boolean;
   build_id?: string;
 };
+
+const activeBuilds = new Map<
+  string,
+  { tempDir: string; finalApkPath?: string; procs: Set<ReturnType<typeof spawn>> }
+>();
 
 function safeTrim(v?: string) {
   return (v ?? '').toString().trim();
 }
 
 function isValidPackageName(pkg: string) {
+  // com.company.app_name
   return /^[a-zA-Z]+[a-zA-Z0-9_]*(\.[a-zA-Z]+[a-zA-Z0-9_]*)+$/.test(pkg);
 }
 
@@ -46,6 +64,7 @@ function slugApkName(name: string) {
 
 function uniqueApkName(publicDownloads: string, baseNameNoExt: string) {
   const tryName = (n?: number) => (n ? `${baseNameNoExt}-${n}.apk` : `${baseNameNoExt}.apk`);
+
   let candidate = tryName();
   let i = 2;
 
@@ -64,85 +83,6 @@ function escapeXml(s: string) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-}
-
-/**
- * ✅ runCmd con logs PRO:
- * - imprime comando
- * - imprime stdout y stderr en vivo con prefijo
- * - junta stderr final para error
- */
-function runCmd(
-  tag: string,
-  cmd: string,
-  args: string[],
-  procs: Set<ReturnType<typeof spawn>>,
-  opts?: { cwd?: string }
-) {
-  return new Promise<void>((resolve, reject) => {
-    console.log(`[${tag}] $ ${cmd} ${args.map((x) => (/\s/.test(x) ? JSON.stringify(x) : x)).join(' ')}`);
-
-    const p = spawn(cmd, args, {
-      cwd: opts?.cwd,
-      stdio: ['ignore', 'pipe', 'pipe'],
-      shell: false,
-    });
-
-    procs.add(p);
-
-    let stderr = '';
-
-    p.stdout.on('data', (d) => {
-      const s = d.toString();
-      s.split('\n').filter(Boolean).forEach((line) => console.log(`[${tag}] ${line}`));
-    });
-
-    p.stderr.on('data', (d) => {
-      const s = d.toString();
-      stderr += s;
-      s.split('\n').filter(Boolean).forEach((line) => console.log(`[${tag}][ERR] ${line}`));
-    });
-
-    p.on('error', (err) => {
-      procs.delete(p);
-      reject(err);
-    });
-
-    p.on('close', (code) => {
-      procs.delete(p);
-      if (code === 0) return resolve();
-      reject(new Error(`[${tag}] exit=${code} ${stderr.slice(-4000)}`));
-    });
-  });
-}
-
-/** ✅ Descarga a Buffer (URL) */
-async function downloadToBuffer(url: string) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`No se pudo descargar logo: ${res.status}`);
-  const buf = Buffer.from(await res.arrayBuffer());
-  return buf;
-}
-
-/** ✅ DataURL: acepta cualquier image/* en base64 */
-function bufferFromDataUrlAny(dataUrl: string) {
-  const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/i);
-  if (!m) throw new Error('logo_base64 inválido (debe ser data:image/*;base64,...)');
-  return Buffer.from(m[2], 'base64');
-}
-
-/** ✅ Protege el server */
-function assertImageSize(buf: Buffer, maxBytes = 10 * 1024 * 1024) {
-  if (!buf || !buf.length) throw new Error('Logo vacío');
-  if (buf.length > maxBytes) throw new Error(`Logo demasiado pesado (máx ${(maxBytes / 1024 / 1024).toFixed(0)}MB)`);
-}
-
-/** ✅ Convierte cualquier imagen soportada a PNG real 512x512 */
-async function toPng512(input: Buffer) {
-  return await sharp(input)
-    .resize(512, 512, { fit: 'cover' })
-    .png({ compressionLevel: 9 })
-    .toBuffer();
 }
 
 function ensureDir(p: string) {
@@ -166,6 +106,98 @@ function replaceAllInFile(filePath: string, from: string, to: string) {
   fs.writeFileSync(filePath, txt.split(from).join(to));
   return true;
 }
+
+function tailLines(s: string, maxLines = 60) {
+  const lines = s.split(/\r?\n/).filter(Boolean);
+  return lines.slice(-maxLines).join('\n');
+}
+
+async function runCmd(
+  cmd: string,
+  args: string[],
+  procs: Set<ReturnType<typeof spawn>>,
+  opts?: { cwd?: string; label?: string; timeoutMs?: number }
+) {
+  return new Promise<{ code: number; stdout: string; stderr: string }>((resolve, reject) => {
+    const p = spawn(cmd, args, {
+      cwd: opts?.cwd,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      shell: false,
+    });
+
+    procs.add(p);
+
+    let stdout = '';
+    let stderr = '';
+
+    p.stdout.on('data', (d) => (stdout += d.toString()));
+    p.stderr.on('data', (d) => (stderr += d.toString()));
+
+    const label = opts?.label ?? cmd;
+
+    const t = opts?.timeoutMs
+      ? setTimeout(() => {
+          try {
+            p.kill('SIGKILL');
+          } catch {}
+        }, opts.timeoutMs)
+      : null;
+
+    p.on('error', (err) => {
+      if (t) clearTimeout(t);
+      procs.delete(p);
+      reject(new Error(`[${label}] spawn error: ${err.message}`));
+    });
+
+    p.on('close', (code) => {
+      if (t) clearTimeout(t);
+      procs.delete(p);
+
+      if (code === 0) return resolve({ code: 0, stdout, stderr });
+
+      const outT = tailLines(stdout, 60);
+      const errT = tailLines(stderr, 60);
+
+      reject(
+        new Error(
+          `[${label}] exit=${code}\n` +
+            `CMD: ${cmd} ${args.join(' ')}\n` +
+            (errT ? `--- STDERR (tail) ---\n${errT}\n` : '') +
+            (outT ? `--- STDOUT (tail) ---\n${outT}\n` : '')
+        )
+      );
+    });
+  });
+}
+
+/** ✅ Descarga logo a Buffer */
+async function downloadToBufferWithMime(url: string) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`No se pudo descargar logo: ${res.status}`);
+  const mime = (res.headers.get('content-type') || '').toLowerCase();
+  const buf = Buffer.from(await res.arrayBuffer());
+  return { mime, buf };
+}
+
+/** ✅ DataURL: acepta cualquier image/* en base64 */
+function bufferFromDataUrlAny(dataUrl: string) {
+  const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/i);
+  if (!m) throw new Error('logo_base64 inválido (debe ser data:image/*;base64,...)');
+  return { mime: m[1].toLowerCase(), buf: Buffer.from(m[2], 'base64') };
+}
+
+/** ✅ Protege el server */
+function assertImageSize(buf: Buffer, maxBytes = 6 * 1024 * 1024) {
+  if (!buf || !buf.length) throw new Error('Logo vacío');
+  if (buf.length > maxBytes) throw new Error('Logo demasiado pesado (máx 6MB)');
+}
+
+/** ✅ Convierte cualquier imagen soportada a PNG real 512x512 */
+async function toPngBuffer(input: Buffer) {
+  return await sharp(input).resize(512, 512, { fit: 'cover' }).png({ compressionLevel: 9 }).toBuffer();
+}
+
+/** ====== Package rename helpers ====== */
 
 function getManifestPackage(manifestPath: string) {
   const manifest = fs.readFileSync(manifestPath, 'utf8');
@@ -202,14 +234,16 @@ function applyPackageRename(decompiledDir: string, newPkg: string) {
   const oldPkg = getManifestPackage(manifestPath);
   if (!oldPkg) throw new Error('No pude leer package original del AndroidManifest.xml');
 
+  // 1) Manifest package
   let manifest = fs.readFileSync(manifestPath, 'utf8');
   manifest = manifest.replace(/package="[^"]+"/, `package="${newPkg}"`);
   fs.writeFileSync(manifestPath, manifest);
 
+  // 2) res XML refs
   const resDir = path.join(decompiledDir, 'res');
-  const resXml = walkFiles(resDir, ['.xml']);
-  for (const f of resXml) replaceAllInFile(f, oldPkg, newPkg);
+  for (const f of walkFiles(resDir, ['.xml'])) replaceAllInFile(f, oldPkg, newPkg);
 
+  // 3) smali refs + paths
   const smaliDirs = fs
     .readdirSync(decompiledDir)
     .filter((n) => n.startsWith('smali'))
@@ -220,8 +254,7 @@ function applyPackageRename(decompiledDir: string, newPkg: string) {
   const newSlash = newPkg.replace(/\./g, '/');
 
   for (const sd of smaliDirs) {
-    const smaliFiles = walkFiles(sd, ['.smali']);
-    for (const f of smaliFiles) {
+    for (const f of walkFiles(sd, ['.smali'])) {
       replaceAllInFile(f, `L${oldSlash}/`, `L${newSlash}/`);
       replaceAllInFile(f, oldPkg, newPkg);
     }
@@ -234,6 +267,8 @@ function applyPackageRename(decompiledDir: string, newPkg: string) {
     }
   }
 }
+
+/** ====== App label ====== */
 
 function setAppLabel(decompiledDir: string, appName: string) {
   const stringsPath = path.join(decompiledDir, 'res', 'values', 'strings.xml');
@@ -249,25 +284,32 @@ function setAppLabel(decompiledDir: string, appName: string) {
         `<string name="app_name">${safeName}</string>`
       );
     } else {
-      xml = xml.replace(/<\/resources>/, `  <string name="app_name">${safeName}</string>\n</resources>`);
+      xml = xml.replace(
+        /<\/resources>/,
+        `  <string name="app_name">${safeName}</string>\n</resources>`
+      );
     }
     fs.writeFileSync(stringsPath, xml);
   }
 
   if (fs.existsSync(manifestPath)) {
     let manifest = fs.readFileSync(manifestPath, 'utf8');
+
     if (/android:label="/.test(manifest)) {
       manifest = manifest.replace(/android:label="[^"]*"/, `android:label="@string/app_name"`);
     } else {
       manifest = manifest.replace(/<application\b/, `<application android:label="@string/app_name"`);
     }
+
     fs.writeFileSync(manifestPath, manifest);
   }
 }
 
+/** ====== Icon replace (keep resource name) ====== */
+
 function parseIconRef(ref?: string) {
   if (!ref) return null;
-  const m = ref.match(/^@([a-zA-Z0-9_]+)\/([a-zA-Z0-9_\.]+)$/);
+  const m = ref.match(/^@([a-zA-Z0-9_]+)\/([a-zA-Z0-9_.]+)$/);
   if (!m) return null;
   return { type: m[1], name: m[2] };
 }
@@ -289,6 +331,7 @@ function replaceResourceFiles(decompiledDir: string, _type: string, name: string
 
     const base = path.join(folder, `${name}`);
     const candidates = [`${base}.png`, `${base}.webp`];
+
     for (const c of candidates) {
       if (fs.existsSync(c)) fs.writeFileSync(c, png);
     }
@@ -301,7 +344,7 @@ function parseAdaptiveIconDependencies(xmlContent: string) {
     name: m[2],
   }));
 
-  const key = (r: any) => `${r.type}/${r.name}`;
+  const key = (r: { type: string; name: string }) => `${r.type}/${r.name}`;
   const seen = new Set<string>();
   return refs.filter((r) => (seen.has(key(r)) ? false : (seen.add(key(r)), true)));
 }
@@ -316,11 +359,16 @@ function applyLauncherIconKeepResourceName(decompiledDir: string, png: Buffer) {
   replaceResourceFiles(decompiledDir, iconRef.type, iconRef.name, png);
   if (roundRef) replaceResourceFiles(decompiledDir, roundRef.type, roundRef.name, png);
 
-  const adaptiveXmlPath = path.join(decompiledDir, 'res', 'mipmap-anydpi-v26', `${iconRef.name}.xml`);
+  const adaptiveXmlPath = path.join(
+    decompiledDir,
+    'res',
+    'mipmap-anydpi-v26',
+    `${iconRef.name}.xml`
+  );
+
   if (fs.existsSync(adaptiveXmlPath)) {
     const xml = fs.readFileSync(adaptiveXmlPath, 'utf8');
-    const deps = parseAdaptiveIconDependencies(xml);
-    for (const d of deps) replaceResourceFiles(decompiledDir, d.type, d.name, png);
+    for (const d of parseAdaptiveIconDependencies(xml)) replaceResourceFiles(decompiledDir, d.type, d.name, png);
   }
 
   const adaptiveRoundXmlPath = roundRef
@@ -329,34 +377,37 @@ function applyLauncherIconKeepResourceName(decompiledDir: string, png: Buffer) {
 
   if (adaptiveRoundXmlPath && fs.existsSync(adaptiveRoundXmlPath)) {
     const xml = fs.readFileSync(adaptiveRoundXmlPath, 'utf8');
-    const deps = parseAdaptiveIconDependencies(xml);
-    for (const d of deps) replaceResourceFiles(decompiledDir, d.type, d.name, png);
+    for (const d of parseAdaptiveIconDependencies(xml)) replaceResourceFiles(decompiledDir, d.type, d.name, png);
   }
+}
+
+function safeUnlink(p: string) {
+  try {
+    if (fs.existsSync(p)) fs.unlinkSync(p);
+  } catch {}
+}
+
+function safeRmDir(p: string) {
+  try {
+    if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true });
+  } catch {}
 }
 
 export default {
   url: '/download-app',
   method: 'POST',
-
-  // ✅ IMPORTANTÍSIMO: permitir payload grande (logo_base64)
-  // Si tu Fastify ya tiene global bodyLimit, esto igual ayuda a nivel ruta.
-  // (En Fastify funciona cuando el plugin lo respeta; en la mayoría de setups sí.)
-  // @ts-ignore
-  bodyLimit: 20 * 1024 * 1024, // 20MB
-
   handler: async (req: FastifyRequest, reply: FastifyReply) => {
     const body = (req.body || {}) as Body;
 
     const build_id = safeTrim(body.build_id) || `${Date.now()}_${Math.random().toString(16).slice(2)}`;
-    console.log(`[APK] build_id=${build_id}`);
-
     const timestamp = Date.now().toString();
+
     const tempDir = path.join(__dirname, `../../../app/tmp_apk_${timestamp}`);
     const decompiledDir = path.join(tempDir, 'apk_decompiled');
 
     const baseApkPath = path.join(__dirname, '../../../frontend/public/static/apk/base.apk');
     const publicDownloads = path.join(__dirname, '../../../frontend/public/downloads');
-    if (!fs.existsSync(publicDownloads)) fs.mkdirSync(publicDownloads, { recursive: true });
+    ensureDir(publicDownloads);
 
     const appName = safeTrim(body.appName) || 'DTunnel';
     const safeAppName = slugApkName(appName);
@@ -364,35 +415,31 @@ export default {
     const finalApkName = uniqueApkName(publicDownloads, safeAppName);
     const finalApkPath = path.join(publicDownloads, finalApkName);
 
+    // ⚠️ Ideal: keystore fuera del deploy y persistente (NO regenerar nunca si querés updates)
     const keystoreDir = path.join(__dirname, '../../../keystore');
     const keystorePath = path.join(keystoreDir, 'my-release-key.jks');
-    const keystorePass = 'keystorepass';
-    const keyAlias = 'mykey';
+    const keystorePass = process.env.APK_KEYSTORE_PASS || 'keystorepass';
+    const keyAlias = process.env.APK_KEY_ALIAS || 'mykey';
+    const keyPass = process.env.APK_KEY_PASS || keystorePass;
 
-    const cleanTemp = () => {
-      try {
-        if (fs.existsSync(tempDir)) fs.rmSync(tempDir, { recursive: true, force: true });
-      } catch {}
-    };
+    const cleanTemp = () => safeRmDir(tempDir);
 
     const cleanAll = () => {
       cleanTemp();
-      try {
-        if (fs.existsSync(finalApkPath)) fs.unlinkSync(finalApkPath);
-      } catch {}
+      safeUnlink(finalApkPath);
       activeBuilds.delete(build_id);
     };
 
     try {
-      // Cancel build
+      // Cancel build (kill)
       if (body.cancel && safeTrim(body.build_id) && activeBuilds.has(body.build_id!)) {
         const st = activeBuilds.get(body.build_id!)!;
         for (const p of st.procs) {
-          try { p.kill('SIGKILL'); } catch {}
+          try {
+            p.kill('SIGKILL');
+          } catch {}
         }
-        try {
-          if (st.tempDir && fs.existsSync(st.tempDir)) fs.rmSync(st.tempDir, { recursive: true, force: true });
-        } catch {}
+        safeRmDir(st.tempDir);
         activeBuilds.delete(body.build_id!);
         reply.status(204).send();
         return;
@@ -402,128 +449,163 @@ export default {
       const token = safeTrim(body.token);
 
       if (!user_id || !token) {
-        reply.status(400).send(`Credenciales faltantes (user_id/token) build_id=${build_id}`);
+        reply.status(400).send('Credenciales faltantes');
         return;
       }
 
       const packageName = safeTrim(body.packageName);
       if (packageName && !isValidPackageName(packageName)) {
-        reply.status(400).send(`Nombre de paquete inválido build_id=${build_id}`);
+        reply.status(400).send('Nombre de paquete inválido');
         return;
       }
 
       const procs = new Set<ReturnType<typeof spawn>>();
       activeBuilds.set(build_id, { tempDir, finalApkPath, procs });
 
-      if (!fs.existsSync(keystoreDir)) fs.mkdirSync(keystoreDir, { recursive: true });
+      ensureDir(keystoreDir);
 
+      // Create keystore if missing (solo para DEV).
+      // En PROD: pre-creala y montala permanente, nunca regenerar, o rompés updates.
       if (!fs.existsSync(keystorePath)) {
-        console.log('[APK] Creando keystore...');
         await runCmd(
-          'KEYTOOL',
           'keytool',
           [
             '-genkeypair',
-            '-alias', keyAlias,
-            '-keyalg', 'RSA',
-            '-keysize', '2048',
-            '-validity', '36500',
-            '-keystore', keystorePath,
-            '-storepass', keystorePass,
-            '-dname', 'CN=DTunnel, OU=Dev, O=MyCompany, L=City, ST=State, C=AR',
+            '-alias',
+            keyAlias,
+            '-keyalg',
+            'RSA',
+            '-keysize',
+            '2048',
+            '-validity',
+            '36500',
+            '-keystore',
+            keystorePath,
+            '-storepass',
+            keystorePass,
+            '-keypass',
+            keyPass,
+            '-dname',
+            'CN=DTunnel, OU=Dev, O=MyCompany, L=City, ST=State, C=AR',
           ],
-          procs
+          procs,
+          { label: 'keytool genkeypair', timeoutMs: 120_000 }
         );
       }
 
       ensureDir(tempDir);
 
       if (!fs.existsSync(baseApkPath)) {
-        reply.status(500).send(`No existe base.apk build_id=${build_id}`);
+        reply.status(500).send('No existe base.apk');
         cleanAll();
         return;
       }
 
-      console.log('[APK] Descompilando...');
-      await runCmd('APKTOOL-DECOMPILE', 'apktool', ['d', '-f', baseApkPath, '-o', decompiledDir], procs);
+      // 1) Decompile
+      await runCmd('apktool', ['d', '-f', baseApkPath, '-o', decompiledDir], procs, {
+        label: 'apktool decompile',
+        timeoutMs: 300_000,
+      });
 
+      // 2) Write assets/credentials.json
       const assetsDir = path.join(decompiledDir, 'assets');
       ensureDir(assetsDir);
+      fs.writeFileSync(path.join(assetsDir, 'credentials.json'), JSON.stringify({ user_id, token }, null, 2));
 
-      fs.writeFileSync(
-        path.join(assetsDir, 'credentials.json'),
-        JSON.stringify({ user_id, token }, null, 2)
-      );
-
-      console.log('[APK] Aplicando nombre visible...');
+      // 3) App label
       setAppLabel(decompiledDir, appName);
 
+      // 4) Package rename (optional)
       if (packageName) {
-        console.log('[APK] Aplicando packageName REAL...');
         applyPackageRename(decompiledDir, packageName);
         setApktoolYmlRenamePackage(decompiledDir, packageName);
       }
 
-      // ✅ LOGO: cualquier image/* -> PNG 512
+      // 5) Logo -> PNG -> apply
       let logoPng: Buffer | null = null;
 
       if (safeTrim(body.logo_base64)) {
-        console.log('[APK] Logo desde base64...');
-        const raw = bufferFromDataUrlAny(body.logo_base64!);
-        assertImageSize(raw);
-        logoPng = await toPng512(raw);
+        const parsed = bufferFromDataUrlAny(body.logo_base64!);
+        assertImageSize(parsed.buf);
+        logoPng = await toPngBuffer(parsed.buf);
       } else if (safeTrim(body.logo_url)) {
-        console.log('[APK] Logo desde URL...');
-        const raw = await downloadToBuffer(body.logo_url!);
-        assertImageSize(raw);
-        logoPng = await toPng512(raw);
+        const dl = await downloadToBufferWithMime(body.logo_url!);
+        assertImageSize(dl.buf);
+        logoPng = await toPngBuffer(dl.buf);
       }
 
       if (logoPng) {
-        console.log('[APK] Aplicando icono...');
         applyLauncherIconKeepResourceName(decompiledDir, logoPng);
       }
 
-      console.log('[APK] Recompilando...');
+      // 6) Build
       const unsignedApk = path.join(tempDir, 'unsigned.apk');
-      await runCmd('APKTOOL-BUILD', 'apktool', ['b', decompiledDir, '-o', unsignedApk], procs);
+      await runCmd('apktool', ['b', decompiledDir, '-o', unsignedApk], procs, {
+        label: 'apktool build',
+        timeoutMs: 600_000,
+      });
 
-      console.log('[APK] Firmando (V1+V2+V3)...');
+      // 7) Zipalign (BEFORE sign)
+      const alignedApk = path.join(tempDir, 'aligned.apk');
+      await runCmd('zipalign', ['-f', '4', unsignedApk, alignedApk], procs, {
+        label: 'zipalign',
+        timeoutMs: 60_000,
+      });
+
+      // 8) Sign
       await runCmd(
-        'APKSIGNER',
         'apksigner',
         [
           'sign',
-          '--ks', keystorePath,
-          '--ks-pass', `pass:${keystorePass}`,
-          '--key-pass', `pass:${keystorePass}`,
-          '--ks-key-alias', keyAlias,
-          '--v1-signing-enabled', 'true',
-          '--v2-signing-enabled', 'true',
-          '--v3-signing-enabled', 'true',
-          '--out', finalApkPath,
-          unsignedApk,
+          '--ks',
+          keystorePath,
+          '--ks-pass',
+          `pass:${keystorePass}`,
+          '--key-pass',
+          `pass:${keyPass}`,
+          '--ks-key-alias',
+          keyAlias,
+          '--v1-signing-enabled',
+          'true',
+          '--v2-signing-enabled',
+          'true',
+          '--v3-signing-enabled',
+          'true',
+          '--out',
+          finalApkPath,
+          alignedApk,
         ],
-        procs
+        procs,
+        { label: 'apksigner sign', timeoutMs: 120_000 }
       );
 
-      reply.header('Content-Type', 'text/plain');
+      // 9) Verify (AFTER sign)
+      await runCmd('apksigner', ['verify', '--verbose', '--print-certs', finalApkPath], procs, {
+        label: 'apksigner verify',
+        timeoutMs: 60_000,
+      });
+
+      // Response
+      reply.header('Content-Type', 'text/plain; charset=utf-8');
       reply.header('x-build-id', build_id);
       reply.send(`/downloads/${finalApkName}`);
 
+      // Clean temp decompile/build artifacts
       cleanTemp();
 
-      // borrar APK a los 5 minutos
+      // Delete final APK after 5 minutes
       setTimeout(() => {
-        try { if (fs.existsSync(finalApkPath)) fs.unlinkSync(finalApkPath); } catch {}
+        safeUnlink(finalApkPath);
         activeBuilds.delete(build_id);
       }, 5 * 60 * 1000);
-
     } catch (err: any) {
       console.error('[ERROR] /download-app:', err);
-      const msg = String(err?.message || err || 'unknown');
+
+      const msg = String(err?.message || err || 'Error desconocido');
+      const short = msg.length > 8000 ? msg.slice(0, 8000) + '\n...recortado' : msg;
+
       cleanAll();
-      reply.status(500).send(`Error al generar APK (build_id=${build_id})\n${msg}`);
+      reply.status(500).send(short);
     }
   },
 } as RouteOptions;

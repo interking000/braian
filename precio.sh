@@ -52,3 +52,4 @@ sqlite3 "$DB" "UPDATE plans SET price_ars=$NEW_PRICE, updated_at=datetime('now')
 # Mostrar resultado final
 UPDATED="$(sqlite3 "$DB" "SELECT price_ars FROM plans WHERE code='$PLAN_CODE' LIMIT 1;")"
 whiptail --title "$TITLE" --msgbox "✅ Listo!\n\nPlan: $PLAN_CODE (30 días)\nNuevo precio: $UPDATED ARS\n\nSe actualizó correctamente." 12 60
+
