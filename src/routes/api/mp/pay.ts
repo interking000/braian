@@ -1,18 +1,56 @@
-// DTunnel/src/routes/api/mp/pay.ts
 import prisma from '../../../config/prisma-client';
 import Authentication from '../../../middlewares/authentication';
 import { FastifyReply, FastifyRequest, RouteOptions } from 'fastify';
+import crypto from 'crypto';
 
-// ✅ Ejemplo (como pediste) — solo se usa si falta env
-const MP_ACCESS_TOKEN_EXAMPLE =
-  'APP_USR-292459445257292-010909-ad9da859bf8eb657422b278edbbef85f-517943228';
+const TICKET_SECRET = process.env.PAY_TICKET_SECRET || '';
 
-function getMpToken() {
-  const envTok = String(process.env.MP_ACCESS_TOKEN || '').trim();
-  if (envTok && !envTok.includes('<<APP_USR')) return envTok;
+function assertTicketSecret() {
+  if (!TICKET_SECRET || TICKET_SECRET.length < 16) {
+    throw new Error('PAY_TICKET_SECRET_MISSING_OR_WEAK');
+  }
+}
 
-  // si no hay env, o es placeholder, usamos el ejemplo
-  return MP_ACCESS_TOKEN_EXAMPLE;
+function makeTicket(payload: {
+  paymentId: string;
+  userId: string;
+  planId: string;
+  amount: number;
+  currency: string;
+}) {
+  assertTicketSecret();
+  const data = [
+    payload.paymentId,
+    payload.userId,
+    payload.planId,
+    String(payload.amount),
+    payload.currency,
+  ].join('|');
+
+  const sig = crypto.createHmac('sha256', TICKET_SECRET).update(data).digest('hex');
+  return `${Buffer.from(data).toString('base64url')}.${sig}`;
+}
+
+function hashTicket(ticket: string) {
+  return crypto.createHash('sha256').update(String(ticket)).digest('hex');
+}
+
+function safeJsonParse(s: any) {
+  try {
+    if (!s) return {};
+    if (typeof s === 'object') return s;
+    return JSON.parse(String(s));
+  } catch {
+    return {};
+  }
+}
+
+function safeJsonStringify(obj: any) {
+  try {
+    return JSON.stringify(obj ?? {});
+  } catch {
+    return '{}';
+  }
 }
 
 export default {
@@ -27,23 +65,31 @@ export default {
       const { plan_code } = (req.body ?? {}) as any;
       if (!plan_code) return reply.status(400).send({ ok: false, error: 'PLAN_REQUIRED' });
 
-      const MP_ACCESS_TOKEN = getMpToken();
-      const APP_BASE_URL = String(process.env.APP_BASE_URL || '').trim();
-      const FRONTEND_RETURN_URL = String(process.env.FRONTEND_RETURN_URL || '').trim();
+      const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
+      const APP_BASE_URL = process.env.APP_BASE_URL;
+      const FRONTEND_RETURN_URL = process.env.FRONTEND_RETURN_URL;
 
-      // ✅ Si querés ser más estricto: si NO hay envTok, cortar.
-      // Pero vos pediste "solo si pide ponele ese" => queda fallback.
-      if (!MP_ACCESS_TOKEN) {
-        return reply.status(500).send({ ok: false, error: 'MP_ACCESS_TOKEN_MISSING' });
+      if (
+        !MP_ACCESS_TOKEN ||
+        MP_ACCESS_TOKEN.includes('<<APP_USR-292459445257292-010909-ad9da859bf8eb657422b278edbbef85f-517943228>>')
+      ) {
+        return reply.status(500).send({ ok: false, error: 'MP_ACCESS_TOKEN_MISSING_OR_PLACEHOLDER' });
       }
-
       if (!APP_BASE_URL) return reply.status(500).send({ ok: false, error: 'APP_BASE_URL_MISSING' });
       if (!FRONTEND_RETURN_URL) return reply.status(500).send({ ok: false, error: 'FRONTEND_RETURN_URL_MISSING' });
+
+      try {
+        assertTicketSecret();
+      } catch (e: any) {
+        return reply.status(500).send({ ok: false, error: e?.message || 'PAY_TICKET_SECRET_ERROR' });
+      }
 
       const plan = await prisma.plan.findUnique({ where: { code: String(plan_code) } });
       if (!plan || !plan.is_active) return reply.status(404).send({ ok: false, error: 'PLAN_INVALID' });
 
       const amount = Number(plan.price_ars);
+      const currency = 'ARS';
+
       if (!Number.isFinite(amount) || amount <= 0) {
         return reply.status(400).send({ ok: false, error: 'PLAN_AMOUNT_INVALID' });
       }
@@ -56,9 +102,9 @@ export default {
           provider: 'MERCADOPAGO',
           status: 'PENDING',
           amount,
-          currency: 'ARS',
+          currency,
           external_ref: null,
-          metadata: JSON.stringify({
+          metadata: safeJsonStringify({
             plan_code: plan.code,
             months: plan.months,
             price_ars: plan.price_ars,
@@ -66,25 +112,41 @@ export default {
         },
       });
 
-      const external_ref = `MP-${String(payment.id)}`;
+      const paymentIdStr = String(payment.id);
+      const planIdStr = String(plan.id);
+      const userIdStr = String(user.id);
+
+      const external_ref = `MP-${paymentIdStr}`;
+
+      // 2) Generar ticket firmado (IDs string)
+      const ticket = makeTicket({
+        paymentId: paymentIdStr,
+        userId: userIdStr,
+        planId: planIdStr,
+        amount,
+        currency,
+      });
+
+      // 3) Guardar external_ref + ticket_hash (si existe) + fallback metadata
+      const prevMeta = safeJsonParse(payment.metadata);
+      const nextMeta = { ...prevMeta, pay_ticket: ticket };
 
       await prisma.payment.update({
         where: { id: payment.id },
-        data: { external_ref },
+        data: {
+          external_ref,
+          metadata: safeJsonStringify(nextMeta),
+          ticket_hash: hashTicket(ticket) as any,
+        } as any,
       });
 
-      // ✅ MP debe volver al HOME si no tenés rutas /pay/success etc
-      const successUrl = `${FRONTEND_RETURN_URL}/?pay=success&ref=${encodeURIComponent(external_ref)}`;
-      const failureUrl = `${FRONTEND_RETURN_URL}/?pay=failure&ref=${encodeURIComponent(external_ref)}`;
-      const pendingUrl = `${FRONTEND_RETURN_URL}/?pay=pending&ref=${encodeURIComponent(external_ref)}`;
-
-      // 2) Crear preferencia en MP
-      const preferenceBody = {
+      // 4) Crear preferencia en MP
+      const preferenceBody: any = {
         items: [
           {
-            title: plan.name,
+            title: String(plan.name),
             quantity: 1,
-            currency_id: 'ARS',
+            currency_id: currency,
             unit_price: amount,
           },
         ],
@@ -92,13 +154,13 @@ export default {
         notification_url: `${APP_BASE_URL}/api/mp/hook`,
         auto_return: 'approved',
         back_urls: {
-          success: successUrl,
-          failure: failureUrl,
-          pending: pendingUrl,
+          success: `${FRONTEND_RETURN_URL}/pay/success?ref=${encodeURIComponent(external_ref)}`,
+          failure: `${FRONTEND_RETURN_URL}/pay/failure?ref=${encodeURIComponent(external_ref)}`,
+          pending: `${FRONTEND_RETURN_URL}/pay/pending?ref=${encodeURIComponent(external_ref)}`,
         },
         metadata: {
-          user_id: user.id,
-          plan_id: plan.id,
+          user_id: userIdStr,
+          plan_id: planIdStr,
           plan_code: plan.code,
         },
       };
@@ -114,8 +176,16 @@ export default {
 
       const text = await mpRes.text();
       if (!mpRes.ok) {
-        console.error('MP_PREF_FAILED', { status: mpRes.status, detail: text?.slice?.(0, 700) });
-        return reply.status(500).send({ ok: false, error: 'MP_PREF_FAILED' });
+        await prisma.payment
+          .update({
+            where: { id: payment.id },
+            data: {
+              status: 'ERROR' as any,
+              metadata: safeJsonStringify({ ...nextMeta, mp_pref_error: text.slice(0, 1000) }),
+            } as any,
+          })
+          .catch(() => {});
+        return reply.status(500).send({ ok: false, error: 'MP_PREF_FAILED', detail: text });
       }
 
       const pref = JSON.parse(text);
@@ -128,11 +198,10 @@ export default {
       return reply.send({
         ok: true,
         ref: external_ref,
+        ticket,
         pref_id: pref.id,
         init_point: pref.init_point,
         sandbox_init_point: pref.sandbox_init_point,
-        // ✅ Solo para debug: te dice si está usando env o fallback
-        token_source: String(process.env.MP_ACCESS_TOKEN || '').trim() ? 'env' : 'fallback',
       });
     } catch (e: any) {
       console.error('mp pay error', e?.message || e);
