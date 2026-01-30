@@ -2,16 +2,27 @@ import prisma from '../../../config/prisma-client';
 import { FastifyReply, FastifyRequest, RouteOptions } from 'fastify';
 import crypto from 'crypto';
 
+// ✅ Ejemplo (como pediste)
+const MP_ACCESS_TOKEN_EXAMPLE =
+  'APP_USR-292459445257292-010909-ad9da859bf8eb657422b278edbbef85f-517943228';
+
+function getMpToken() {
+  // ✅ Primero .env (recomendado). Si no existe, cae al ejemplo.
+  return String(process.env.MP_ACCESS_TOKEN || MP_ACCESS_TOKEN_EXAMPLE).trim();
+}
+
 function extendByMonths(currentEnds: Date | null, months: number) {
-  const base = currentEnds && currentEnds.getTime() > Date.now() ? new Date(currentEnds) : new Date();
+  const base =
+    currentEnds && currentEnds.getTime() > Date.now()
+      ? new Date(currentEnds)
+      : new Date();
   const d = new Date(base);
   d.setMonth(d.getMonth() + months);
   return d;
 }
 
 function isApproved(mp: any) {
-  const st = String(mp?.status ?? '');
-  // approved es el que nos interesa para activar
+  const st = String(mp?.status ?? '').toLowerCase();
   return st === 'approved';
 }
 
@@ -34,6 +45,7 @@ function verifyMpSignature(req: FastifyRequest, dataId: string) {
   }
   if (!ts || !v1) return false;
 
+  // ✅ FIX: tiene que ser template string con backticks
   const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
   const calc = crypto.createHmac('sha256', secret).update(manifest).digest('hex');
 
@@ -45,7 +57,6 @@ function verifyMpSignature(req: FastifyRequest, dataId: string) {
 }
 
 function extractPaymentId(req: FastifyRequest) {
-  // MP puede mandar en query o body, dependiendo del tipo de notificación
   const q: any = req.query ?? {};
   const b: any = req.body ?? {};
 
@@ -66,27 +77,23 @@ function numOrNull(v: any) {
 
 export default {
   url: '/api/mp/hook',
-  method: ['POST', 'GET'] as any, // ✅ aceptar GET/POST
+  method: ['POST', 'GET'] as any,
   handler: async (req: FastifyRequest, reply: FastifyReply) => {
-    // ✅ Respondemos 200 al final (si querés “rápido”, que sea rápido pero procesando dentro)
     try {
-      const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
+      const MP_ACCESS_TOKEN = getMpToken();
       if (!MP_ACCESS_TOKEN) {
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
       const paymentId = extractPaymentId(req);
       if (!paymentId) {
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
       // Firma opcional
       if (!verifyMpSignature(req, String(paymentId))) {
         console.error('MP_HOOK_SIGNATURE_INVALID', { paymentId: String(paymentId) });
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
       // Consultar pago real
@@ -96,22 +103,24 @@ export default {
 
       const mpText = await mpRes.text();
       if (!mpRes.ok) {
-        console.error('MP_GET_PAYMENT_FAILED', { status: mpRes.status, paymentId: String(paymentId) });
-        reply.status(200).send('OK');
-        return;
+        console.error('MP_GET_PAYMENT_FAILED', {
+          status: mpRes.status,
+          paymentId: String(paymentId),
+          body: mpText.slice(0, 400),
+        });
+        return reply.status(200).send('OK');
       }
 
       const mp = JSON.parse(mpText);
+
       if (!isApproved(mp)) {
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
       const external_ref = String(mp.external_reference ?? '').trim();
       if (!external_ref) {
         console.error('MP_APPROVED_NO_EXTERNAL_REF', { paymentId: String(paymentId) });
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
       // Buscar payment local por external_ref
@@ -122,26 +131,24 @@ export default {
 
       if (!payment) {
         console.error('MP_APPROVED_REF_NOT_FOUND', { ref: external_ref, paymentId: String(paymentId) });
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
-      // ✅ idempotencia por mp_payment_id también (por si MP reintenta)
+      // ✅ idempotencia
       if (payment.status === 'APPROVED') {
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
-      // ✅ Anti-estafa suave:
-      // - amount y currency deben coincidir “razonablemente” con lo esperado
+      // ✅ Anti-estafa suave (opcional)
       const mpAmount = numOrNull(mp.transaction_amount);
       const mpCurrency = String(mp.currency_id ?? '').trim() || null;
 
-      const expectedAmount = payment.amount ?? (payment.plan?.price_ars ? Number(payment.plan.price_ars) : null);
+      const expectedAmount =
+        payment.amount ?? (payment.plan?.price_ars ? Number(payment.plan.price_ars) : null);
+
       const expectedCurrency = payment.currency ?? 'ARS';
 
       if (expectedAmount != null && mpAmount != null) {
-        // tolerancia 1 peso por redondeos/cargos raros (podés bajar a 0.01 si querés)
         const diff = Math.abs(Number(expectedAmount) - Number(mpAmount));
         if (diff > 1.0) {
           console.error('MP_AMOUNT_MISMATCH', {
@@ -150,8 +157,7 @@ export default {
             expected: expectedAmount,
             got: mpAmount,
           });
-          reply.status(200).send('OK');
-          return;
+          return reply.status(200).send('OK');
         }
       }
 
@@ -162,19 +168,16 @@ export default {
           expected: expectedCurrency,
           got: mpCurrency,
         });
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
       if (!payment.plan) {
         console.error('MP_APPROVED_NO_PLAN', { id: payment.id, ref: external_ref });
-        reply.status(200).send('OK');
-        return;
+        return reply.status(200).send('OK');
       }
 
-      // ✅ Todo en una transacción: payment APPROVED + user ACTIVE
+      // ✅ Transacción: aprobar payment + activar user + log evento
       await prisma.$transaction(async (tx) => {
-        // actualizar payment
         const updatedPayment = await tx.payment.update({
           where: { id: payment.id },
           data: {
@@ -209,12 +212,10 @@ export default {
       });
 
       console.log('MP_APPROVED_OK', { paymentId: String(paymentId), ref: external_ref });
-
-      reply.status(200).send('OK');
+      return reply.status(200).send('OK');
     } catch (e: any) {
       console.error('MP_HOOK_ERROR', e?.message || e);
-      // ✅ siempre 200 para que MP no te mate el endpoint, pero dejamos log
-      reply.status(200).send('OK');
+      return reply.status(200).send('OK');
     }
   },
 } as RouteOptions;

@@ -3,6 +3,18 @@ import prisma from '../../../config/prisma-client';
 import Authentication from '../../../middlewares/authentication';
 import { FastifyReply, FastifyRequest, RouteOptions } from 'fastify';
 
+// ✅ Ejemplo (como pediste) — solo se usa si falta env
+const MP_ACCESS_TOKEN_EXAMPLE =
+  'APP_USR-292459445257292-010909-ad9da859bf8eb657422b278edbbef85f-517943228';
+
+function getMpToken() {
+  const envTok = String(process.env.MP_ACCESS_TOKEN || '').trim();
+  if (envTok && !envTok.includes('<<APP_USR')) return envTok;
+
+  // si no hay env, o es placeholder, usamos el ejemplo
+  return MP_ACCESS_TOKEN_EXAMPLE;
+}
+
 export default {
   url: '/api/mp/pay',
   method: 'POST',
@@ -15,13 +27,16 @@ export default {
       const { plan_code } = (req.body ?? {}) as any;
       if (!plan_code) return reply.status(400).send({ ok: false, error: 'PLAN_REQUIRED' });
 
-      const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
-      const APP_BASE_URL = process.env.APP_BASE_URL;
-      const FRONTEND_RETURN_URL = process.env.FRONTEND_RETURN_URL;
+      const MP_ACCESS_TOKEN = getMpToken();
+      const APP_BASE_URL = String(process.env.APP_BASE_URL || '').trim();
+      const FRONTEND_RETURN_URL = String(process.env.FRONTEND_RETURN_URL || '').trim();
 
-      if (!MP_ACCESS_TOKEN || MP_ACCESS_TOKEN.includes('<<APP_USR')) {
-        return reply.status(500).send({ ok: false, error: 'MP_ACCESS_TOKEN_MISSING_OR_PLACEHOLDER' });
+      // ✅ Si querés ser más estricto: si NO hay envTok, cortar.
+      // Pero vos pediste "solo si pide ponele ese" => queda fallback.
+      if (!MP_ACCESS_TOKEN) {
+        return reply.status(500).send({ ok: false, error: 'MP_ACCESS_TOKEN_MISSING' });
       }
+
       if (!APP_BASE_URL) return reply.status(500).send({ ok: false, error: 'APP_BASE_URL_MISSING' });
       if (!FRONTEND_RETURN_URL) return reply.status(500).send({ ok: false, error: 'FRONTEND_RETURN_URL_MISSING' });
 
@@ -58,7 +73,7 @@ export default {
         data: { external_ref },
       });
 
-      // ✅ IMPORTANTE: MP debe volver al HOME (tu HTML principal) porque /pay/success no existe
+      // ✅ MP debe volver al HOME si no tenés rutas /pay/success etc
       const successUrl = `${FRONTEND_RETURN_URL}/?pay=success&ref=${encodeURIComponent(external_ref)}`;
       const failureUrl = `${FRONTEND_RETURN_URL}/?pay=failure&ref=${encodeURIComponent(external_ref)}`;
       const pendingUrl = `${FRONTEND_RETURN_URL}/?pay=pending&ref=${encodeURIComponent(external_ref)}`;
@@ -99,7 +114,7 @@ export default {
 
       const text = await mpRes.text();
       if (!mpRes.ok) {
-        console.error('MP_PREF_FAILED', { status: mpRes.status, detail: text?.slice?.(0, 500) });
+        console.error('MP_PREF_FAILED', { status: mpRes.status, detail: text?.slice?.(0, 700) });
         return reply.status(500).send({ ok: false, error: 'MP_PREF_FAILED' });
       }
 
@@ -116,6 +131,8 @@ export default {
         pref_id: pref.id,
         init_point: pref.init_point,
         sandbox_init_point: pref.sandbox_init_point,
+        // ✅ Solo para debug: te dice si está usando env o fallback
+        token_source: String(process.env.MP_ACCESS_TOKEN || '').trim() ? 'env' : 'fallback',
       });
     } catch (e: any) {
       console.error('mp pay error', e?.message || e);
