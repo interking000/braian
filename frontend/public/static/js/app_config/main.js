@@ -297,8 +297,8 @@ const renderApp = (appConfigList) => {
     const empty = document.createElement("div");
     empty.className = "text-center opacity-75 py-5";
     empty.innerHTML = `
-      <div class="mb-2" style="font-size:18px;">No hay temas todavía</div>
-      <div style="font-size:13px;">Usá <b>NUEVO</b> o <b>IMPORTAR</b> arriba.</div>
+      <div class="mb-2" style="font-size:18px;">No hay temas todavía presione crear, eso creara un tema defauld</div>
+      <div style="font-size:13px;">Usá <b>CREAR</b> o <b>IMPORTAR</b> arriba.</div>
     `;
     root.appendChild(empty);
     return;
@@ -495,7 +495,7 @@ const main = async () => {
       });
 
       if (response.status === 201) {
-        showToastSuccess("Layout creado con exito!");
+        showToastSuccess("Tema creado con exito!");
         main();
         return;
       }
@@ -506,7 +506,7 @@ const main = async () => {
         return;
       }
 
-      showToastError("Error al crear layout!");
+      showToastError("Error al crear tema!");
     }
   });
 

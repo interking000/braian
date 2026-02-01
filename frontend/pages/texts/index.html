@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="es-AR" translate="no" data-bs-theme="light">
-
+<html lang="es-AR" translate="no" data-bs-theme="dark">
 <head>
   <meta charset="utf-8">
   <base href="/" target="_blank">
@@ -23,221 +22,486 @@
   <meta name="csrf-token" content="<%= it.csrfToken %>">
 
   <style>
-    /* ==========================
-       🎨 Fondo principal (forzado) + paleta
-       ========================== */
     :root{
-      --bg1:#070A10;
-      --bg2:#0B1020;
+      /* ✅ PALETA MARRÓN + DORADO (igual a tus otras pantallas) */
+      --bg1:#7A4A10;   /* marrón claro */
+      --bg2:#2A1705;   /* marrón oscuro */
+      --bg3:#4B2A09;   /* marrón medio */
 
-      --panel:#0E1424;
-      --panel2:#0B1020;
+      --panel: rgba(55, 32, 8, .92);
+      --panel2: rgba(32, 18, 5, .88);
 
-      --accent:#8B5CF6;
-      --accent2:#22D3EE;
-      --accent3:#A78BFA;
+      --gold:#D4AF37;
+      --gold2:#FFD36A;
+      --gold3:#8C6B1A;
+      --gold4:#F0B92D;
 
-      --line: rgba(167,139,250,.22);
-
-      --text:#EAF0FF;
-      --muted:#AAB3D6;
+      --text: rgba(255,246,214,.96);
+      --text2: rgba(255,246,214,.88);
+      --muted: rgba(255,226,170,.74);
+      --muted2: rgba(255,226,170,.60);
 
       --radius:18px;
 
-      --shadow: 0 18px 55px rgba(0,0,0,.65);
-      --ring: 0 0 0 3px rgba(139,92,246,.18);
-      --softGlow: 0 0 0 1px rgba(167,139,250,.14), 0 12px 28px rgba(0,0,0,.55);
-      --softGlow2: 0 0 0 1px rgba(34,211,238,.12), 0 18px 40px rgba(0,0,0,.62);
+      --shadow: 0 18px 55px rgba(0,0,0,.72);
+      --ring: 0 0 0 3px rgba(255,211,106,.22);
+      --softGlow: 0 0 0 1px rgba(255,211,106,.18), 0 12px 28px rgba(0,0,0,.62);
+      --softGlow2: 0 0 0 1px rgba(255,211,106,.14), 0 18px 40px rgba(0,0,0,.70);
+
+      --header-safe: 46px;
     }
 
-    /* ✅ Arregla “fondo gris” (sobre-escribe estilos de bootstrap/plantilla) */
     html, body{ height: 100%; }
-    body,
-    body[data-bs-theme="light"],
-    body[data-bs-theme="dark"]{
-      min-height:100vh !important;
-      color:var(--text) !important;
-      background:
-        radial-gradient(950px 520px at 18% 12%, rgba(139,92,246,.18), transparent 62%),
-        radial-gradient(900px 520px at 82% 14%, rgba(34,211,238,.14), transparent 60%),
-        radial-gradient(900px 620px at 50% 92%, rgba(167,139,250,.10), transparent 62%),
-        linear-gradient(135deg, var(--bg1), var(--bg2)) !important;
-      background-attachment: fixed !important;
-      overflow: hidden !important;
+
+    /* ✅ ANTI-BLUR GLOBAL (MOBILE SAFE) */
+    body, main, .content, .card, .card-body, #root, #pagination,
+    .container-fluid, .sidebar, .header, .table-responsive, table, tr, td,
+    .modal, .modal-content, .modal-backdrop{
+      filter: none !important;
+      -webkit-filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
-    /* Por si algún CSS externo pinta el contenedor */
+
+    body{
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(980px 560px at 18% 0%, rgba(255,211,106,.30), transparent 62%),
+        radial-gradient(980px 560px at 92% 12%, rgba(212,175,55,.22), transparent 66%),
+        radial-gradient(980px 620px at 50% 92%, rgba(212,175,55,.16), transparent 68%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg3) 36%, var(--bg2) 100%);
+      background-attachment: fixed;
+      overflow: hidden;
+      padding-top: var(--header-safe);
+    }
+
     .container-fluid, main.d-flex{ background: transparent !important; }
 
-    /* ===== Card principal fija ===== */
+    /* Scrollbar (marrón/dorado) */
+    *{
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,211,106,.55) rgba(42,23,5,.55);
+    }
+    *::-webkit-scrollbar{ width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track{ background: rgba(42,23,5,.55); border-radius: 999px; }
+    *::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(255,211,106,.42), rgba(212,175,55,.78));
+      border-radius: 999px;
+      border: 2px solid rgba(42,23,5,.55);
+    }
+
+    /* ===========================
+       ✅ CARD PRINCIPAL (mejor formada arriba)
+       - arregla “rayas/marcos” para que combinen
+       - añade reflejo dorado más pro
+       =========================== */
     .card-fixed{
       position: fixed;
-      top: 80px; left: 20px; right: 20px; bottom: 20px;
-      border-radius: calc(var(--radius) + 6px);
-      padding: 1rem;
+      top: 80px; left: 16px; right: 16px; bottom: 16px;
+
+      border-radius: calc(var(--radius) + 8px);
+      padding: 16px;
       overflow: hidden;
-      background: linear-gradient(180deg, rgba(14,20,36,.90), rgba(11,16,32,.88));
-      border: 1px solid rgba(167,139,250,.22);
-      box-shadow: var(--shadow), 0 0 0 1px rgba(34,211,238,.05);
-      backdrop-filter: blur(10px);
+
+      background:
+        radial-gradient(640px 260px at 18% 0%, rgba(255,211,106,.18), transparent 64%),
+        radial-gradient(680px 280px at 86% 10%, rgba(212,175,55,.14), transparent 66%),
+        linear-gradient(145deg, rgba(60, 35, 9, .92), rgba(18, 10, 2, .96));
+
+      border: 1px solid rgba(255,211,106,.26);
+      box-shadow: var(--shadow);
     }
+
+    /* Reflejo dorado (más pro) */
+    .card-fixed::before{
+      content:"";
+      position:absolute;
+      inset:-2px -2px auto -2px;
+      height: 140px;
+
+      background:
+        radial-gradient(520px 120px at 18% 35%, rgba(255,255,255,.08), transparent 66%),
+        radial-gradient(680px 140px at 72% 40%, rgba(255,211,106,.28), transparent 72%),
+        linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,211,106,.12), rgba(255,255,255,.03));
+
+      border-bottom: 1px solid rgba(255,211,106,.16);
+      pointer-events:none;
+    }
+
+    /* Marcos internos que sí combinan (no “rayas raras”) */
+    .card-fixed::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      border-radius: calc(var(--radius) + 8px);
+      pointer-events:none;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,211,106,.18),
+        inset 0 0 0 2px rgba(255,255,255,.02),
+        inset 0 26px 46px rgba(0,0,0,.18);
+    }
+
+    .card-fixed > *{ position: relative; z-index: 1; }
+
+    /* ======= CABECERA “TEXTOS + INFO” (como Servidores) ======= */
+    .title-wrap{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .title-left{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .text-gray-800{
+      color: var(--gold4) !important;
+      letter-spacing: .20em;
+      text-transform: uppercase;
+      font-weight: 950;
+      text-shadow: 0 10px 28px rgba(0,0,0,.60);
+      margin: 0 !important;
+    }
+    .title-left .text-gray-800::after{
+      content:"";
+      display:block;
+      height: 2px;
+      width: 150px;
+      margin-top: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,211,106,0), rgba(255,211,106,.90), rgba(255,211,106,0));
+      box-shadow: 0 10px 22px rgba(0,0,0,.55);
+    }
+
+    /* Botón INFO (gold) */
+    .btn-info-king{
+      width: 44px;
+      height: 38px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 !important;
+      border-radius: 12px !important;
+      background:
+        radial-gradient(160px 70px at 30% 30%, rgba(255,211,106,.18), transparent 66%),
+        rgba(22, 12, 3, .60) !important;
+      border: 1px solid rgba(255,211,106,.26) !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 10px 18px rgba(0,0,0,.52);
+      transition: transform .10s ease, filter .18s ease, box-shadow .18s ease, border-color .18s ease;
+      position: relative;
+      overflow:hidden;
+    }
+    .btn-info-king::after{
+      content:"";
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 85%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .btn-info-king:hover::after{ left: 140%; }
+    .btn-info-king i{ color: rgba(255,211,106,.96); font-size: 1.05rem; }
+    .btn-info-king:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      border-color: rgba(255,211,106,.40) !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.16), 0 14px 26px rgba(0,0,0,.62);
+    }
+
+    /* ===========================
+       ✅ Botones (marrón/dorado)
+       =========================== */
+    .btn{
+      border-radius: 14px !important;
+      border: 1px solid rgba(255,211,106,.22) !important;
+      color: var(--text) !important;
+      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease, border-color .2s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,.44);
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.18), transparent 64%),
+        linear-gradient(145deg, rgba(88, 52, 12, .92), rgba(18, 10, 2, .96));
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after{
+      content:"";
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 80%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 1px rgba(255,211,106,.16), 0 14px 30px rgba(0,0,0,.62);
+      filter: brightness(1.06);
+      border-color: rgba(255,211,106,.36) !important;
+    }
+    .btn:hover::after{ left: 140%; }
+    .btn:active{ transform: translateY(0); filter: brightness(.99); }
+
+    #reset_texts{
+      border-radius: 14px !important;
+      background:
+        radial-gradient(140px 76px at 20% 30%, rgba(239,68,68,.22), transparent 64%),
+        linear-gradient(145deg, rgba(88, 24, 10, .92), rgba(18, 10, 2, .96)) !important;
+      border: 1px solid rgba(239,68,68,.26) !important;
+      box-shadow: 0 0 0 1px rgba(239,68,68,.10), 0 12px 28px rgba(0,0,0,.55);
+      letter-spacing: .08em !important;
+      text-transform: uppercase !important;
+      font-weight: 950 !important;
+    }
+    #reset_texts i{ color: rgba(255,140,140,.98); }
 
     /* Tabla con scroll */
     .table-container{
-      height: calc(100% - 60px);
+      height: calc(100% - 72px);
       overflow-y: auto;
       padding-right: 10px;
     }
 
+    /* ===========================
+       ✅ Tabla (marcos coherentes)
+       =========================== */
     table{
       table-layout: fixed;
       width: 100%;
-      background: rgba(11,16,32,.55);
-      border-radius: 14px;
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(167,139,250,.14);
+      border-radius: 16px;
       overflow: hidden;
+
+      background:
+        radial-gradient(520px 200px at 18% 10%, rgba(255,211,106,.10), transparent 60%),
+        rgba(22, 12, 3, .34);
+
+      border: 1px solid rgba(255,211,106,.18);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        0 10px 26px rgba(0,0,0,.40);
     }
+
     .table thead th{
-      color: rgba(170,179,214,.95) !important;
-      letter-spacing: .10em;
+      color: rgba(255,246,214,.94) !important;
+      letter-spacing: .16em;
       text-transform: uppercase;
       font-size: .78rem;
-      background: linear-gradient(90deg, rgba(34,211,238,.10), rgba(11,16,32,.72), rgba(139,92,246,.10)) !important;
-      border-color: rgba(167,139,250,.10) !important;
+
+      background:
+        linear-gradient(90deg,
+          rgba(255,211,106,.16),
+          rgba(22, 12, 3, .82),
+          rgba(212,175,55,.16)
+        ) !important;
+
+      border-color: rgba(255,211,106,.16) !important;
     }
+
     .table tbody td{
-      color: rgba(234,240,255,.92) !important;
-      border-color: rgba(167,139,250,.10) !important;
+      color: var(--text2) !important;
+      border-color: rgba(255,211,106,.10) !important;
       background: transparent !important;
+      word-wrap: break-word;
     }
+
     .table-striped>tbody>tr:nth-of-type(odd)>*{
-      background: rgba(7,10,18,.25) !important;
+      background: rgba(0,0,0,.10) !important;
     }
 
-    .text-gray-800{
-      color: var(--text) !important;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-    }
-
+    /* preview */
     .__preview{
-      background: rgba(7,10,18,.55);
-      border: 1px solid rgba(167,139,250,.14);
+      background: rgba(22, 12, 3, .48);
+      border: 1px solid rgba(255,211,106,.18);
       border-radius: 12px;
       min-height: 40px;
       padding: 10px;
       font-size: 0.95rem;
-      color: rgba(234,240,255,.92);
+      color: var(--text2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
     }
 
     .btn-action{
       padding: 3px 6px;
       font-size: 0.85rem;
-      width: 30px; height: 30px;
-      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px;
+      display: inline-flex; align-items: center; justify-content: center;
       border-radius: 12px !important;
-      border: 1px solid rgba(167,139,250,.16) !important;
-      background: rgba(7,10,18,.70) !important;
-      box-shadow: 0 0 0 1px rgba(34,211,238,.05), 0 10px 18px rgba(0,0,0,.45);
+      border: 1px solid rgba(255,211,106,.16) !important;
+      background: rgba(22, 12, 3, .58) !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 10px 18px rgba(0,0,0,.48);
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      font-weight: 900 !important;
     }
-    .btn-action i{ color: rgba(34,211,238,.90); }
-
-    #reset_texts{
-      border-radius: 14px !important;
-      background:
-        radial-gradient(120px 70px at 20% 30%, rgba(239,68,68,.18), transparent 62%),
-        linear-gradient(135deg, rgba(7,10,18,.86), rgba(11,16,32,.92)) !important;
-      border: 1px solid rgba(239,68,68,.22) !important;
-      box-shadow: 0 0 0 1px rgba(239,68,68,.10), 0 12px 28px rgba(0,0,0,.55);
-    }
+    .btn-action i{ color: rgba(255,211,106,.95); }
 
     .__spinner{ display:none; }
 
     /* ===========================
-       ✅ Modal: más abajo (no tapa header) + compacto + elegante
+       ✅ MODALS: centrados en el medio (NO abajo)
        =========================== */
-    @keyframes popIn {
-      from { transform: translateY(10px) scale(.98); opacity: 0; }
-      to   { transform: translateY(0) scale(1); opacity: 1; }
-    }
-    #modal-text.show .modal-dialog{ animation: popIn .18s ease-out; }
 
+    /* Backdrop SIN blur + no bloquea touch */
+    .modal-backdrop{
+      pointer-events: none !important;
+      background: rgba(0,0,0,.55) !important;
+    }
+    .modal{ pointer-events: auto !important; }
+
+    /* Este modal en particular */
     #modal-text .modal-dialog{
       max-width: 520px !important;
-      margin: 140px auto 1.35rem !important; /* ✅ más abajo */
+    }
+
+    /* 🔥 Modal estilo KING (para info y editar) */
+    .king-modal .modal-dialog{
+      max-width: 820px;
     }
     @media (max-width: 540px){
-      #modal-text .modal-dialog{
-        max-width: calc(100vw - 18px) !important;
-        margin-top: 120px !important;
+      .king-modal .modal-dialog{
+        max-width: calc(100vw - 18px);
       }
     }
 
-    #modal-text .modal-content{
-      background: rgba(11,16,32,.96) !important;
-      color: var(--text) !important;
-      border-radius: 18px !important;
-      border: 1px solid rgba(167,139,250,.16) !important;
-      box-shadow: var(--shadow), 0 0 0 1px rgba(34,211,238,.06) !important;
-      backdrop-filter: blur(14px);
+    .king-modal .modal-content{
+      border-radius: 22px !important;
+      border: 2px solid rgba(255,211,106,.55) !important;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255,211,106,.12) !important;
+      background:
+        radial-gradient(620px 260px at 18% 12%, rgba(255,211,106,.14), transparent 60%),
+        radial-gradient(620px 260px at 86% 10%, rgba(212,175,55,.12), transparent 62%),
+        linear-gradient(145deg, rgba(60, 35, 9, .94), rgba(18, 10, 2, .98)) !important;
       overflow: hidden;
     }
-    #modal-text .modal-header,
-    #modal-text .modal-footer{
-      border-color: rgba(167,139,250,.10) !important;
-      background: linear-gradient(90deg, rgba(34,211,238,.10), rgba(11,16,32,.92), rgba(139,92,246,.10)) !important;
-      padding: .85rem 1rem !important;
-    }
-    #modal-text .modal-body{ padding: 1rem !important; }
 
-    #modal-text .modal-title{
-      letter-spacing:.14em;
+    /* Reflejo dorado extra en modal */
+    .king-modal .modal-content::before{
+      content:"";
+      position:absolute; inset:-2px -2px auto -2px; height: 120px;
+      background:
+        radial-gradient(520px 120px at 18% 35%, rgba(255,255,255,.07), transparent 66%),
+        radial-gradient(700px 140px at 72% 40%, rgba(255,211,106,.28), transparent 72%),
+        linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,211,106,.12), rgba(255,255,255,.03));
+      border-bottom: 1px solid rgba(255,211,106,.16);
+      pointer-events:none;
+    }
+
+    .king-modal .modal-header,
+    .king-modal .modal-footer{
+      border-color: rgba(255,211,106,.28) !important;
+      background:
+        linear-gradient(90deg, rgba(255,211,106,.16), rgba(18,10,2,.94), rgba(212,175,55,.18)) !important;
+      position: relative;
+      z-index: 1;
+    }
+
+    .king-modal .modal-title{
+      letter-spacing: .16em;
       text-transform: uppercase;
-      font-size: .95rem !important;
-      color: var(--text) !important;
-    }
-    #modal-text .btn-close{
-      filter: invert(1) brightness(1.15);
-      opacity: .85;
-    }
-    #modal-text .btn-close:hover{ opacity: 1; }
-
-    #modal-text input,
-    #modal-text textarea{
-      background: rgba(7,10,18,.86) !important;
-      color: var(--text) !important;
-      border: 1px solid rgba(167,139,250,.16) !important;
-      border-radius: 12px !important;
-      padding-top: .55rem !important;
-      padding-bottom: .55rem !important;
-    }
-    #modal-text input:focus,
-    #modal-text textarea:focus{
-      box-shadow: var(--ring) !important;
-      border-color: rgba(34,211,238,.32) !important;
+      font-weight: 950;
+      color: rgba(255,211,106,.96) !important;
+      text-shadow: 0 0 12px rgba(255,211,106,.35);
     }
 
-    #modal-text .btn-responsive{
+    /* X dorada (override) */
+    .king-modal .btn-close{
+      background: none !important;
+      opacity: 1 !important;
+      width: 46px;
+      height: 40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius: 14px;
+      border: 1px solid rgba(255,211,106,.30);
+      box-shadow: 0 0 0 1px rgba(255,211,106,.12), 0 10px 24px rgba(0,0,0,.55);
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+    .king-modal .btn-close::before{
+      content:"✕";
+      font-size: 1.28rem;
+      font-weight: 950;
+      color: rgba(255,211,106,.98);
+      text-shadow: 0 0 12px rgba(255,211,106,.65);
+      line-height: 1;
+    }
+    .king-modal .btn-close::after{
+      content:"";
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 80%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .king-modal .btn-close:hover::after{ left: 140%; }
+    .king-modal .btn-close:hover{ border-color: rgba(255,211,106,.55); filter: brightness(1.07); }
+
+    /* inputs modal */
+    .king-modal .form-control,
+    .king-modal textarea,
+    .king-modal input{
+      background: rgba(22, 12, 3, .62) !important;
+      color: var(--text) !important;
+      border: 1px solid rgba(255,211,106,.22) !important;
       border-radius: 14px !important;
-      border: 1px solid rgba(34,211,238,.18) !important;
-      background: linear-gradient(135deg, rgba(139,92,246,.22), rgba(7,10,18,.88)) !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03);
+    }
+    .king-modal .form-control:focus,
+    .king-modal textarea:focus{
+      box-shadow: var(--ring) !important;
+      border-color: rgba(255,211,106,.40) !important;
+    }
+    .king-modal label{
+      color: var(--muted) !important;
+      font-weight: 900 !important;
+      letter-spacing: .08em !important;
+      text-transform: uppercase !important;
+    }
+
+    /* Botones modal */
+    .king-modal .btn-responsive{
+      border-radius: 14px !important;
+      border: 1px solid rgba(255,211,106,.22) !important;
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.18), transparent 64%),
+        linear-gradient(145deg, rgba(88, 52, 12, .92), rgba(18, 10, 2, .96)) !important;
       color: var(--text) !important;
       box-shadow: var(--softGlow) !important;
       padding: .55rem .9rem !important;
       transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
     }
-    #modal-text .btn-responsive:hover{
+    .king-modal .btn-responsive:hover{
       transform: translateY(-1px);
       box-shadow: var(--softGlow2) !important;
       filter: brightness(1.03);
     }
 
-    /* ===========================
-       ✅ Controles de formato: “botones” ON/OFF + botón Color similar
-       =========================== */
+    /* Toggles */
     .fmt-row{ display:flex; justify-content:center; gap:10px; flex-wrap: wrap; }
 
-    /* Ocultamos el checkbox real y usamos label como botón */
     .fmt-toggle input{ display:none; }
     .fmt-btn{
       display:inline-flex;
@@ -245,55 +509,147 @@
       gap:8px;
       padding: 8px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(167,139,250,.16);
-      background: rgba(7,10,18,.70);
-      color: rgba(234,240,255,.92);
-      box-shadow: 0 0 0 1px rgba(34,211,238,.04), 0 10px 18px rgba(0,0,0,.35);
+      border: 1px solid rgba(255,211,106,.18);
+      background: rgba(22, 12, 3, .58);
+      color: var(--text2);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 10px 18px rgba(0,0,0,.35);
       cursor: pointer;
       user-select:none;
-      font-weight: 650;
-      letter-spacing: .01em;
-      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
+      font-weight: 850;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease, border-color .2s ease;
     }
-    .fmt-btn i{ color: rgba(34,211,238,.90); }
-    .fmt-btn:hover{ transform: translateY(-1px); box-shadow: var(--softGlow); }
+    .fmt-btn i{ color: rgba(255,211,106,.95); }
+    .fmt-btn:hover{
+      transform: translateY(-1px);
+      box-shadow: var(--softGlow);
+      border-color: rgba(255,211,106,.30);
+    }
     .fmt-toggle input:checked + .fmt-btn{
-      border-color: rgba(34,211,238,.30);
+      border-color: rgba(255,211,106,.36);
       box-shadow: var(--softGlow2);
       background:
-        radial-gradient(140px 70px at 18% 30%, rgba(34,211,238,.16), transparent 62%),
-        radial-gradient(180px 70px at 70% 30%, rgba(139,92,246,.20), transparent 65%),
-        rgba(7,10,18,.72);
+        radial-gradient(140px 70px at 18% 30%, rgba(255,211,106,.18), transparent 62%),
+        radial-gradient(220px 70px at 70% 30%, rgba(212,175,55,.14), transparent 65%),
+        rgba(22, 12, 3, .62);
     }
 
-    /* Botón color igual que toggles */
     .btn-color{
       padding: 8px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(167,139,250,.16);
-      background: rgba(7,10,18,.70);
-      color: rgba(234,240,255,.92);
-      box-shadow: 0 0 0 1px rgba(34,211,238,.04), 0 10px 18px rgba(0,0,0,.35);
+      border: 1px solid rgba(255,211,106,.18);
+      background: rgba(22, 12, 3, .58);
+      color: var(--text2);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 10px 18px rgba(0,0,0,.35);
       display:flex; align-items:center; gap:10px; justify-content: space-between;
       min-width: 140px;
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease, border-color .2s ease;
+      user-select: none;
+      font-weight: 850;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-color:hover{ box-shadow: var(--softGlow); transform: translateY(-1px); }
-    .btn-color .close-color{ margin-left:auto; }
+    .btn-color::after{
+      content:"";
+      position:absolute; top:-40%; left:-120%;
+      width: 85%; height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .btn-color:hover::after{ left: 140%; }
+    .btn-color i{ color: rgba(255,211,106,.95); }
+    .btn-color:hover{
+      box-shadow: var(--softGlow);
+      transform: translateY(-1px);
+      border-color: rgba(255,211,106,.30);
+    }
+    .btn-color .close-color{ margin-left:auto; color: rgba(255,255,255,.75); font-size: 1.05rem; }
+
+    /* z-index safe */
+    .sidebar{ z-index: 2005 !important; }
+    .modal-backdrop{ z-index: 2000 !important; }
+    .modal{ z-index: 2001 !important; }
   </style>
 </head>
 
 <body>
   <main class="d-flex">
     <%~ include("./sidebar", it) %>
+
     <div class="container-fluid p-0">
       <%~ include("./header", it) %>
 
       <div class="card-fixed">
-        <div class="d-flex justify-content-between mb-3">
-          <h1 class="h3 mb-0 text-gray-800">Textos</h1>
+
+        <!-- ✅ TITULO + INFO + BOTÓN RESET (acomodado y prolijo) -->
+        <div class="title-wrap">
+          <div class="title-left">
+            <h1 class="h3 text-gray-800">TEXTOS</h1>
+
+            <button type="button"
+                    class="btn-info-king"
+                    title="Información"
+                    data-bs-toggle="modal"
+                    data-bs-target="#infoTextosModal"
+                    aria-label="Información de textos">
+              <i class="bi bi-info-lg"></i>
+            </button>
+          </div>
+
           <button class="btn btn-danger btn-sm" id="reset_texts">
-            <i class="bi bi-trash"></i> Restablecer textos
+            <i class="bi bi-trash"></i> RESTABLECER TEXTOS
           </button>
+        </div>
+
+        <!-- ✅ MODAL<!-- ✅ MODAL INFO (centrado en el medio) -->
+        <div class="modal fade king-modal" id="infoTextosModal" tabindex="-1"
+             aria-labelledby="infoTextosModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="infoTextosModalLabel">INFORMACIÓN DE TEXTOS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+
+              <div class="modal-body">
+                <div style="
+                  border-radius:16px;
+                  border:1px solid rgba(255,211,106,.22);
+                  background:
+                    radial-gradient(520px 200px at 18% 10%, rgba(255,211,106,.12), transparent 60%),
+                    rgba(22,12,3,.45);
+                  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 12px 30px rgba(0,0,0,.50);
+                  padding:14px;">
+                  <span style="
+                    display:block;
+                    font-size:.72rem;
+                    letter-spacing:.16em;
+                    text-transform:uppercase;
+                    color:var(--muted);
+                    font-weight:950;
+                    margin-bottom:6px;">¿PARA QUÉ SIRVE ESTA SECCIÓN?</span>
+
+                  <p style="margin:0; color:rgba(255,246,214,.92); line-height:1.45rem; font-size:.95rem;">
+                    Acá administrás los <b>TEXTOS</b> que usa tu app/panel (labels y mensajes).<br>
+                    Podés <b>editar</b>, <b>restablecer uno</b> o <b>restablecer todos</b> a fábrica.<br><br>
+                    <b>TIP:</b> mantené textos cortos y claros para que todo se vea “premium”.
+                  </p>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-sm" data-bs-dismiss="modal">
+                  <i class="bi bi-check2-circle"></i> ENTENDIDO
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="table-container text-center">
@@ -308,67 +664,69 @@
           <table class="table table-striped mb-0" id="table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Texto</th>
-                <th>Acciones</th>
+                <th style="width:70px;">ID</th>
+                <th>TEXTO</th>
+                <th style="width:140px;">ACCIONES</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
+
       </div>
     </div>
   </main>
 
-  <!-- Modal -->
-  <div class="modal fade" id="modal-text" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+  <!-- ✅ MODAL EDITAR (centrado en el medio) -->
+  <div class="modal fade king-modal" id="modal-text" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
+
         <div class="modal-header">
           <h5 class="modal-title">EDITAR TEXTO</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
 
         <div class="modal-body text-start">
           <input hidden id="id">
 
           <div class="mb-3">
-            <label class="form-label">Nombre del label</label>
+            <label class="form-label">NOMBRE DEL LABEL</label>
             <input class="form-control" disabled id="label">
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Pre visualización</label>
+            <label class="form-label">PRE VISUALIZACIÓN</label>
             <div class="form-control __preview"></div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Texto</label>
+            <label class="form-label">TEXTO</label>
             <textarea class="form-control" id="text" maxlength="1024" minlength="1" rows="5"></textarea>
           </div>
 
-          <!-- ✅ Botones ON/OFF (negrita, itálica) + color igual -->
+          <!-- ✅ Botones ON/OFF (negrita, itálica) + color -->
           <div class="mb-3 fmt-row">
             <div class="fmt-toggle">
               <input class="form-check-input __bold" type="checkbox" id="fmtBold">
-              <label class="fmt-btn" for="fmtBold"><i class="bi bi-type-bold"></i> Negrita</label>
+              <label class="fmt-btn" for="fmtBold"><i class="bi bi-type-bold"></i> NEGRITA</label>
             </div>
 
             <div class="fmt-toggle">
               <input class="form-check-input __italic" type="checkbox" id="fmtItalic">
-              <label class="fmt-btn" for="fmtItalic"><i class="bi bi-type-italic"></i> Itálica</label>
+              <label class="fmt-btn" for="fmtItalic"><i class="bi bi-type-italic"></i> ITÁLICA</label>
             </div>
 
             <div class="btn-color __apply_color">
-              <span><i class="bi bi-palette2"></i> Color</span>
+              <span><i class="bi bi-palette2"></i> COLOR</span>
               <span class="close-color">&times;</span>
             </div>
           </div>
 
           <div class="modal-footer p-0 pt-2">
             <div class="d-flex flex-fill justify-content-end gap-2">
-              <button type="button" class="btn-responsive w-100" data-bs-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn-responsive w-100" id="btnSave">Guardar</button>
+              <button type="button" class="btn-responsive w-100" data-bs-dismiss="modal">CERRAR</button>
+              <button type="button" class="btn-responsive w-100" id="btnSave">GUARDAR</button>
             </div>
           </div>
         </div>
@@ -444,43 +802,53 @@
       $('.__italic').prop('checked', /<i>.*<\/i>/.test(text.text));
     });
 
+    const setPreview = (text) => document.querySelector('.__preview').innerHTML = text;
+
     $('#btnSave').click(async () => {
       let id = $('#id').val();
       let text = $('#text').val();
+
+      // ✅ asegura que SIEMPRE exista font color (default blanco crema)
       if (!/^<font color=".*?">.*<\/font>$/.test(text)) {
-        text = `<font color="#ffffff">${text.replace(/<font color=".*?">(.*?)<\/font>/g,'$1')}</font>`;
+        text = `<font color="#fff6d6">${text.replace(/<font color=".*?">(.*?)<\/font>/g,'$1')}</font>`;
       }
+
       try {
         const response = await fetch('/texts/update', {
           method: 'PUT',
           body: JSON.stringify({ label: id, text }),
           headers: { 'Content-Type': 'application/json' }
         });
+
         if (response.status === 200) {
           showToastSuccess('Texto actualizado con éxito!');
           bootstrap.Modal.getInstance(document.getElementById('modal-text')).hide();
           setTimeout(loadTextList, 500);
+        } else {
+          showToastError('No fue posible actualizar el texto');
         }
       } catch {
         showToastError('No fue posible actualizar el texto');
       }
     });
 
+    // ✅ Color picker
     const applyColorBtn = document.querySelector('.__apply_color');
     applyColorBtn.addEventListener('click', () => {
       const div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.left = '-9999px';
+      document.body.appendChild(div);
+
       const color = new jscolor(div);
       color.onInput = () => {
         const t = $('#text')[0];
         t.value = `<font color="${color.toHEXString()}">${t.value.replace(/<font color=".*?">(.*?)<\/font>/g,'$1')}</font>`;
-        $('.__preview').html(t.value);
+        setPreview(t.value);
       }
-      applyColorBtn.insertAdjacentElement('beforebegin', div);
       color.show();
-      div.querySelector('.close-color')?.addEventListener('click', () => div.remove());
+      setTimeout(() => div.remove(), 3500);
     });
-
-    // (sin UI de copiar)
 
     document.getElementById('reset_texts').addEventListener('click', async () => {
       try {
@@ -488,6 +856,8 @@
         if (response.status === 204) {
           showToastSuccess('Todos los textos se restablecieron a fábrica!');
           setTimeout(loadTextList, 500);
+        } else {
+          showToastError('No se pudo restablecer todos los textos.');
         }
       } catch {
         showToastError('No se pudo restablecer todos los textos.');
@@ -504,6 +874,8 @@
         if (response.status === 200) {
           showToastSuccess(`Éxito, ${label} restablecido!`);
           setTimeout(loadTextList, 500);
+        } else {
+          showToastError(`No se pudo restablecer ${label}`);
         }
       } catch {
         showToastError(`No se pudo restablecer ${label}`);
@@ -512,19 +884,26 @@
 
     const bold = document.querySelector('.__bold');
     const italic = document.querySelector('.__italic');
-    const setPreview = (text) => document.querySelector('.__preview').innerHTML = text;
 
-    // ✅ toggles (mantiene tu lógica)
     bold.addEventListener('click', () => {
       let t = $('#text')[0];
-      t.value = /<b>.*<\/b>/.test(t.value) ? t.value.replace(/<b>(.*)<\/b>/g,'$1') : `<b>${t.value}</b>`;
+      t.value = /<b>.*<\/b>/.test(t.value)
+        ? t.value.replace(/<b>(.*)<\/b>/g,'$1')
+        : `<b>${t.value}</b>`;
       setPreview(t.value);
     });
 
     italic.addEventListener('click', () => {
       let t = $('#text')[0];
-      t.value = /<i>.*<\/i>/.test(t.value) ? t.value.replace(/<i>(.*)<\/i>/g,'$1') : `<i>${t.value}</i>`;
+      t.value = /<i>.*<\/i>/.test(t.value)
+        ? t.value.replace(/<i>(.*)<\/i>/g,'$1')
+        : `<i>${t.value}</i>`;
       setPreview(t.value);
+    });
+
+    // ✅ preview en vivo mientras escribe
+    $('#text').on('input', function(){
+      setPreview(this.value);
     });
   </script>
 </body>

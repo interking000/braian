@@ -28,136 +28,309 @@
   if (st === 'ACTIVE') badgeText = 'PREMIUM';
   else if (st === 'GRACE') badgeText = 'VENCIDO';
   else if (st === 'NONE') badgeText = 'SIN ACCESO';
+
+  // Textos “detallados” según estado
+  let badgeDesc = 'Acceso de prueba limitado';
+  if (st === 'ACTIVE') badgeDesc = 'Acceso Premium activo';
+  else if (st === 'GRACE') badgeDesc = 'Acceso vencido (modo gracia)';
+  else if (st === 'NONE') badgeDesc = 'Sin acceso asignado';
 %>
 
 <style>
   /* =======================
-     KING•VPN – Futuristic Pro
+     KING•VPN – GOLD SHIELD PREMIUM (like your logo colors)
      ======================= */
 
-  .kv-shell{width:100%;max-width:980px;margin:0 auto;}
-  .kv-wrap{
-    border-radius:22px;
-    background:
-      radial-gradient(800px 360px at 15% 5%, rgba(168,85,247,.14), transparent 60%),
-      radial-gradient(800px 360px at 85% 0%, rgba(99,102,241,.12), transparent 60%),
-      linear-gradient(180deg, rgba(10,10,14,.92), rgba(6,6,8,.94));
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 20px 60px rgba(0,0,0,.55);
-    padding:14px;
+  :root{
+    /* Oro */
+    --gold-main:#D4AF37;
+    --gold-soft:#FFD36A;
+    --gold-hi:#FFE7A6;
+    --gold-deep:#B88A1A;
+
+    /* Marrones del escudo */
+    --brown-1:#9A6A12;
+    --brown-2:#7A4F0A;
+    --brown-3:#5C3A06;
+    --brown-4:#3A2400;
+
+    --text:#FFF2C2;
+    --muted: rgba(255,242,194,.72);
+
+    --line: rgba(255,231,166,.18);
+    --line2: rgba(255,231,166,.12);
+
+    --shadow: 0 25px 70px rgba(30,18,0,.72);
+    --softGlow: 0 0 0 1px rgba(255,231,166,.12), 0 18px 48px rgba(0,0,0,.55);
+
+    --radius: 22px;
   }
 
+  .kv-shell{width:100%;max-width:980px;margin:0 auto;}
+
+  .kv-wrap{
+    border-radius: var(--radius);
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+
+    background:
+      radial-gradient(900px 420px at 18% 10%, rgba(255,211,106,.18), transparent 62%),
+      radial-gradient(900px 420px at 82% 8%, rgba(212,175,55,.14), transparent 62%),
+      linear-gradient(180deg, rgba(14,10,2,.80), rgba(8,6,2,.90));
+    border: 1px solid rgba(255,215,120,.16);
+    box-shadow: var(--shadow);
+  }
+
+  /* Sheen dorado suave */
+  .kv-wrap::before{
+    content:"";
+    position:absolute;
+    inset:-40%;
+    background: linear-gradient(120deg, transparent 44%, rgba(255,255,255,.14) 50%, transparent 56%);
+    filter: blur(16px);
+    opacity:.35;
+    transform: translateX(-140%);
+    animation: kvSheen 7.2s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes kvSheen{
+    0%{transform:translateX(-140%)}
+    100%{transform:translateX(140%)}
+  }
+
+  /* HEADER */
   .kv-head{
-    display:flex;align-items:center;justify-content:space-between;
-    gap:12px;padding:8px 6px 14px;
-    border-bottom:1px solid rgba(255,255,255,.06);
+    display:flex;align-items:flex-start;justify-content:space-between;
+    gap:12px;padding:10px 8px 14px;
+    border-bottom:1px solid rgba(255,215,120,.12);
     margin-bottom:14px;
+    position:relative;
+    z-index:1;
   }
 
   .kv-brand{display:flex;align-items:center;gap:12px;}
   .kv-logo{
-    width:44px;height:44px;border-radius:16px;
+    width:46px;height:46px;border-radius:16px;
     display:grid;place-items:center;
-    background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(99,102,241,.14));
-    border:1px solid rgba(255,255,255,.12);
+    background:
+      radial-gradient(210px 90px at 30% 20%, rgba(255,231,166,.26), transparent 65%),
+      linear-gradient(145deg, rgba(255,211,106,.18), rgba(184,138,26,.10));
+    border:1px solid rgba(255,231,166,.18);
+    box-shadow: var(--softGlow);
+  }
+  .kv-logo i{
+    color: rgba(255,231,166,.95);
+    filter: drop-shadow(0 0 12px rgba(255,215,120,.20));
   }
 
   .kv-title{
-    margin:0;font-weight:950;letter-spacing:.14em;
-    text-transform:uppercase;font-size:.95rem;
+    margin:0;
+    font-weight:1000;
+    letter-spacing:.20em;
+    text-transform:uppercase;
+    font-size:1rem;
+    color: var(--gold-hi);
+    text-shadow:
+      0 2px 0 rgba(80,40,0,.55),
+      0 6px 18px rgba(0,0,0,.55),
+      0 0 18px rgba(255,231,166,.12);
   }
-  .kv-sub{margin:0;font-size:.82rem;opacity:.7}
+  .kv-sub{
+    margin:6px 0 0;
+    font-size:.84rem;
+    color: var(--muted);
+    line-height:1.25;
+  }
+
+  /* Badge premium con descripción */
+  .kv-badgeWrap{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:6px;
+    min-width: 170px;
+  }
 
   .kv-badge{
     padding:8px 14px;border-radius:999px;
-    font-weight:900;letter-spacing:.14em;
+    font-weight:1000;letter-spacing:.14em;
     font-size:.72rem;
-    border:1px solid rgba(255,255,255,.12);
-    background:rgba(0,0,0,.35);
+    border:1px solid rgba(255,231,166,.18);
+    background:
+      radial-gradient(240px 80px at 30% 30%, rgba(255,231,166,.14), transparent 60%),
+      rgba(0,0,0,.35);
+    color: rgba(255,231,166,.92);
+    text-transform: uppercase;
+    box-shadow: 0 12px 30px rgba(0,0,0,.45);
+    position:relative;
+    overflow:hidden;
+  }
+  .kv-badge::before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: linear-gradient(120deg, transparent 42%, rgba(255,255,255,.18) 50%, transparent 58%);
+    transform: translateX(-140%);
+    opacity:.75;
+    animation: kvBadgeSheen 6.4s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes kvBadgeSheen{
+    0%{transform:translateX(-140%)}
+    100%{transform:translateX(140%)}
   }
 
-  .kv-accordion{display:flex;flex-direction:column;gap:12px}
+  .kv-badgeDesc{
+    font-size:.78rem;
+    color: rgba(255,242,194,.68);
+    text-align:right;
+    line-height:1.15;
+  }
+
+  /* Acordeón */
+  .kv-accordion{display:flex;flex-direction:column;gap:12px; position:relative; z-index:1;}
 
   .kv-item{
     border-radius:18px;
-    border:1px solid rgba(255,255,255,.08);
-    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.18));
+    border:1px solid rgba(255,215,120,.14);
+    background:
+      radial-gradient(520px 160px at 18% 10%, rgba(255,231,166,.08), transparent 70%),
+      linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.24));
     overflow:hidden;
+    box-shadow: 0 10px 28px rgba(0,0,0,.42);
   }
 
   .kv-btn{
-    width:100%;background:none;border:0;
-    color:#fff;padding:14px;
-    display:flex;justify-content:space-between;align-items:center;
+    width:100%;
+    background:none;
+    border:0;
+    color: var(--text);
+    padding:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    text-align:left;
   }
+  .kv-btn:focus{outline:none}
 
   .kv-left{display:flex;gap:12px;align-items:center}
+
   .kv-ico{
-    width:42px;height:42px;border-radius:14px;
+    width:44px;height:44px;border-radius:16px;
     display:grid;place-items:center;
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.1);
+    background:
+      radial-gradient(180px 70px at 30% 30%, rgba(255,231,166,.14), transparent 60%),
+      linear-gradient(145deg, rgba(58,36,0,.38), rgba(14,10,2,.28));
+    border:1px solid rgba(255,231,166,.16);
+    box-shadow: 0 14px 32px rgba(0,0,0,.35);
   }
+  .kv-ico i{ color: rgba(255,231,166,.95); }
 
   .kv-txt strong{
-    display:block;font-size:.78rem;
-    letter-spacing:.16em;text-transform:uppercase;
+    display:block;
+    font-size:.78rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color: rgba(255,231,166,.95);
   }
-  .kv-txt span{font-size:.82rem;opacity:.7}
+  .kv-txt span{
+    font-size:.86rem;
+    color: rgba(255,242,194,.70);
+  }
 
   .kv-chevron{
-    width:38px;height:38px;border-radius:12px;
+    width:40px;height:40px;border-radius:14px;
     display:grid;place-items:center;
-    background:rgba(0,0,0,.3);
-    transition:transform .2s;
+    background:
+      radial-gradient(140px 60px at 30% 30%, rgba(255,231,166,.12), transparent 62%),
+      rgba(0,0,0,.28);
+    border:1px solid rgba(255,231,166,.10);
+    transition:transform .2s ease, filter .2s ease;
   }
-
+  .kv-chevron i{ color: rgba(255,231,166,.92); }
   .kv-item.kv-open .kv-chevron{transform:rotate(180deg)}
+  .kv-btn:hover .kv-chevron{filter:brightness(1.06)}
 
   .kv-content{
-    max-height:0;overflow:hidden;
+    max-height:0;
+    overflow:hidden;
     transition:max-height .25s ease;
-    border-top:1px solid rgba(255,255,255,.06);
+    border-top:1px solid rgba(255,215,120,.10);
   }
-
   .kv-item.kv-open .kv-content{max-height:900px}
 
   .kv-inner{padding:14px}
 
   .kv-grid{
-    display:grid;grid-template-columns:1fr 1fr 1fr;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
     gap:12px;
   }
-
   @media(max-width:900px){
     .kv-grid{grid-template-columns:1fr}
+    .kv-badgeWrap{min-width:auto}
   }
 
   .kv-card{
-    border-radius:18px;padding:14px;
-    border:1px solid rgba(255,255,255,.08);
-    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.2));
+    border-radius:18px;
+    padding:14px;
+    border:1px solid rgba(255,215,120,.14);
+    background:
+      radial-gradient(520px 140px at 20% 10%, rgba(255,231,166,.08), transparent 65%),
+      linear-gradient(180deg, rgba(58,36,0,.22), rgba(0,0,0,.22));
+    box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    color: var(--text);
+    text-decoration:none;
   }
+  a.kv-card:hover{ filter:brightness(1.03); transform:translateY(-1px); transition:.18s ease; }
 
   .kv-k{
-    font-size:.7rem;letter-spacing:.16em;
-    text-transform:uppercase;opacity:.7;
+    font-size:.70rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color: rgba(255,242,194,.72);
     margin-bottom:8px;
   }
 
   .kv-vdt .d1{
-    display:block;font-weight:950;
-    font-size:1.1rem;
+    display:block;
+    font-weight:1000;
+    font-size:1.05rem;
+    color: rgba(255,231,166,.96);
+    text-shadow: 0 8px 18px rgba(0,0,0,.45);
   }
   .kv-vdt .d2{
-    display:block;margin-top:6px;
-    font-size:.9rem;opacity:.7;
-    letter-spacing:.08em;
+    display:block;
+    margin-top:6px;
+    font-size:.90rem;
+    color: rgba(255,242,194,.70);
+    letter-spacing:.06em;
   }
 
-  .kv-metric{display:flex;justify-content:space-between;align-items:end}
-  .kv-metric .num{font-size:1.7rem;font-weight:950}
-  .kv-metric .hint{font-size:.8rem;opacity:.7}
+  .kv-metric{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    gap:12px;
+  }
+  .kv-metric .num{
+    font-size:1.85rem;
+    font-weight:1000;
+    color: rgba(255,231,166,.96);
+    text-shadow: 0 10px 22px rgba(0,0,0,.45);
+    line-height:1;
+  }
+  .kv-metric .hint{
+    font-size:.82rem;
+    color: rgba(255,242,194,.70);
+  }
+
+  /* Placeholders dorados */
+  .placeholder{
+    background-color: rgba(255,231,166,.16) !important;
+    border: 1px solid rgba(255,231,166,.10);
+  }
 </style>
 
 <div class="kv-shell">
@@ -168,22 +341,26 @@
         <div class="kv-logo"><i class="bi bi-shield-lock-fill"></i></div>
         <div>
           <p class="kv-title">KING•VPN</p>
-          <p class="kv-sub">Panel de control</p>
+          <p class="kv-sub">Panel de control • Información del acceso y métricas del sistema</p>
         </div>
       </div>
-      <div class="kv-badge"><%= badgeText %></div>
+
+      <div class="kv-badgeWrap">
+        <div class="kv-badge"><%= badgeText %></div>
+        <div class="kv-badgeDesc"><%= badgeDesc %></div>
+      </div>
     </div>
 
     <div class="kv-accordion">
 
       <!-- INFO ESTADO -->
       <div class="kv-item" id="kvEstado">
-        <button class="kv-btn" data-kv="estado">
+        <button class="kv-btn" data-kv="estado" type="button">
           <div class="kv-left">
             <div class="kv-ico"><i class="bi bi-person-badge-fill"></i></div>
             <div class="kv-txt">
               <strong>INFO ESTADO</strong>
-              <span>Registro / Actualización / Vence</span>
+              <span>Registro • Actualización • Vencimiento</span>
             </div>
           </div>
           <div class="kv-chevron"><i class="bi bi-chevron-down"></i></div>
@@ -217,7 +394,14 @@
                     <span class="d2"><%= dtVence.time %></span>
                   </div>
                 <% } else { %>
-                  <div style="font-weight:900"><%= venceLabel %></div>
+                  <div style="font-weight:1000; color: rgba(255,231,166,.92); letter-spacing:.06em;">
+                    <%= venceLabel %>
+                  </div>
+                  <% if (st === 'GRACE') { %>
+                    <div style="margin-top:8px; color: rgba(255,242,194,.70); font-size:.88rem;">
+                      Estás en modo gracia. Renová para evitar restricciones y pérdida de datos.
+                    </div>
+                  <% } %>
                 <% } %>
               </div>
 
@@ -228,12 +412,12 @@
 
       <!-- INFO PANEL -->
       <div class="kv-item" id="kvPanel">
-        <button class="kv-btn" data-kv="panel">
+        <button class="kv-btn" data-kv="panel" type="button">
           <div class="kv-left">
             <div class="kv-ico"><i class="bi bi-speedometer2"></i></div>
             <div class="kv-txt">
               <strong>INFO PANEL</strong>
-              <span>Categorías / Configuraciones</span>
+              <span>Métricas • Categorías • Configuraciones</span>
             </div>
           </div>
           <div class="kv-chevron"><i class="bi bi-chevron-down"></i></div>
@@ -265,6 +449,16 @@
                 </div>
               </a>
 
+              <div class="kv-card">
+                <div class="kv-k">Estado del servicio</div>
+                <div style="font-weight:1000; color: rgba(255,231,166,.94); letter-spacing:.08em;">
+                  <%= badgeText %>
+                </div>
+                <div style="margin-top:8px; color: rgba(255,242,194,.70); font-size:.88rem;">
+                  <%= badgeDesc %>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -281,13 +475,14 @@
     const panel = document.getElementById('kvPanel');
 
     const closeAll = () => {
-      estado.classList.remove('kv-open');
-      panel.classList.remove('kv-open');
+      if (estado) estado.classList.remove('kv-open');
+      if (panel) panel.classList.remove('kv-open');
     };
 
     items.forEach(b => {
       b.addEventListener('click', () => {
-        const t = b.dataset.kv === 'estado' ? estado : panel;
+        const t = (b.dataset.kv === 'estado') ? estado : panel;
+        if (!t) return;
         const open = t.classList.contains('kv-open');
         closeAll();
         if (!open) t.classList.add('kv-open');

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="es-AR" translate="no" data-bs-theme="dark">
-
 <head>
   <base href="/" target="_blank">
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="google" content="notranslate">
   <link rel="shortcut icon" href="../static/img/favicon.svg" />
-  <title>KING•VPN - Categorías</title>
+  <title>Categorias</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
@@ -25,35 +24,78 @@
 
   <style>
     :root{
-      --bg1:#070A10; --bg2:#0B1020;
-      --panel:#0E1424; --panel2:#0B1020;
+      /* ✅ FONDO MARRÓN (como la imagen) */
+      --bg1:#7A4A10;
+      --bg2:#2A1705;
+      --bg3:#4B2A09;
 
-      /* KING: violeta + verde */
-      --accent:#8B5CF6;
-      --accent2:#22C55E;
-      --accent3:#A78BFA;
+      /* ✅ PANELES */
+      --panel: rgba(55, 32, 8, .92);
+      --panel2: rgba(32, 18, 5, .88);
 
-      --text:#EAF0FF; --muted:#AAB3D6;
+      /* ✅ DORADOS */
+      --gold:#D4AF37;
+      --gold2:#FFD36A;
+      --gold3:#8C6B1A;
+      --gold4:#F0B92D; /* dorado del texto KING•VPN */
+
+      /* ✅ TEXTO CREMA */
+      --text: rgba(255, 246, 214, .96);
+      --muted: rgba(255, 226, 170, .74);
+
       --radius:18px;
 
-      --shadow: 0 18px 55px rgba(0,0,0,.65);
-      --ring: 0 0 0 3px rgba(34,197,94,.16);
-      --softGlow: 0 0 0 1px rgba(167,139,250,.14), 0 12px 28px rgba(0,0,0,.55);
+      --shadow: 0 18px 55px rgba(0,0,0,.72);
+      --ring: 0 0 0 3px rgba(255,211,106,.22);
+      --softGlow: 0 0 0 1px rgba(255,211,106,.18), 0 12px 28px rgba(0,0,0,.62);
 
       --header-safe: 46px;
     }
 
     html, body{ height:100%; }
 
+    /* =========================
+       ✅ ANTI-BLUR GLOBAL (MOBILE SAFE)
+       ========================= */
+    body, main, .content, .card, .card-body, #root, #pagination,
+    .container-fluid, .sidebar, .header, .table-responsive, table, tr, td{
+      filter: none !important;
+      -webkit-filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      transform: none;
+    }
+
+    body{
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    /* Scrollbar */
+    *{
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,211,106,.55) rgba(42,23,5,.55);
+    }
+    *::-webkit-scrollbar{ width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track{ background: rgba(42,23,5,.55); border-radius: 999px; }
+    *::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(255,211,106,.42), rgba(212,175,55,.78));
+      border-radius: 999px;
+      border: 2px solid rgba(42,23,5,.55);
+    }
+
     body{
       min-height:100vh;
       color:var(--text);
+
+      /* ✅ Fondo estilo KING•VPN (marrón + glow dorado) */
       background:
-        radial-gradient(950px 520px at 18% 12%, rgba(139,92,246,.18), transparent 62%),
-        radial-gradient(900px 520px at 82% 14%, rgba(34,197,94,.13), transparent 60%),
-        radial-gradient(900px 620px at 50% 92%, rgba(167,139,250,.10), transparent 62%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
+        radial-gradient(980px 560px at 18% 0%, rgba(255,211,106,.30), transparent 62%),
+        radial-gradient(980px 560px at 92% 12%, rgba(212,175,55,.22), transparent 66%),
+        radial-gradient(980px 620px at 50% 92%, rgba(212,175,55,.16), transparent 68%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg3) 36%, var(--bg2) 100%);
       background-attachment: fixed;
+
       overflow-x:hidden;
       padding-top: var(--header-safe);
     }
@@ -66,109 +108,151 @@
       min-height: calc(100vh - var(--header-safe));
     }
 
+    /* ✅ Card principal */
     .content > .card{
       border-radius: calc(var(--radius) + 6px);
-      background: linear-gradient(180deg, rgba(14,20,36,.92), rgba(11,16,32,.92));
-      border: 1px solid rgba(167,139,250,.24) !important;
-      box-shadow: var(--shadow), 0 0 0 1px rgba(34,197,94,.045);
-      backdrop-filter: blur(10px);
+      background:
+        radial-gradient(640px 240px at 20% 0%, rgba(255,211,106,.16), transparent 64%),
+        linear-gradient(145deg, rgba(60, 35, 9, .92), rgba(18, 10, 2, .96));
+      border: 1px solid rgba(255,211,106,.26) !important;
+      box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
+
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    .content > .card::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      border-radius: calc(var(--radius) + 6px);
+      pointer-events:none;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,211,106,.18),
+        inset 0 0 0 2px rgba(255,255,255,.02);
     }
 
     .content > .card::before{
       content:"";
       position:absolute; inset:-2px -2px auto -2px; height: 110px;
       background:
-        radial-gradient(380px 110px at 16% 30%, rgba(139,92,246,.22), transparent 65%),
-        radial-gradient(560px 110px at 70% 30%, rgba(34,197,94,.16), transparent 65%),
-        linear-gradient(90deg, rgba(139,92,246,.10), rgba(34,197,94,.06));
+        radial-gradient(520px 110px at 18% 30%, rgba(255,255,255,.07), transparent 66%),
+        radial-gradient(620px 110px at 72% 30%, rgba(255,211,106,.22), transparent 72%),
+        linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,211,106,.10));
       pointer-events:none;
-      border-bottom: 1px solid rgba(167,139,250,.14);
+      border-bottom: 1px solid rgba(255,211,106,.16);
     }
 
     .card-body{ position:relative; }
 
     .text-gray-800{
-      color: var(--text) !important;
-      letter-spacing: .14em;
-      text-shadow:none;
+      color: var(--gold4) !important;
+      letter-spacing: .20em;
       text-transform: uppercase;
+      font-weight: 950;
+      text-shadow: 0 10px 28px rgba(0,0,0,.60);
     }
 
     .form-select, .form-control, .input-group-text{
-      background: rgba(7,10,18,.86) !important;
+      background: rgba(22, 12, 3, .58) !important;
       color: var(--text) !important;
-      border: 1px solid rgba(167,139,250,.18) !important;
+      border: 1px solid rgba(255,211,106,.20) !important;
       border-radius: 14px !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03);
     }
     .form-select:focus, .form-control:focus{
       box-shadow: var(--ring) !important;
-      border-color: rgba(34,197,94,.32) !important;
+      border-color: rgba(255,211,106,.40) !important;
     }
+    .form-control::placeholder{ color: rgba(255,226,170,.60); }
 
-    /* ===== Botones top (pequeños, pro) ===== */
     .btn{
       border-radius: 14px !important;
-      border: 1px solid rgba(167,139,250,.18) !important;
+      border: 1px solid rgba(255,211,106,.22) !important;
       color: var(--text) !important;
-      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
-      box-shadow: 0 10px 22px rgba(0,0,0,.42);
-      background: rgba(7,10,18,.72);
-      font-weight: 900;
+      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease, border-color .2s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,.44);
+
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.18), transparent 64%),
+        linear-gradient(145deg, rgba(88, 52, 12, .92), rgba(18, 10, 2, .96));
+
+      font-weight: 950;
       letter-spacing: .10em;
       text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
     }
-    .btn:hover{ transform: translateY(-1px); box-shadow: var(--softGlow); filter: brightness(1.03); }
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 1px rgba(255,211,106,.16), 0 14px 30px rgba(0,0,0,.62);
+      filter: brightness(1.06);
+      border-color: rgba(255,211,106,.36) !important;
+    }
     .btn:active{ transform: translateY(0); filter: brightness(.99); }
+
+    .btn::after{
+      content:"";
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 80%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .btn:hover::after{ left: 140%; }
 
     .btn-king-sm{
       padding: .42rem .7rem !important;
       font-size: .78rem !important;
       letter-spacing: .12em !important;
-      background:
-        radial-gradient(140px 60px at 20% 30%, rgba(34,197,94,.14), transparent 60%),
-        radial-gradient(200px 70px at 70% 30%, rgba(139,92,246,.18), transparent 65%),
-        rgba(7,10,18,.72) !important;
-      border-color: rgba(34,197,94,.18) !important;
+      border-color: rgba(255,211,106,.28) !important;
     }
-    .btn-king-sm i{ color: rgba(34,197,94,.92); }
+    .btn-king-sm i{ color: rgba(255,211,106,.98); }
 
     .btn-edit-soft{
       padding: .42rem .7rem !important;
       font-size: .78rem !important;
       letter-spacing: .12em !important;
-      background:
-        radial-gradient(160px 70px at 20% 30%, rgba(139,92,246,.22), transparent 62%),
-        radial-gradient(220px 70px at 80% 30%, rgba(34,197,94,.10), transparent 65%),
-        rgba(7,10,18,.72) !important;
-      border: 1px solid rgba(139,92,246,.22) !important;
-      box-shadow: 0 0 0 1px rgba(167,139,250,.10), 0 12px 28px rgba(0,0,0,.55);
+      border: 1px solid rgba(255,211,106,.26) !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.10), 0 12px 28px rgba(0,0,0,.56);
     }
-    .btn-edit-soft i{ color: rgba(167,139,250,.95); }
+    .btn-edit-soft i{ color: rgba(255,211,106,.95); }
 
     .btn-danger-soft{
       padding: .42rem .7rem !important;
       font-size: .78rem !important;
       letter-spacing: .12em !important;
       background:
-        radial-gradient(120px 70px at 20% 30%, rgba(239,68,68,.18), transparent 62%),
-        rgba(7,10,18,.72) !important;
-      border: 1px solid rgba(239,68,68,.22) !important;
+        radial-gradient(140px 76px at 20% 30%, rgba(239,68,68,.22), transparent 64%),
+        linear-gradient(145deg, rgba(88, 24, 10, .92), rgba(18, 10, 2, .96)) !important;
+      border: 1px solid rgba(239,68,68,.26) !important;
       box-shadow: 0 0 0 1px rgba(239,68,68,.10), 0 12px 28px rgba(0,0,0,.55);
     }
-    .btn-danger-soft i{ color: rgba(248,113,113,.95); }
+    .btn-danger-soft i{ color: rgba(255,140,140,.98); }
 
-    /* =========================================================
-       TABLA -> CARDS 2×2 (sin romper tu JS)
-       ========================================================= */
     .table-responsive{
       border-radius: 18px;
-      border: 1px solid rgba(167,139,250,.16);
-      background: rgba(11,16,32,.58);
-      box-shadow: inset 0 0 0 1px rgba(34,197,94,.03);
+      border: 1px solid rgba(255,211,106,.18);
+      background: rgba(22, 12, 3, .34);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        0 10px 26px rgba(0,0,0,.40);
       overflow: hidden;
       padding: 10px;
+      position: relative;
+    }
+    .table-responsive::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      border-radius: 18px;
+      pointer-events:none;
+      box-shadow: inset 0 0 0 1px rgba(255,211,106,.14);
     }
 
     table.table.neon-cards-cat{ width:100%; margin:0; }
@@ -188,23 +272,34 @@
       gap: 8px 10px;
 
       border-radius: 16px;
-      background: rgba(11,16,32,.86);
-      border: 1px solid rgba(167,139,250,.16);
-      box-shadow: 0 0 0 1px rgba(34,197,94,.04), 0 16px 28px rgba(0,0,0,.45);
+      background:
+        radial-gradient(280px 130px at 20% 0%, rgba(255,211,106,.14), transparent 64%),
+        rgba(22, 12, 3, .42);
+      border: 1px solid rgba(255,211,106,.16);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.02), 0 16px 28px rgba(0,0,0,.48);
       padding: 12px;
       overflow: hidden;
 
-      min-height: 110px;
-      max-height: 140px;
+      min-height: 112px;
+      max-height: 148px;
+    }
+
+    table.table.neon-cards-cat tbody tr::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius: 16px;
+      pointer-events:none;
+      box-shadow: inset 0 0 0 1px rgba(255,211,106,.12);
     }
 
     table.table.neon-cards-cat tbody tr::before{
       content:"";
       position:absolute; inset:0 0 auto 0; height:44px;
       background:
-        radial-gradient(240px 44px at 20% 30%, rgba(34,197,94,.10), transparent 65%),
-        radial-gradient(360px 44px at 70% 30%, rgba(139,92,246,.12), transparent 65%);
-      border-bottom: 1px solid rgba(167,139,250,.10);
+        radial-gradient(340px 44px at 20% 30%, rgba(255,255,255,.07), transparent 72%),
+        radial-gradient(420px 44px at 70% 30%, rgba(255,211,106,.18), transparent 74%);
+      border-bottom: 1px solid rgba(255,211,106,.12);
       pointer-events:none;
     }
 
@@ -240,10 +335,10 @@
       align-items:center;
       gap: 8px;
 
-      font-weight: 650;
-      font-size: .90rem;
+      font-weight: 800;
+      font-size: .92rem;
       line-height: 1.2;
-      color: rgba(234,240,255,.96) !important;
+      color: rgba(255,246,214,.96) !important;
 
       white-space: nowrap;
       overflow: hidden;
@@ -255,14 +350,13 @@
       content: attr(data-label) ":";
       display:inline-block;
       font-size:.70rem;
-      letter-spacing:.10em;
+      letter-spacing:.12em;
       text-transform:uppercase;
-      color: rgba(170,179,214,.75);
-      font-weight: 900;
+      color: var(--muted);
+      font-weight: 950;
       flex: 0 0 auto;
     }
 
-    /* ===== Acciones por fila: SIEMPRE visibles + color correcto ===== */
     table.table.neon-cards-cat td:last-child button,
     table.table.neon-cards-cat td:last-child a{
       width: 42px;
@@ -272,35 +366,35 @@
       justify-content:center;
       padding:0 !important;
       border-radius: 12px !important;
-      background: rgba(7,10,18,.70) !important;
-      border: 1px solid rgba(167,139,250,.16) !important;
-      box-shadow: 0 0 0 1px rgba(34,197,94,.05), 0 10px 18px rgba(0,0,0,.45);
+
+      background:
+        radial-gradient(120px 60px at 30% 30%, rgba(255,211,106,.16), transparent 66%),
+        rgba(22, 12, 3, .58) !important;
+
+      border: 1px solid rgba(255,211,106,.16) !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 10px 18px rgba(0,0,0,.48);
       opacity: 1 !important;
       visibility: visible !important;
+      transition: transform .10s ease, filter .18s ease, box-shadow .18s ease;
+    }
+    table.table.neon-cards-cat td:last-child button:hover,
+    table.table.neon-cards-cat td:last-child a:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.07);
+      box-shadow: 0 0 0 1px rgba(255,211,106,.20), 0 14px 24px rgba(0,0,0,.60);
     }
 
-    /* EDITAR (violeta) — detecta muchos patrones */
-    table.table.neon-cards-cat td:last-child a[href*="edit"] i,
-    table.table.neon-cards-cat td:last-child button[class*="edit"] i,
-    table.table.neon-cards-cat td:last-child a[class*="edit"] i,
-    table.table.neon-cards-cat td:last-child button[data-action="edit"] i,
-    table.table.neon-cards-cat td:last-child a[data-action="edit"] i,
-    table.table.neon-cards-cat td:last-child .bi-pencil i,
-    table.table.neon-cards-cat td:last-child .bi-pencil-square i,
-    table.table.neon-cards-cat td:last-child i.bi-pencil,
-    table.table.neon-cards-cat td:last-child i.bi-pencil-square{
-      color: rgba(167,139,250,.95) !important;
+    #pagination .page-link{
+      background: rgba(22, 12, 3, .62) !important;
+      color: var(--text) !important;
+      border: 1px solid rgba(255,211,106,.14) !important;
     }
-
-    /* ELIMINAR (rojo) — detecta muchos patrones */
-    table.table.neon-cards-cat td:last-child a[href*="delete"] i,
-    table.table.neon-cards-cat td:last-child button[class*="delete"] i,
-    table.table.neon-cards-cat td:last-child a[class*="delete"] i,
-    table.table.neon-cards-cat td:last-child button[data-action="delete"] i,
-    table.table.neon-cards-cat td:last-child a[data-action="delete"] i,
-    table.table.neon-cards-cat td:last-child i.bi-trash,
-    table.table.neon-cards-cat td:last-child i.bi-trash3{
-      color: rgba(248,113,113,.95) !important;
+    #pagination .page-link:hover{ border-color: rgba(255,211,106,.20) !important; }
+    #pagination .page-link:focus{ box-shadow: var(--ring) !important; }
+    #pagination .page-item.active .page-link{
+      background: linear-gradient(90deg, rgba(255,211,106,.12), rgba(212,175,55,.22)) !important;
+      border-color: rgba(255,211,106,.28) !important;
+      box-shadow: var(--softGlow);
     }
 
     @media (max-width: 540px){
@@ -308,12 +402,125 @@
       table.table.neon-cards-cat td:last-child{ justify-self: start; }
     }
 
-    #pagination .page-link{
-      background: rgba(7,10,18,.86) !important;
-      color: var(--text) !important;
-      border: 1px solid rgba(167,139,250,.14) !important;
+    /* ✅ BOTÓN INFO + MODAL */
+    .title-wrap{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    #pagination .page-link:focus{ box-shadow: var(--ring) !important; }
+    .title-wrap .title-left{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .btn-info-king{
+      width: 44px;
+      height: 38px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 !important;
+      border-radius: 12px !important;
+
+      background:
+        radial-gradient(160px 70px at 30% 30%, rgba(255,211,106,.16), transparent 66%),
+        rgba(22, 12, 3, .66) !important;
+
+      border: 1px solid rgba(255,211,106,.28) !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 10px 18px rgba(0,0,0,.52);
+      transition: transform .10s ease, filter .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .btn-info-king i{
+      color: rgba(255,211,106,.98);
+      font-size: 1.05rem;
+    }
+    .btn-info-king:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+      border-color: rgba(255,211,106,.40) !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.18), 0 14px 26px rgba(0,0,0,.62);
+    }
+
+    .king-modal .modal-dialog{
+      max-width: 760px;
+      margin-top: 130px;
+    }
+    @media (max-width: 540px){
+      .king-modal .modal-dialog{
+        margin-top: 110px;
+        max-width: calc(100vw - 18px);
+      }
+    }
+
+    .king-modal .modal-content{
+      border-radius: 20px !important;
+      border: 1px solid rgba(255,211,106,.28) !important;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255,211,106,.08) !important;
+      background:
+        radial-gradient(560px 240px at 18% 12%, rgba(255,211,106,.18), transparent 62%),
+        radial-gradient(560px 240px at 86% 10%, rgba(212,175,55,.14), transparent 66%),
+        linear-gradient(145deg, rgba(60, 35, 9, .92), rgba(18, 10, 2, .96)) !important;
+      overflow: hidden;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    .king-modal .modal-header,
+    .king-modal .modal-footer{
+      border-color: rgba(255,211,106,.16) !important;
+      background:
+        linear-gradient(90deg, rgba(255,211,106,.14), rgba(18,10,2,.92), rgba(212,175,55,.16)) !important;
+    }
+
+    .king-modal .modal-title{
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 950;
+      color: rgba(255,211,106,.98);
+      text-shadow: 0 10px 28px rgba(0,0,0,.60);
+    }
+
+    .king-modal .btn-close{
+      filter: invert(1) brightness(1.15);
+      opacity: .88;
+    }
+    .king-modal .btn-close:hover{ opacity: 1; }
+
+    .info-box{
+      border-radius: 16px;
+      border: 1px solid rgba(255,211,106,.18);
+      background:
+        radial-gradient(540px 220px at 18% 10%, rgba(255,211,106,.12), transparent 62%),
+        rgba(22, 12, 3, .52);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 12px 30px rgba(0,0,0,.50);
+      padding: 14px;
+    }
+
+    .info-kicker{
+      display:block;
+      font-size: .72rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 950;
+      margin-bottom: 6px;
+    }
+
+    .info-text{
+      color: rgba(255,246,214,.92);
+      line-height: 1.45rem;
+      font-size: .95rem;
+      margin: 0;
+    }
+
+    /* Z-index: sidebar arriba del backdrop */
+    .sidebar{ z-index: 2005 !important; }
+    .modal-backdrop{ z-index: 2000 !important; }
+    .modal{ z-index: 2001 !important; }
   </style>
 </head>
 
@@ -330,22 +537,64 @@
         <div class="card h-100 border border-0 shadow overflow-auto">
           <div class="card-body m-0">
 
-            <h1 class="mt-2 h3 mb-4 text-gray-800">CATEGORÍAS</h1>
+            <!-- ✅ TITULO + BOTON INFO -->
+            <div class="title-wrap mt-2 mb-4">
+              <div class="title-left">
+                <h1 class="h3 m-0 text-gray-800">CATEGORÍAS</h1>
+
+                <button type="button"
+                        class="btn-info-king"
+                        title="Información"
+                        data-bs-toggle="modal"
+                        data-bs-target="#infoCategoriasModal"
+                        aria-label="Información de categorías">
+                  <i class="bi bi-info-lg"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- ✅ MODAL INFO -->
+            <div class="modal fade king-modal" id="infoCategoriasModal" tabindex="-1"
+                 aria-labelledby="infoCategoriasModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="infoCategoriasModalLabel">Información de categorías</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+
+                  <div class="modal-body">
+                    <div class="info-box">
+                      <span class="info-kicker">¿Para qué sirve?</span>
+                      <p class="info-text">
+                        Acá podés organizar tus servidores por <b>categorías</b> (por ejemplo: Gratis, VIP, VIP 3, etc.).<br>
+                        Cada categoría define el <b>nombre</b>, el <b>color</b> y el <b>estado</b> (ACTIVO / INACTIVO).<br><br>
+                        <b>Tip:</b> mantené las categorías claras para que el cliente elija rápido y no se pierda.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-king-sm" data-bs-dismiss="modal">
+                      <i class="bi bi-check2-circle"></i>
+                      ENTENDIDO
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div class="d-md-flex justify-content-between align-items-center mb-3">
               <div class="col-md-2">
                 <select class="__status form-select mb-2"></select>
               </div>
 
-              <!-- ✅ TOP ACTIONS: ahora EDITAR usa la MISMA lógica que tu tabla -->
               <div class="col-md-5 d-flex justify-content-center align-items-center mb-2 text-nowrap gap-2">
                 <button type="button" class="__btn__add btn btn-king-sm w-100">
                   <i class="bi bi-plus-lg"></i>
                   NUEVO
                 </button>
 
-                <!-- ✅ IMPORTANTE: este botón NO edita “por su cuenta”.
-                     Dispara el botón editar REAL de la fila seleccionada. -->
                 <button type="button" class="__btn__edit_proxy btn btn-edit-soft w-100">
                   <i class="bi bi-pencil-square"></i>
                   EDITAR
@@ -413,7 +662,6 @@
     const findRealEditButtonInRow = (tr) => {
       if (!tr) return null;
 
-      // Probamos varios selectores comunes (sin romper nada)
       const candidates = [
         'a[href*="edit"]',
         'button[class*="edit"]',
@@ -433,7 +681,6 @@
         } catch {}
       }
 
-      // Fallback: buscar un botón/link que tenga icono de lápiz
       const icon = tr.querySelector('i.bi-pencil, i.bi-pencil-square');
       if (icon) return icon.closest('a,button');
 
@@ -445,6 +692,10 @@
       const btnProxy = document.querySelector('.__btn__edit_proxy');
       if (!btnProxy) return;
 
+      // evita doble bind si el observer corre varias veces
+      if (btnProxy.dataset.bound === "1") return;
+      btnProxy.dataset.bound = "1";
+
       btnProxy.addEventListener('click', () => {
         const root = document.querySelector('#root');
         const table = root ? root.querySelector('table.table') : null;
@@ -453,7 +704,6 @@
           return;
         }
 
-        // busca checkbox marcado (selección)
         const checked = table.querySelector('tbody input[type="checkbox"]:checked');
         if (!checked) {
           try { toastr.warning('Seleccioná una categoría (checkbox) para editar.'); } catch {}
@@ -468,7 +718,6 @@
           return;
         }
 
-        // dispara la misma acción que tu sistema ya usa
         editBtn.click();
       });
     };
@@ -491,5 +740,4 @@
   <script src="../static/js/jscolor.js"></script>
   <script type="module" src="../static/js/category/main.js"></script>
 </body>
-
 </html>

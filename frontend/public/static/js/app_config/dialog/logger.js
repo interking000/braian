@@ -7,8 +7,9 @@ export default class DialogLogger extends AbsDialog {
             e.stopPropagation();
             this.close();
         });
-        this.dialogContent.element.innerHTML = 'ESTE ES UN DIALOG DE LOG';
+        this.dialogContent.element.innerHTML = 'ESTE COLOR SE VERA EN LA APP EN LOG';
         this.setStyle({ 'text-align': 'center' });
         super.render();
     }
 }
+

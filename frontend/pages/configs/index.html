@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="es-AR" translate="no" data-bs-theme="dark">
-
 <head>
   <meta charset="utf-8">
   <base href="/" target="_blank">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="google" content="notranslate">
   <link rel="shortcut icon" href="../static/img/favicon.svg" />
-  <title>KING•VPN - Configuraciones</title>
+  <title>KING•VPN - Servidores</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -27,32 +26,79 @@
 
   <style>
     :root{
-      --bg1:#070A10; --bg2:#0B1020;
-      --panel:#0E1424; --panel2:#0B1020;
-      --accent:#8B5CF6;
-      --accent2:#22C55E;
-      --accent3:#A78BFA;
-      --text:#EAF0FF; --muted:#AAB3D6;
+      /* ✅ FONDO MARRÓN (como la imagen KING•VPN) */
+      --bg1:#7A4A10;   /* marrón claro */
+      --bg2:#2A1705;   /* marrón oscuro */
+      --bg3:#4B2A09;   /* marrón medio */
+
+      /* ✅ PANELES */
+      --panel: rgba(55, 32, 8, .92);
+      --panel2: rgba(32, 18, 5, .88);
+
+      /* ✅ DORADOS */
+      --gold:#D4AF37;
+      --gold2:#FFD36A;
+      --gold3:#8C6B1A;
+      --gold4:#F0B92D; /* dorado “KING•VPN” */
+
+      /* ✅ TEXTO CREMA */
+      --text: rgba(255, 246, 214, .96);
+      --text2: rgba(255, 246, 214, .88);
+      --muted: rgba(255, 226, 170, .74);
+      --muted2: rgba(255, 226, 170, .60);
+
       --radius:18px;
-      --shadow: 0 18px 55px rgba(0,0,0,.65);
-      --ring: 0 0 0 3px rgba(34,197,94,.16);
-      --softGlow: 0 0 0 1px rgba(167,139,250,.14), 0 12px 28px rgba(0,0,0,.55);
+
+      --shadow: 0 18px 55px rgba(0,0,0,.72);
+      --ring: 0 0 0 3px rgba(255,211,106,.22);
+      --softGlow: 0 0 0 1px rgba(255,211,106,.18), 0 12px 28px rgba(0,0,0,.62);
+      --softGlow2: 0 0 0 1px rgba(255,211,106,.14), 0 18px 40px rgba(0,0,0,.70);
+
       --header-safe: 46px;
     }
 
     html, body{ height:100%; }
 
+    /* =========================
+       ✅ ANTI-BLUR GLOBAL (MOBILE SAFE)
+       ========================= */
+    body, main, .content, .card, .card-body, #root, #pagination,
+    .container-fluid, .sidebar, .header, .table-responsive, table, tr, td{
+      filter: none !important;
+      -webkit-filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
     body{
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
       min-height:100vh;
       color:var(--text);
+
+      /* ✅ Fondo estilo KING•VPN (marrón + glow dorado) */
       background:
-        radial-gradient(950px 520px at 18% 12%, rgba(139,92,246,.18), transparent 62%),
-        radial-gradient(900px 520px at 82% 14%, rgba(34,197,94,.13), transparent 60%),
-        radial-gradient(900px 620px at 50% 92%, rgba(167,139,250,.10), transparent 62%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
+        radial-gradient(980px 560px at 18% 0%, rgba(255,211,106,.30), transparent 62%),
+        radial-gradient(980px 560px at 92% 12%, rgba(212,175,55,.22), transparent 66%),
+        radial-gradient(980px 620px at 50% 92%, rgba(212,175,55,.16), transparent 68%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg3) 36%, var(--bg2) 100%);
       background-attachment: fixed;
+
       overflow-x:hidden;
       padding-top: var(--header-safe);
+    }
+
+    /* Scrollbar (marrón/dorado) */
+    *{
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,211,106,.55) rgba(42,23,5,.55);
+    }
+    *::-webkit-scrollbar{ width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track{ background: rgba(42,23,5,.55); border-radius: 999px; }
+    *::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(255,211,106,.42), rgba(212,175,55,.78));
+      border-radius: 999px;
+      border: 2px solid rgba(42,23,5,.55);
     }
 
     main.d-flex{ min-height:100vh; justify-content:flex-start !important; align-items:stretch; }
@@ -63,107 +109,174 @@
       min-height: calc(100vh - var(--header-safe));
     }
 
+    /* ✅ Card principal (panel marrón) */
     .content > .card{
       border-radius: calc(var(--radius) + 6px);
-      background: linear-gradient(180deg, rgba(14,20,36,.92), rgba(11,16,32,.92));
-      border: 1px solid rgba(167,139,250,.24) !important;
-      box-shadow: var(--shadow), 0 0 0 1px rgba(34,197,94,.045);
-      backdrop-filter: blur(10px);
+      background:
+        radial-gradient(640px 240px at 20% 0%, rgba(255,211,106,.16), transparent 64%),
+        linear-gradient(145deg, rgba(60, 35, 9, .92), rgba(18, 10, 2, .96));
+      border: 1px solid rgba(255,211,106,.26) !important;
+      box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
 
     .content > .card::before{
       content:"";
-      position:absolute; inset:-2px -2px auto -2px; height: 110px;
+      position:absolute;
+      inset:-2px -2px auto -2px;
+      height: 120px;
       background:
-        radial-gradient(380px 110px at 16% 30%, rgba(139,92,246,.22), transparent 65%),
-        radial-gradient(560px 110px at 70% 30%, rgba(34,197,94,.16), transparent 65%),
-        linear-gradient(90deg, rgba(139,92,246,.10), rgba(34,197,94,.06));
+        radial-gradient(520px 110px at 18% 30%, rgba(255,255,255,.07), transparent 66%),
+        radial-gradient(620px 110px at 72% 30%, rgba(255,211,106,.22), transparent 72%),
+        linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,211,106,.10));
       pointer-events:none;
-      border-bottom: 1px solid rgba(167,139,250,.14);
+      border-bottom: 1px solid rgba(255,211,106,.16);
     }
 
-    .card-body{ position:relative; }
+    .content > .card::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      border-radius: calc(var(--radius) + 6px);
+      pointer-events:none;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,211,106,.18),
+        inset 0 0 0 2px rgba(255,255,255,.02);
+    }
 
+    .card-body{ position:relative; z-index: 1; }
+
+    /* ✅ Titular dorado */
     .text-gray-800{
-      color: var(--text) !important;
-      letter-spacing: .14em;
-      text-shadow:none;
+      color: var(--gold4) !important;
+      letter-spacing: .20em;
       text-transform: uppercase;
+      font-weight: 950;
+      text-shadow: 0 10px 28px rgba(0,0,0,.60);
+      position: relative;
+      margin: 0 !important;
+    }
+    .title-left .text-gray-800::after{
+      content:"";
+      display:block;
+      height: 2px;
+      width: 160px;
+      margin-top: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,211,106,0), rgba(255,211,106,.90), rgba(255,211,106,0));
+      box-shadow: 0 10px 22px rgba(0,0,0,.55);
     }
 
+    /* Inputs */
     .form-select, .form-control, .input-group-text{
-      background: rgba(7,10,18,.86) !important;
+      background: rgba(22, 12, 3, .58) !important;
       color: var(--text) !important;
-      border: 1px solid rgba(167,139,250,.18) !important;
+      border: 1px solid rgba(255,211,106,.20) !important;
       border-radius: 14px !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03);
     }
+    .form-control::placeholder{ color: var(--muted2); }
     .form-select:focus, .form-control:focus{
       box-shadow: var(--ring) !important;
-      border-color: rgba(34,197,94,.32) !important;
+      border-color: rgba(255,211,106,.40) !important;
     }
+    .input-group-text i{ color: rgba(255,211,106,.98); }
 
+    /* ✅ Botones marrón/dorado + shine */
     .btn{
       border-radius: 14px !important;
-      border: 1px solid rgba(167,139,250,.18) !important;
+      border: 1px solid rgba(255,211,106,.22) !important;
       color: var(--text) !important;
-      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
-      box-shadow: 0 10px 22px rgba(0,0,0,.42);
-      background: rgba(7,10,18,.72);
-      font-weight: 900;
+      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease, border-color .2s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,.44);
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.18), transparent 64%),
+        linear-gradient(145deg, rgba(88, 52, 12, .92), rgba(18, 10, 2, .96));
+      font-weight: 950;
       letter-spacing: .10em;
       text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
     }
-    .btn:hover{ transform: translateY(-1px); box-shadow: var(--softGlow); filter: brightness(1.03); }
+    .btn::after{
+      content:"";
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 80%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 1px rgba(255,211,106,.16), 0 14px 30px rgba(0,0,0,.62);
+      filter: brightness(1.06);
+      border-color: rgba(255,211,106,.36) !important;
+    }
+    .btn:hover::after{ left: 140%; }
     .btn:active{ transform: translateY(0); filter: brightness(.99); }
 
     .btn-king-sm{
       padding: .42rem .7rem !important;
       font-size: .78rem !important;
       letter-spacing: .12em !important;
-      background:
-        radial-gradient(140px 60px at 20% 30%, rgba(34,197,94,.14), transparent 60%),
-        radial-gradient(200px 70px at 70% 30%, rgba(139,92,246,.18), transparent 65%),
-        rgba(7,10,18,.72) !important;
-      border-color: rgba(34,197,94,.18) !important;
+      border-color: rgba(255,211,106,.28) !important;
     }
-    .btn-king-sm i{ color: rgba(34,197,94,.92); }
+    .btn-king-sm i{ color: rgba(255,211,106,.98); }
 
     .btn-edit-soft{
       padding: .42rem .7rem !important;
       font-size: .78rem !important;
       letter-spacing: .12em !important;
+      border: 1px solid rgba(255,211,106,.26) !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.10), 0 12px 28px rgba(0,0,0,.56);
       background:
-        radial-gradient(160px 70px at 20% 30%, rgba(139,92,246,.22), transparent 62%),
-        radial-gradient(220px 70px at 80% 30%, rgba(34,197,94,.10), transparent 65%),
-        rgba(7,10,18,.72) !important;
-      border: 1px solid rgba(139,92,246,.22) !important;
-      box-shadow: 0 0 0 1px rgba(167,139,250,.10), 0 12px 28px rgba(0,0,0,.55);
+        radial-gradient(180px 70px at 18% 30%, rgba(255,211,106,.16), transparent 62%),
+        radial-gradient(220px 70px at 78% 30%, rgba(212,175,55,.10), transparent 65%),
+        rgba(22, 12, 3, .58) !important;
     }
-    .btn-edit-soft i{ color: rgba(167,139,250,.95); }
+    .btn-edit-soft i{ color: rgba(255,211,106,.95); }
 
     .btn-danger-soft{
       padding: .42rem .7rem !important;
       font-size: .78rem !important;
       letter-spacing: .12em !important;
       background:
-        radial-gradient(120px 70px at 20% 30%, rgba(239,68,68,.18), transparent 62%),
-        rgba(7,10,18,.72) !important;
-      border: 1px solid rgba(239,68,68,.22) !important;
+        radial-gradient(140px 76px at 20% 30%, rgba(239,68,68,.22), transparent 64%),
+        linear-gradient(145deg, rgba(88, 24, 10, .92), rgba(18, 10, 2, .96)) !important;
+      border: 1px solid rgba(239,68,68,.26) !important;
       box-shadow: 0 0 0 1px rgba(239,68,68,.10), 0 12px 28px rgba(0,0,0,.55);
     }
-    .btn-danger-soft i{ color: rgba(248,113,113,.95); }
+    .btn-danger-soft i{ color: rgba(255,140,140,.98); }
 
+    /* Table responsive */
     .table-responsive{
       border-radius: 18px;
-      border: 1px solid rgba(167,139,250,.16);
-      background: rgba(11,16,32,.58);
-      box-shadow: inset 0 0 0 1px rgba(34,197,94,.03);
+      border: 1px solid rgba(255,211,106,.18);
+      background: rgba(22, 12, 3, .34);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        0 10px 26px rgba(0,0,0,.40);
       overflow: hidden;
       padding: 10px;
+      position: relative;
+    }
+    .table-responsive::after{
+      content:"";
+      position:absolute; inset: 0;
+      border-radius: 18px;
+      pointer-events:none;
+      box-shadow: inset 0 0 0 1px rgba(255,211,106,.14);
     }
 
+    /* ===========================
+       ✅ CARDS responsive (neon-cards-config)
+       =========================== */
     table.table.neon-cards-config{ width:100%; margin:0; }
     table.table.neon-cards-config thead{ display:none !important; }
 
@@ -181,9 +294,11 @@
       gap: 8px 10px;
 
       border-radius: 16px;
-      background: rgba(11,16,32,.86);
-      border: 1px solid rgba(167,139,250,.16);
-      box-shadow: 0 0 0 1px rgba(34,197,94,.04), 0 16px 28px rgba(0,0,0,.45);
+      background:
+        radial-gradient(280px 130px at 20% 0%, rgba(255,211,106,.14), transparent 64%),
+        rgba(22, 12, 3, .42);
+      border: 1px solid rgba(255,211,106,.16);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.02), 0 16px 28px rgba(0,0,0,.48);
       padding: 12px;
       overflow: hidden;
 
@@ -195,10 +310,18 @@
       content:"";
       position:absolute; inset:0 0 auto 0; height:44px;
       background:
-        radial-gradient(240px 44px at 20% 30%, rgba(34,197,94,.10), transparent 65%),
-        radial-gradient(360px 44px at 70% 30%, rgba(139,92,246,.12), transparent 65%);
-      border-bottom: 1px solid rgba(167,139,250,.10);
+        radial-gradient(340px 44px at 20% 30%, rgba(255,255,255,.07), transparent 72%),
+        radial-gradient(420px 44px at 70% 30%, rgba(255,211,106,.18), transparent 74%);
+      border-bottom: 1px solid rgba(255,211,106,.12);
       pointer-events:none;
+    }
+
+    table.table.neon-cards-config tbody tr::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius: 16px;
+      pointer-events:none;
+      box-shadow: inset 0 0 0 1px rgba(255,211,106,.12);
     }
 
     table.table.neon-cards-config td,
@@ -238,10 +361,10 @@
       align-items:center;
       gap: 8px;
 
-      font-weight: 650;
+      font-weight: 750;
       font-size: .90rem;
       line-height: 1.2;
-      color: rgba(234,240,255,.96) !important;
+      color: var(--text2) !important;
 
       white-space: nowrap;
       overflow: hidden;
@@ -253,14 +376,14 @@
       content: attr(data-label) ":";
       display:inline-block;
       font-size:.70rem;
-      letter-spacing:.10em;
+      letter-spacing:.12em;
       text-transform:uppercase;
-      color: rgba(170,179,214,.75);
-      font-weight: 900;
+      color: var(--muted);
+      font-weight: 950;
       flex: 0 0 auto;
     }
 
-    /* ✅ BOTÓN LÁPIZ IZQUIERDA */
+    /* ✅ BOTÓN LÁPIZ IZQUIERDA (GOLD/MARRÓN) */
     .kv-left-edit{
       width: 42px;
       height: 36px;
@@ -270,16 +393,35 @@
       padding:0 !important;
       border-radius: 12px !important;
       background:
-        radial-gradient(160px 70px at 20% 30%, rgba(139,92,246,.22), transparent 62%),
-        radial-gradient(220px 70px at 80% 30%, rgba(34,197,94,.10), transparent 65%),
-        rgba(7,10,18,.72) !important;
-      border: 1px solid rgba(167,139,250,.22) !important;
-      box-shadow: 0 0 0 1px rgba(167,139,250,.10), 0 12px 24px rgba(0,0,0,.55);
+        radial-gradient(180px 70px at 18% 30%, rgba(255,211,106,.18), transparent 62%),
+        radial-gradient(220px 70px at 78% 30%, rgba(212,175,55,.12), transparent 65%),
+        rgba(22, 12, 3, .58) !important;
+      border: 1px solid rgba(255,211,106,.26) !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.10), 0 12px 24px rgba(0,0,0,.55);
       cursor:pointer;
-      transition: transform .10s ease, filter .16s ease, box-shadow .16s ease;
+      transition: transform .10s ease, filter .16s ease, box-shadow .16s ease, border-color .16s ease;
+      position: relative;
+      overflow:hidden;
     }
-    .kv-left-edit i{ color: rgba(167,139,250,.96) !important; font-size: 1.05rem; }
-    .kv-left-edit:hover{ transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 0 0 1px rgba(34,197,94,.10), 0 14px 28px rgba(0,0,0,.60); }
+    .kv-left-edit::after{
+      content:"";
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 85%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .kv-left-edit:hover::after{ left: 140%; }
+    .kv-left-edit i{ color: rgba(255,211,106,.96) !important; font-size: 1.05rem; }
+    .kv-left-edit:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      border-color: rgba(255,211,106,.38) !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.16), 0 14px 28px rgba(0,0,0,.60);
+    }
     .kv-left-edit:active{ transform: translateY(0); filter: brightness(.99); }
 
     @media (max-width: 540px){
@@ -287,14 +429,266 @@
       table.table.neon-cards-config td:last-child{ justify-self: start; }
     }
 
+    /* Pagination */
     #pagination .page-link{
-      background: rgba(7,10,18,.86) !important;
+      background: rgba(22, 12, 3, .62) !important;
       color: var(--text) !important;
-      border: 1px solid rgba(167,139,250,.14) !important;
+      border: 1px solid rgba(255,211,106,.16) !important;
     }
+    #pagination .page-link:hover{ border-color: rgba(255,211,106,.26) !important; }
     #pagination .page-link:focus{ box-shadow: var(--ring) !important; }
+    #pagination .page-item.active .page-link{
+      background: linear-gradient(90deg, rgba(255,211,106,.14), rgba(212,175,55,.24)) !important;
+      border-color: rgba(255,211,106,.32) !important;
+      box-shadow: var(--softGlow);
+    }
 
-    .config-not-found h4{ color: rgba(170,179,214,.75) !important; }
+    /* =========================================================
+       ✅ TITULO + BOTON INFO (al lado de SERVIDORES)
+       ========================================================= */
+    .title-wrap{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: .5rem;
+      margin-bottom: 1.2rem;
+    }
+    .title-left{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .btn-info-king{
+      width: 44px;
+      height: 38px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 !important;
+      border-radius: 12px !important;
+      background:
+        radial-gradient(160px 70px at 30% 30%, rgba(255,211,106,.14), transparent 65%),
+        rgba(22, 12, 3, .62) !important;
+      border: 1px solid rgba(255,211,106,.28) !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 10px 18px rgba(0,0,0,.52);
+      transition: transform .10s ease, filter .18s ease, box-shadow .18s ease, border-color .18s ease;
+      position: relative;
+      overflow:hidden;
+    }
+    .btn-info-king::after{
+      content:"";
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 85%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .btn-info-king:hover::after{ left: 140%; }
+    .btn-info-king i{
+      color: rgba(255,211,106,.98);
+      font-size: 1.05rem;
+    }
+    .btn-info-king:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.07);
+      border-color: rgba(255,211,106,.45) !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.18), 0 14px 26px rgba(0,0,0,.62);
+    }
+
+    /* =========================================================
+       ✅ FIX DEFINITIVO: NO FREEZE / NO BORROSO al abrir modals
+       ========================================================= */
+    .modal-backdrop{
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      filter: none !important;
+      pointer-events: none !important;
+      background: rgba(0,0,0,.55) !important;
+    }
+    .modal{ pointer-events: auto !important; }
+
+    body.modal-open,
+    body.modal-open main,
+    body.modal-open .container-fluid,
+    body.modal-open .content,
+    body.modal-open .content > .card,
+    body.modal-open .card,
+    body.modal-open .card-body,
+    body.modal-open #root,
+    body.modal-open #pagination,
+    body.modal-open .sidebar,
+    body.modal-open .header{
+      filter: none !important;
+      -webkit-filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    /* =========================================================
+       ✅ MODALES (marrón + dorado)  / marca con .king-modal
+       ========================================================= */
+    .king-modal .modal-dialog{
+      max-width: 820px;
+      margin-top: 130px;
+    }
+    @media (max-width: 540px){
+      .king-modal .modal-dialog{
+        margin-top: 110px;
+        max-width: calc(100vw - 18px);
+      }
+    }
+
+    .king-modal .modal-content{
+      border-radius: 22px !important;
+      border: 2px solid rgba(255,211,106,.55) !important;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255,211,106,.12) !important;
+      background:
+        radial-gradient(620px 260px at 18% 12%, rgba(255,211,106,.16), transparent 60%),
+        radial-gradient(620px 260px at 86% 10%, rgba(212,175,55,.14), transparent 62%),
+        linear-gradient(145deg, rgba(60, 35, 9, .94), rgba(18, 10, 2, .98)) !important;
+      overflow: hidden;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    .king-modal .modal-header,
+    .king-modal .modal-footer{
+      border-color: rgba(255,211,106,.28) !important;
+      background:
+        linear-gradient(90deg, rgba(255,211,106,.16), rgba(18,10,2,.94), rgba(212,175,55,.18)) !important;
+    }
+
+    .king-modal .modal-title{
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-weight: 950;
+      color: rgba(255,211,106,.98) !important;
+      text-shadow: 0 0 12px rgba(255,211,106,.35);
+    }
+
+    .king-modal .btn-close{
+      background: none !important;
+      opacity: 1 !important;
+      filter: none !important;
+      width: 46px;
+      height: 40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius: 14px;
+      border: 1px solid rgba(255,211,106,.32);
+      box-shadow: 0 0 0 1px rgba(255,211,106,.12), 0 10px 24px rgba(0,0,0,.55);
+      position: relative;
+      overflow: hidden;
+    }
+    .king-modal .btn-close::before{
+      content:"✕";
+      font-size: 1.28rem;
+      font-weight: 950;
+      color: rgba(255,211,106,.98);
+      text-shadow: 0 0 12px rgba(255,211,106,.65);
+      line-height: 1;
+    }
+    .king-modal .btn-close::after{
+      content:"";
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 80%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      transition: left .55s ease;
+      pointer-events:none;
+    }
+    .king-modal .btn-close:hover::after{ left: 140%; }
+    .king-modal .btn-close:hover{
+      border-color: rgba(255,211,106,.60);
+      filter: brightness(1.07);
+    }
+
+    .king-modal .form-control,
+    .king-modal .form-select,
+    .king-modal .input-group-text,
+    .king-modal textarea{
+      background: rgba(22, 12, 3, .72) !important;
+      color: rgba(255,246,214,.96) !important;
+      border: 1px solid rgba(255,211,106,.34) !important;
+      border-radius: 14px !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03);
+    }
+    .king-modal .form-control:focus,
+    .king-modal .form-select:focus,
+    .king-modal textarea:focus{
+      box-shadow: 0 0 0 3px rgba(255,211,106,.22) !important;
+      border-color: rgba(255,211,106,.65) !important;
+    }
+    .king-modal label{
+      color: rgba(255,246,214,.92) !important;
+      font-weight: 850;
+      letter-spacing: .06em;
+    }
+
+    .king-modal .modal-footer .btn{
+      min-width: 170px;
+      justify-content: center;
+    }
+    .king-modal .btn-secondary{
+      background: linear-gradient(145deg, rgba(60, 35, 9, .92), rgba(18, 10, 2, .96)) !important;
+      border: 1px solid rgba(255,211,106,.40) !important;
+      color: rgba(255,211,106,.95) !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.10), 0 12px 26px rgba(0,0,0,.55);
+    }
+    .king-modal .btn-primary,
+    .king-modal .btn-success{
+      background: linear-gradient(145deg, rgba(255,211,106,.98), rgba(212,175,55,.98)) !important;
+      border: none !important;
+      color: rgba(0,0,0,.95) !important;
+      font-weight: 950 !important;
+      letter-spacing: .14em !important;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.35), 0 16px 36px rgba(255,211,106,.22);
+    }
+    .king-modal .btn-primary:hover,
+    .king-modal .btn-success:hover{
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .info-box{
+      border-radius: 16px;
+      border: 1px solid rgba(255,211,106,.22);
+      background:
+        radial-gradient(520px 200px at 18% 10%, rgba(255,211,106,.12), transparent 60%),
+        rgba(22, 12, 3, .48);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 12px 30px rgba(0,0,0,.50);
+      padding: 14px;
+    }
+    .info-kicker{
+      display:block;
+      font-size: .72rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 950;
+      margin-bottom: 6px;
+    }
+    .info-text{
+      color: rgba(255,246,214,.92);
+      line-height: 1.45rem;
+      font-size: .95rem;
+      margin: 0;
+    }
+
+    /* Z-index */
+    .sidebar{ z-index: 2005 !important; }
+    .modal-backdrop{ z-index: 2000 !important; }
+    .modal{ z-index: 2001 !important; }
   </style>
 </head>
 
@@ -311,8 +705,55 @@
         <div class="card h-100 border border-0 shadow overflow-auto">
           <div class="card-body m-0">
 
-            <h1 class="mt-2 h3 mb-4 text-gray-800">CONFIGURACIONES</h1>
+            <!-- ✅ TITULO + BOTON INFO -->
+            <div class="title-wrap">
+              <div class="title-left">
+                <h1 class="h3 text-gray-800">SERVIDORES</h1>
 
+                <button type="button"
+                        class="btn-info-king"
+                        title="Información"
+                        data-bs-toggle="modal"
+                        data-bs-target="#infoServidoresModal"
+                        aria-label="Información de servidores">
+                  <i class="bi bi-info-lg"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- ✅ MODAL INFO -->
+            <div class="modal fade king-modal" id="infoServidoresModal" tabindex="-1"
+                 aria-labelledby="infoServidoresModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="infoServidoresModalLabel">Información de servidores</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+
+                  <div class="modal-body">
+                    <div class="info-box">
+                      <span class="info-kicker">¿Para qué sirve esta ventana?</span>
+                      <p class="info-text">
+                        Acá administrás tus <b>servidores</b> que ve el cliente en la app.<br>
+                        Podés <b>crear</b>, <b>importar</b>, <b>exportar</b>, <b>editar</b> y <b>eliminar</b> entradas,
+                        además de filtrar por <b>ACTIVAS / INACTIVAS</b> y buscarlas rápido.<br><br>
+                        <b>Tip:</b> mantené nombres claros y un orden prolijo para que la lista se vea “premium”.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-king-sm" data-bs-dismiss="modal">
+                      <i class="bi bi-check2-circle"></i>
+                      ENTENDIDO
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONTROLES -->
             <div class="d-md-flex justify-content-between align-items-center mb-3">
               <div class="d-flex flex-column mb-1">
                 <div class="d-flex">
@@ -368,7 +809,7 @@
             <div id="root"></div>
 
             <div class="d-none config-not-found d-flex justify-content-center align-items-center p-3">
-              <h4 class="text-muted text-nowrap">No se encontraron configuraciones</h4>
+              <h4 class="text-muted text-nowrap">No se encontraron servidores</h4>
             </div>
 
             <div id="pagination"></div>
@@ -379,6 +820,7 @@
     </div>
   </main>
 
+  <!-- ✅ SCRIPTS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -497,27 +939,22 @@
         try { toastr.error(msg); } catch {}
       }
 
-      // Click robusto (mejor que element.click())
       function fireUserLikeClick(el){
         try { el.focus && el.focus(); } catch {}
         const ev = new MouseEvent('click', { bubbles:true, cancelable:true, view:window });
         el.dispatchEvent(ev);
       }
 
-      // Encuentra el control de editar REAL dentro de "Acciones" (última celda)
       function findRealEditInRow(row){
         const actionsCell = row.querySelector('td:last-child, th:last-child');
         const scope = actionsCell || row;
 
-        // 1) bootstrap modal trigger
         let el = scope.querySelector('[data-bs-toggle="modal"][data-bs-target]');
         if (el) return el;
 
-        // 2) link de edición
         el = scope.querySelector('a[href*="edit"]');
         if (el) return el;
 
-        // 3) botón con data-action / class / icono lápiz
         el =
           scope.querySelector('button[data-action="edit"], a[data-action="edit"]') ||
           scope.querySelector('button[class*="edit"], a[class*="edit"]');
@@ -540,7 +977,6 @@
           return;
         }
 
-        // Si es modal bootstrap: abrir manual
         const target = real.getAttribute('data-bs-target');
         if (target && window.bootstrap){
           const modalEl = document.querySelector(target);
@@ -551,7 +987,6 @@
           }
         }
 
-        // Si es link, navegar (misma pestaña para evitar bloqueos)
         if (real.tagName === "A"){
           const href = real.getAttribute('href');
           if (href && href !== "#"){
@@ -560,7 +995,6 @@
           }
         }
 
-        // Sino: disparar click robusto
         fireUserLikeClick(real);
       }
 
@@ -607,8 +1041,41 @@
     })();
   </script>
 
-  <!-- ✅ TU JS ORIGINAL: acá vive editar/eliminar/exportar (NO TOCAR) -->
+  <!-- ✅ Marca TODOS los modals (los del main.js también) como KING -->
+  <script>
+    (function(){
+      const mark = () => {
+        document.querySelectorAll('.modal').forEach(m => m.classList.add('king-modal'));
+      };
+      window.addEventListener('DOMContentLoaded', () => {
+        mark();
+        const obs = new MutationObserver(mark);
+        obs.observe(document.body, { childList:true, subtree:true });
+      });
+    })();
+  </script>
+
+  <!-- ✅ FIX EXTRA: si bootstrap deja el body “muerto”, lo limpia SIEMPRE -->
+  <script>
+    (function(){
+      function hardCleanModalState(){
+        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+
+        const anyVisible = !!document.querySelector('.modal.show');
+        if (!anyVisible){
+          document.body.classList.remove('modal-open');
+          document.body.style.overflow = '';
+          document.body.style.paddingRight = '';
+        }
+      }
+
+      document.addEventListener('hidden.bs.modal', hardCleanModalState);
+      window.addEventListener('resize', hardCleanModalState);
+      window.addEventListener('DOMContentLoaded', () => setTimeout(hardCleanModalState, 200));
+    })();
+  </script>
+
+  <!-- ✅ TU JS ORIGINAL (NO TOCAR) -->
   <script type="module" src="../static/js/config/main.js"></script>
 </body>
-
 </html>

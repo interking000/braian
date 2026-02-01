@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es-AR" translate="no" data-bs-theme="light">
+
+<head>
+  <base href="/" target="_blank">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="google" content="notranslate">
+  <link rel="shortcut icon" href="../static/img/favicon.svg" />
+  <title>KING•VPN - CDN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link rel="stylesheet" href="../static/css/styles.css">
+  <link rel="stylesheet" href="../static/css/bootstrap.css">
+  <link rel="stylesheet" href="../static/css/sidebar.css">
+  <link rel="stylesheet" href="../static/css/header.css">
+
+  <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet" />
+
+  <meta name="csrf-token" content="<%= it.csrfToken %>">
+
+  <!-- ✅ Premium GOLD (solo estética, no rompe tu JS) -->
+  <style>
+    :root{
+      --gold-main:#D4AF37;
+      --gold-soft:#FFD36A;
+      --gold-hi:#FFE7A6;
+      --gold-deep:#B88A1A;
+
+      --bg1:#07070B;
+      --bg2:#0E0F16;
+
+      --panel:#121420;
+      --panel2:#0C0D12;
+
+      --text:#F2F3F7;
+      --muted:rgba(242,243,247,.68);
+
+      --line:rgba(255,215,120,.18);
+      --shadow:0 18px 55px rgba(0,0,0,.72);
+      --softGlow:0 0 0 1px rgba(255,231,166,.12), 0 14px 40px rgba(0,0,0,.64);
+
+      --radius:18px;
+    }
+
+    body,
+    body[data-bs-theme="light"],
+    body[data-bs-theme="dark"]{
+      min-height:100vh !important;
+      color:var(--text) !important;
+      background:
+        radial-gradient(900px 520px at 18% 12%, rgba(255,211,106,.10), transparent 62%),
+        radial-gradient(900px 520px at 82% 14%, rgba(212,175,55,.08), transparent 60%),
+        radial-gradient(900px 620px at 50% 92%, rgba(255,211,106,.06), transparent 62%),
+        linear-gradient(135deg, var(--bg1), var(--bg2)) !important;
+      background-attachment: fixed !important;
+      overflow-x:hidden !important;
+    }
+
+    .container-fluid, main.d-flex{ background: transparent !important; }
+
+    /* Card principal premium */
+    .kv-cdn-card{
+      border-radius: calc(var(--radius) + 6px) !important;
+      background: linear-gradient(180deg, rgba(18,20,32,.92), rgba(12,13,18,.92)) !important;
+      border: 1px solid var(--line) !important;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255,231,166,.04) !important;
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .kv-cdn-card::before{
+      content:"";
+      position:absolute;
+      inset:-2px -2px auto -2px;
+      height: 110px;
+      background:
+        radial-gradient(420px 110px at 18% 30%, rgba(255,211,106,.10), transparent 65%),
+        radial-gradient(560px 110px at 70% 30%, rgba(212,175,55,.08), transparent 65%),
+        linear-gradient(90deg, rgba(255,231,166,.05), rgba(212,175,55,.04));
+      border-bottom: 1px solid rgba(255,215,120,.10);
+      pointer-events:none;
+    }
+
+    .kv-head{
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:6px;
+      margin-bottom:14px;
+    }
+
+    .kv-title{
+      margin:0;
+      font-weight:1000;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color: rgba(255,231,166,.95);
+      text-shadow:
+        0 2px 0 rgba(80,40,0,.50),
+        0 10px 20px rgba(0,0,0,.55),
+        0 0 18px rgba(255,231,166,.12);
+    }
+
+    .kv-sub{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .kv-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,231,166,.18);
+      background:
+        radial-gradient(240px 80px at 30% 30%, rgba(255,231,166,.10), transparent 60%),
+        rgba(0,0,0,.28);
+      box-shadow: var(--softGlow);
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      font-size:.72rem;
+      color: rgba(255,231,166,.92);
+      white-space:nowrap;
+    }
+
+    /* Inputs/select premium */
+    .kv-select, .kv-input{
+      background: rgba(10,11,16,.55) !important;
+      color: var(--text) !important;
+      border: 1px solid rgba(255,215,120,.18) !important;
+      border-radius: 14px !important;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03) !important;
+    }
+    .kv-select:focus, .kv-input:focus{
+      border-color: rgba(255,211,106,.55) !important;
+      box-shadow: 0 0 0 3px rgba(255,211,106,.18) !important;
+    }
+
+    /* Botones premium */
+    .kv-btn{
+      border-radius: 14px !important;
+      font-weight: 900 !important;
+      letter-spacing: .08em !important;
+      text-transform: uppercase !important;
+      padding: 11px 12px !important;
+      border: 1px solid rgba(255,231,166,.16) !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,.45) !important;
+      display:flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:8px !important;
+      white-space:nowrap !important;
+    }
+
+    .kv-btn-add{
+      background: linear-gradient(145deg, rgba(255,211,106,.95), rgba(184,138,26,.92)) !important;
+      color: #2b1a00 !important;
+      border: none !important;
+    }
+    .kv-btn-add:hover{ filter:brightness(1.05); transform: translateY(-1px); }
+
+    .kv-btn-del{
+      background: rgba(0,0,0,.25) !important;
+      color: rgba(255,231,166,.92) !important;
+    }
+    .kv-btn-del:hover{ filter:brightness(1.08); transform: translateY(-1px); }
+
+    /* Afinado responsive */
+    @media (max-width: 768px){
+      .kv-row{
+        gap:10px !important;
+      }
+      .kv-actions{
+        width:100% !important;
+      }
+    }
+
+    /* Tipografía del h1 original */
+    .text-gray-800{ color: rgba(242,243,247,.92) !important; }
+  </style>
+</head>
+
+<body>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+
+  <main class="d-flex">
+    <%~ include("./sidebar", it) %>
+
+    <div class="container-fluid p-0">
+      <%~ include("./header", it) %>
+
+      <div class="content pt-1 overflow-auto">
+        <!-- ✅ Mantengo tu estructura, solo cambio estilos + clases -->
+        <div class="card h-100 border border-0 shadow overflow-auto kv-cdn-card">
+          <div class="card-body m-0">
+
+            <div class="kv-head">
+              <div>
+                <h1 class="mt-2 h3 mb-1 text-gray-800 kv-title">CDN</h1>
+                <div class="kv-sub">Administración de cdn</div>
+              </div>
+              <div class="kv-chip">
+                <i class="bi bi-lightning-charge-fill"></i> TU 
+              </div>
+            </div>
+
+            <div class="d-md-flex justify-content-between align-items-center mb-3 kv-row" style="position:relative; z-index:1;">
+              <div class="col-md-2">
+                <select class="__status form-select mb-2 kv-select">
+                </select>
+              </div>
+
+              <div class="col-md-3 d-flex justify-content-center align-items-center mb-2 text-nowrap kv-actions">
+                <button type="button" class="__btn__add btn me-2 w-100 kv-btn kv-btn-add">
+                  <i class="bi bi-plus-lg"></i>
+                  NUEVO
+                </button>
+
+                <button type="button" class="__btn__delete btn w-100 kv-btn kv-btn-del">
+                  <i class="bi bi-trash"></i>
+                  ELIMINAR
+                </button>
+              </div>
+            </div>
+
+            <div id="root"></div>
+            <div id="pagination"></div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../static/js/sidebar.js"></script>
+  <script src="../static/js/utils.js"></script>
+  <script src="../static/js/dark_light.js"></script>
+  <script type="module" src="../static/js/cdn/main.js"></script>
+</body>
+
+</html>

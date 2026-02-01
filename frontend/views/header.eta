@@ -1,8 +1,8 @@
-<!-- ======================= KINGVPN HEADER (1 SOLO CÓDIGO COMPLETO) ======================= -->
+<!-- ======================= KINGVPN HEADER (ELEGANTE: MATCH SIDEBAR GOLD) ======================= -->
 <!-- PEGÁ TODO ESTO JUNTO (HTML + CSS + JS) -->
 
 <!-- HEADER -->
-<nav class="header king-header" id="kingHeader">
+<nav class="header king-header king-header-luxe" id="kingHeader">
   <button id="openNav" class="menu-btn" aria-label="Abrir menú" type="button">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M3 6H21"></path>
@@ -25,145 +25,175 @@
 </nav>
 
 <style>
-/* ===================== KINGVPN HEADER (ANTI-BUG MODALS) ===================== */
-/* ✅ Importante: NO usa fixed, usa sticky para que Bootstrap modal NO lo rompa */
-.header.king-header{
+/* ===================== KINGVPN HEADER LUXE (MATCH SIDEBAR GOLD) ===================== */
+.header.king-header.king-header-luxe{
   position: sticky;
   top: 0;
   z-index: 1200;
 
-  height: 44px;
+  /* ✅ un poquito más ancho/alto (no exagerado) */
+  height: 50px;        /* antes 44px */
   width: 100%;
   margin: 0;
-  padding: 0 14px;
+  padding: 0 16px;     /* antes 14px */
 
   display:flex;
   align-items:center;
   justify-content: space-between;
 
+  /* ✅ COLORES = SIDEBAR (NEGRO + GOLD) */
   background:
-    radial-gradient(900px 420px at 8% 0%, rgba(255,211,77,.10), transparent 60%),
-    radial-gradient(900px 420px at 92% 10%, rgba(34,211,238,.10), transparent 60%),
-    linear-gradient(180deg, rgba(7,10,16,.98), rgba(11,16,32,.92));
+    radial-gradient(900px 520px at 18% 0%, rgba(255,200,80,.22), transparent 60%),
+    radial-gradient(900px 520px at 90% 12%, rgba(212,175,55,.14), transparent 62%),
+    linear-gradient(180deg, #0b0b0d 0%, #000 55%, #000 100%) !important;
 
-  border-bottom: 1px solid rgba(34,211,238,.12);
+  /* ✅ borde igual al sidebar */
+  border-bottom: 1px solid rgba(212,175,55,.22);
+  box-shadow: 0 16px 40px rgba(0,0,0,.60);
 
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 
   overflow: hidden;
   transform: translateZ(0);
+
+  /* ✅ importante para ::before/::after */
+  position: sticky;
 }
 
-.header.king-header::after{
+/* Marco fino (como sidebar) */
+.header.king-header.king-header-luxe::before{
   content:"";
   position:absolute;
   inset:0;
   pointer-events:none;
-  background:
-    radial-gradient(180px 180px at 10% 10%, rgba(34,211,238,.10), transparent 60%),
-    radial-gradient(180px 180px at 88% 40%, rgba(167,139,250,.08), transparent 60%);
-  opacity: .9;
+  box-shadow:
+    inset 0 -1px 0 rgba(212,175,55,.18),
+    inset 0 0 0 1px rgba(255,255,255,.02);
+  opacity: 1;
 }
 
-/* ✅ Mata cualquier padding-top viejo que hayas puesto por un header fixed */
+/* Glow sutil dorado */
+.header.king-header.king-header-luxe::after{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  pointer-events:none;
+  background:
+    radial-gradient(360px 260px at 18% 35%, rgba(255,215,90,.10), transparent 62%),
+    radial-gradient(320px 260px at 86% 45%, rgba(255,255,255,.05), transparent 62%);
+  opacity: .95;
+}
+
+/* ✅ Mata cualquier padding-top viejo */
 body{ padding-top: 0 !important; }
 
-/* BOTÓN MENÚ */
-.header.king-header .menu-btn{
+/* ===================== BOTÓN MENÚ (MISMA PASTA QUE SIDEBAR) ===================== */
+.header.king-header.king-header-luxe .menu-btn{
   position: relative;
-  z-index: 1;
+  z-index: 2;
 
   width: auto;
   margin: 0;
 
-  background: rgba(7,10,18,.28);
-  border: 1px solid rgba(34,211,238,.16);
-  box-shadow: 0 0 0 1px rgba(34,211,238,.06);
+  background:
+    radial-gradient(220px 90px at 20% 30%, rgba(255,215,90,.10), transparent 62%),
+    linear-gradient(145deg, rgba(10,10,12,.92), rgba(0,0,0,.96));
+  border:1px solid rgba(212,175,55,.26);
+  box-shadow: 0 12px 28px rgba(0,0,0,.55);
 
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 8px 12px;     /* un toque más grande */
   border-radius: 12px;
 
-  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease, border-color .12s ease;
 
-  /* ✅ pisa tu header.css viejo que lo ocultaba */
   visibility: visible !important;
   opacity: 1 !important;
   color: inherit;
 }
-
-.header.king-header .menu-btn:hover{
-  filter: brightness(1.06);
-  box-shadow: 0 0 0 2px rgba(34,211,238,.12);
+.header.king-header.king-header-luxe .menu-btn:hover{
+  filter: brightness(1.07);
+  border-color: rgba(255,215,90,.40);
+  box-shadow: 0 16px 36px rgba(0,0,0,.62);
 }
-.header.king-header .menu-btn:active{ transform: translateY(1px); }
+.header.king-header.king-header-luxe .menu-btn:active{ transform: translateY(1px); }
 
-.header.king-header .menu-btn svg{
+.header.king-header.king-header-luxe .menu-btn svg{
   width: 20px;
   height: 20px;
-  stroke: #EAF0FF;
-  stroke-width: 2;
+  stroke: #F7F8FC;
+  stroke-width: 2.2;
   fill: none;
+  opacity: .96;
+  filter: drop-shadow(0 0 10px rgba(212,175,55,.12));
 }
 
-/* TÍTULO */
-.header.king-header .header-title{
+/* ===================== TÍTULO ===================== */
+.header.king-header.king-header-luxe .header-title{
   position:absolute;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
 
-  font-size: .9rem;
+  font-size: .95rem;     /* un toque más firme */
   font-weight: 950;
-  letter-spacing: .22em;
-  color: #EAF0FF;
+  letter-spacing: .24em;
+  color: rgba(255,255,255,.96);
   user-select: none;
 
   text-shadow:
-    0 0 8px rgba(34,211,238,.14),
-    0 0 16px rgba(167,139,250,.10);
+    0 0 10px rgba(0,0,0,.55),
+    0 0 16px rgba(212,175,55,.12);
 }
-.header.king-header .header-title span{ opacity: .35; }
+.header.king-header.king-header-luxe .header-title span{ opacity: .40; }
 
-/* USUARIO */
-.header.king-header .header-user{
+/* ===================== USUARIO (MISMA PASTA QUE SIDEBAR) ===================== */
+.header.king-header.king-header-luxe .header-user{
   position: relative;
-  z-index: 1;
+  z-index: 2;
 
   display:flex;
   align-items:center;
   gap: 8px;
 
-  padding: 6px 12px;
+  padding: 8px 12px;      /* un toque más grande */
   border-radius: 999px;
 
-  background: rgba(7,10,18,.35);
-  border: 1px solid rgba(34,211,238,.16);
-  box-shadow: 0 0 0 1px rgba(34,211,238,.06);
+  background:
+    radial-gradient(220px 90px at 20% 30%, rgba(255,215,90,.10), transparent 62%),
+    linear-gradient(145deg, rgba(10,10,12,.92), rgba(0,0,0,.96));
+  border:1px solid rgba(212,175,55,.20);
+  box-shadow: 0 12px 28px rgba(0,0,0,.55);
 
-  max-width: 46%;
+  max-width: 52%;
   overflow: hidden;
   cursor: pointer;
-  transition: filter .12s ease, transform .12s ease;
-}
-.header.king-header .header-user:hover{ filter: brightness(1.05); }
-.header.king-header .header-user:active{ transform: translateY(1px); }
 
-.header.king-header .header-user svg{
+  transition: filter .12s ease, transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.header.king-header.king-header-luxe .header-user:hover{
+  filter: brightness(1.07);
+  border-color: rgba(255,215,90,.34);
+  box-shadow: 0 16px 36px rgba(0,0,0,.62);
+}
+.header.king-header.king-header-luxe .header-user:active{ transform: translateY(1px); }
+
+.header.king-header.king-header-luxe .header-user svg{
   width: 16px;
   height: 16px;
-  stroke: #22D3EE;
-  stroke-width: 2;
+  stroke: rgba(243,231,179,.95);
+  stroke-width: 2.2;
   fill: none;
+  filter: drop-shadow(0 0 10px rgba(212,175,55,.12));
 }
 
-.header.king-header .header-user span{
-  font-size: .70rem;
+.header.king-header.king-header-luxe .header-user span{
+  font-size: .72rem;
   font-weight: 950;
-  letter-spacing: .08em;
+  letter-spacing: .09em;
   text-transform: uppercase;
-  color: #EAF0FF;
+  color: rgba(255,255,255,.96);
 
   white-space: nowrap;
   overflow: hidden;
@@ -174,7 +204,7 @@ body{ padding-top: 0 !important; }
 #kvSidebarBackdrop{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.58);
+  background: rgba(0,0,0,.62);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   opacity: 0;
@@ -182,21 +212,15 @@ body{ padding-top: 0 !important; }
   transition: opacity .2s ease, visibility .2s ease;
   z-index: 998;
 }
-#kvSidebarBackdrop.show{
-  opacity: 1;
-  visibility: visible;
-}
-body.kv-sidebar-open{
-  overflow: hidden;
-  touch-action: none;
-}
+#kvSidebarBackdrop.show{ opacity: 1; visibility: visible; }
+body.kv-sidebar-open{ overflow: hidden; touch-action: none; }
 
-/* Desktop: ocultar botón (como tu css original) */
+/* Desktop: ocultar botón */
 @media (min-width: 992px){
-  .header.king-header .menu-btn{ visibility: hidden !important; opacity: 0 !important; }
+  .header.king-header.king-header-luxe .menu-btn{ visibility: hidden !important; opacity: 0 !important; }
 }
 @media (max-width: 991px){
-  .header.king-header .menu-btn{ visibility: visible !important; opacity: 1 !important; }
+  .header.king-header.king-header-luxe .menu-btn{ visibility: visible !important; opacity: 1 !important; }
 }
 </style>
 
@@ -268,8 +292,6 @@ body.kv-sidebar-open{
   });
 
   // ✅ ANTI-BUG MODALES:
-  // - al abrir un modal, cerramos sidebar (así no estorba ni queda abierto)
-  // - al cerrar modal, “repintado suave” para evitar posiciones raras en Android
   document.addEventListener('show.bs.modal', () => {
     closeSidebar();
     document.body.classList.add('king-modal-open');

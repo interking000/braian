@@ -1,219 +1,455 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="es-AR">
 <head>
-  <base href="/" target="_blank">
+  <base href="/" target="_self">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="shortcut icon" href="../static/img/favicon.svg" />
-  <title>KING•VPN - Registro</title>
+  <title>KING•VPN - REGISTRO</title>
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+  <!-- ✅ Igual que el original -->
   <meta name="csrf-token" content="<%= it.csrfToken %>">
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: linear-gradient(145deg, #1a1a1a, #252525);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem 1rem;
-      overflow-x: hidden; /* Evita scroll lateral */
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      position: relative;
+    :root{
+      --gold-main:#D4AF37;
+      --gold-soft:#FFD36A;
+      --gold-hi:#FFE7A6;
+      --gold-deep:#B88A1A;
+
+      --bg1:#9A6A12;
+      --bg2:#7A4F0A;
+      --bg3:#5C3A06;
+
+      --text:#FFF2C2;
+      --shadow:0 22px 60px rgba(60,35,0,.72);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; }
+
+    /* ✅ IMPORTANT: sin scroll (entra en una sola pantalla) */
+    body{
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:12px;
+      font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(255,211,106,.30), transparent 60%),
+        radial-gradient(800px 520px at 80% 20%, rgba(212,175,55,.26), transparent 65%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 45%, var(--bg3) 100%);
+      overflow:hidden;
+      position:relative;
       touch-action: pan-x pan-y;
     }
 
-    /* Reflejos suaves vidriados en el fondo */
-    body::before, body::after, .reflect1, .reflect2, .reflect3, .reflect4 {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.1;
-      z-index: 0;
-      pointer-events: none;
-      animation: float 80s ease-in-out infinite;
-      background: rgba(255, 255, 255, 0.08);
+    /* reflejo global */
+    body::before,
+    body::after{
+      content:"";
+      position:absolute;
+      inset:-45%;
+      background:linear-gradient(120deg, transparent 45%, rgba(255,215,120,.22) 50%, transparent 55%);
+      filter:blur(16px);
+      opacity:.28;
+      animation:sheen 7.2s linear infinite;
+      pointer-events:none;
+    }
+    body::after{ animation-duration:10.5s; opacity:.18; }
+    @keyframes sheen{ 0%{transform:translateX(-120%)} 100%{transform:translateX(120%)} }
+
+    /* bokeh premium (más chico para mobile) */
+    .b1,.b2,.b3,.b4{
+      position:absolute;border-radius:999px;filter:blur(80px);opacity:.12;pointer-events:none;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.14), transparent 60%),
+        radial-gradient(circle at 70% 60%, rgba(255,211,106,.16), transparent 62%);
+      animation: drift 30s ease-in-out infinite;
+    }
+    .b1{width:210px;height:210px;top:6%;left:10%;}
+    .b2{width:180px;height:180px;bottom:10%;right:12%;animation-duration:34s;}
+    .b3{width:220px;height:220px;top:56%;left:10%;animation-duration:38s;}
+    .b4{width:170px;height:170px;top:22%;right:16%;animation-duration:30s;}
+    @keyframes drift{
+      0%{transform:translate3d(0,0,0);opacity:.12}
+      50%{transform:translate3d(18px,12px,0);opacity:.09}
+      100%{transform:translate3d(0,0,0);opacity:.12}
     }
 
-    body::before { width: 200px; height: 200px; top: 10%; left: 10%; animation-duration: 70s; }
-    body::after { width: 180px; height: 180px; top: 50%; left: 75%; animation-duration: 80s; }
-    .reflect1 { width: 220px; height: 220px; top: 70%; left: 20%; animation-duration: 90s; }
-    .reflect2 { width: 160px; height: 160px; bottom: 15%; left: 50%; animation-duration: 85s; }
-    .reflect3 { width: 200px; height: 200px; top: 25%; right: 25%; animation-duration: 75s; }
-    .reflect4 { width: 150px; height: 150px; bottom: 25%; right: 15%; animation-duration: 95s; }
+    main{ width:100%; display:flex; justify-content:center; align-items:center; }
 
-    @keyframes float {
-      0% { transform: translate(0px, 0px); }
-      25% { transform: translate(30px, 20px); }
-      50% { transform: translate(-20px, 40px); }
-      75% { transform: translate(20px, -20px); }
-      100% { transform: translate(0px, 0px); }
+    /* ✅ CARD más chica y compacta */
+    .card-king{
+      width: min(480px, 96vw);
+      border-radius:24px;
+      padding:14px 14px 12px;
+      background:
+        radial-gradient(520px 240px at 50% 0%, rgba(255,215,120,.32), transparent 60%),
+        linear-gradient(145deg, #8C6400, #5C3A06);
+      box-shadow: var(--shadow);
+      border:1px solid rgba(255,215,120,.33);
+      position:relative;
+      z-index:2;
+      text-align:center;
+      overflow:hidden;
     }
-
-    /* Tarjeta más compacta */
-    .card {
-      background: linear-gradient(145deg, #2b2b2b, #1f1f1f);
-      border-radius: 28px;
-      padding: 1.5rem;
-      width: 100%;
-      max-width: 360px; /* Reducido */
-      min-height: 60vh; /* Más compacta */
-      box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 10px 30px rgba(0,0,0,0.5);
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow: hidden;
+    .card-king::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:24px;
+      pointer-events:none;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,215,120,.14),
+        inset 0 0 0 2px rgba(255,255,255,.04);
+      opacity:.9;
     }
+    .inner{ position:relative; z-index:2; }
 
-    h1.title {
-      font-size: 1.8rem;
+    /* Top actions (más compacto) */
+    .top-actions{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 6px 8px 10px;
+      border-bottom: 1px solid rgba(255,231,166,.14);
+      margin-bottom: 8px;
+    }
+    .mini-note{
+      margin:0;
+      color: rgba(255,246,214,.84);
       font-weight: 900;
-      letter-spacing: 2px;
-      text-align: center;
-      margin-bottom: 0.5rem;
-      color: #fff;
-      text-shadow: 1px 1px 5px rgba(0,0,0,0.6);
+      letter-spacing:.05em;
+      font-size: .78rem;
+      line-height: 1.02rem;
+      text-align:left;
+    }
+    .mini-note b{ color: rgba(255,231,166,.98); font-weight: 1000; }
+
+    .wa-chip{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:14px;
+      text-decoration:none;
+      border:1px solid rgba(255,231,166,.26);
+      background:
+        radial-gradient(220px 80px at 24% 28%, rgba(255,211,106,.15), transparent 64%),
+        linear-gradient(145deg, rgba(10,10,12,.92), rgba(0,0,0,.96));
+      color: rgba(255,246,214,.96);
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      box-shadow: 0 14px 34px rgba(0,0,0,.42);
+      overflow:hidden;
+      white-space:nowrap;
+      transition: transform .12s ease, filter .2s ease, border-color .2s ease;
+      flex:0 0 auto;
+      font-size:.76rem;
+    }
+    .wa-chip:hover{ transform: translateY(-1px); filter:brightness(1.06); border-color: rgba(255,231,166,.40); }
+    .wa-chip i{ color:#25D366; font-size:1rem; }
+    .wa-chip::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent 42%, rgba(255,255,255,.16) 50%, transparent 58%);
+      transform: translateX(-140%);
+      opacity:.70;
+      animation: chipSheen 5.8s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes chipSheen{ 0%{transform:translateX(-140%)} 100%{transform:translateX(140%)} }
+
+    /* Title + orn (más chico) */
+    .title-king{
+      margin: 8px 0 8px;
+    }
+    .title-king h1{
+      margin:0;
+      font-size:1.78rem;
+      font-weight:1000;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color: var(--gold-hi);
+      text-shadow:
+        0 2px 0 rgba(80,40,0,.70),
+        0 4px 0 rgba(70,35,0,.60),
+        0 6px 0 rgba(60,30,0,.52),
+        0 10px 18px rgba(0,0,0,.50),
+        0 0 16px rgba(255,231,166,.26);
+    }
+    .title-king .orn{
+      width:72%;
+      margin:8px auto 0;
+      height:2px;
+      border-radius:999px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,231,166,.20) 15%, rgba(255,231,166,.92) 50%, rgba(255,231,166,.20) 85%, transparent 100%);
+      box-shadow:0 0 14px rgba(255,231,166,.18);
+      position:relative;
+    }
+    .title-king .orn::after{
+      content:"";
+      position:absolute;
+      left:50%;top:50%;
+      width:9px;height:9px;
+      transform:translate(-50%,-50%) rotate(45deg);
+      background: linear-gradient(145deg, var(--gold-soft), var(--gold-deep));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:3px;
+      box-shadow:0 0 12px rgba(255,215,120,.26);
     }
 
-    .subtitles {
-      font-size: 0.85rem;
-      color: #ccc;
-      text-align: center;
-      margin-bottom: 1rem;
-      white-space: nowrap;
-      overflow: hidden;
-      position: relative;
-      max-width: 90%;
+    /* ticker (más corto y rápido) */
+    .ticker{
+      width:100%;
+      margin: 6px auto 10px;
+      position:relative;
+      overflow:hidden;
+      padding: 6px 0;
+      border-top: 1px solid rgba(255,231,166,.10);
+      border-bottom: 1px solid rgba(255,231,166,.10);
+      mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    }
+    .ticker span{
+      display:inline-block;
+      padding-left:100%;
+      white-space:nowrap;
+      color: rgba(255,246,214,.76);
+      font-weight: 900;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+      font-size:.68rem;
+      animation: marquee 11.5s linear infinite;
+    }
+    @keyframes marquee{ 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
+
+    /* labels pro (más chicos) */
+    .label-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:7px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,231,166,.30);
+      background:
+        radial-gradient(200px 80px at 20% 20%, rgba(255,231,166,.16), transparent 60%),
+        linear-gradient(145deg, rgba(60,35,0,.34), rgba(20,10,0,.20));
+      color:rgba(255,242,194,.96);
+      font-weight:1000;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-size:.68rem;
+      box-shadow:0 10px 22px rgba(0,0,0,.26);
+      margin-bottom:6px;
     }
 
-    .subtitles span {
-      display: inline-block;
-      padding-left: 100%;
-      animation: slide-text 12s linear infinite;
+    /* inputs (más compactos) */
+    .form-control{
+      border-radius:14px;
+      background:linear-gradient(145deg, #6F4A08, #4A2E05);
+      border:1px solid rgba(255,215,120,.42);
+      color:var(--text);
+      padding:.70rem .85rem;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+      font-size:.95rem;
+    }
+    .form-control::placeholder{ color:rgba(255,242,194,.55); }
+    .form-control:focus{
+      outline:none;
+      background:
+        radial-gradient(220px 90px at 20% 30%, rgba(255,215,120,.30), transparent 65%),
+        linear-gradient(145deg, #7A540C, #5C3A06);
+      border-color:var(--gold-soft);
+      box-shadow:0 0 0 3px rgba(255,215,120,.30);
+      color:#FFF;
     }
 
-    @keyframes slide-text {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
+    /* grid password/confirm */
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:8px;
+    }
+    @media (max-width: 520px){
+      .row2{ grid-template-columns: 1fr; }
     }
 
-    .form-control,
-    .form-select {
-      background-color: #2a2a2a;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      transition: color 0.2s;
-      max-width: 100%;
-      box-sizing: border-box;
+    /* buttons (más chicos) */
+    .btn-gold{
+      width:100%;
+      margin-top:10px;
+      padding:12px;
+      border-radius:16px;
+      border:none;
+      background: linear-gradient(145deg, var(--gold-soft), var(--gold-deep));
+      color:#3A2400;
+      font-weight:1000;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+      box-shadow:0 12px 30px rgba(0,0,0,.46);
+      transition:.2s;
+      position:relative;
+      overflow:hidden;
+      font-size:.92rem;
+    }
+    .btn-gold::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent 42%, rgba(255,255,255,.24) 50%, transparent 58%);
+      transform: translateX(-140%);
+      opacity:.60;
+      animation: btnSheen 5.8s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes btnSheen{ 0%{transform:translateX(-140%)} 100%{transform:translateX(140%)} }
+    .btn-gold:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+
+    .btn-login{
+      display:block;
+      width:100%;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      text-decoration:none;
+      text-align:center;
+      border:1px solid rgba(255,231,166,.38);
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.18), transparent 64%),
+        linear-gradient(145deg, rgba(30,16,0,.30), rgba(15,8,0,.18));
+      color:rgba(255,242,194,.98);
+      font-weight:1000;
+      letter-spacing:.08em;
+      box-shadow:0 10px 24px rgba(0,0,0,.34);
+      transition:.2s;
+      position:relative;
+      overflow:hidden;
+      font-size:.88rem;
+    }
+    .btn-login::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent 42%, rgba(255,215,120,.20) 50%, transparent 58%);
+      transform: translateX(-140%);
+      opacity:.72;
+      animation: regSheen 6.4s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes regSheen{ 0%{transform:translateX(-140%)} 100%{transform:translateX(140%)} }
+    .btn-login:hover{ transform:translateY(-1px); filter:brightness(1.06); }
+
+    /* loader */
+    .__btn_loader .spinner-border{ width:1.25rem; height:1.25rem; }
+
+    .powered{
+      position:fixed;
+      bottom:10px;
+      left:0; right:0;
+      text-align:center;
+      color:rgba(255,242,194,.58);
+      font-size:.80rem;
+      pointer-events:none;
+      z-index:1;
     }
 
-    .form-label { color: #fff; font-weight: 700; }
-
-    .form-control:focus { color: red; background-color: #2a2a2a; box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.15); }
-    #email:focus { color: #fff; }
-
-    .btn-dark {
-      background-color: #333333;
-      border: none;
-      max-width: 160px;
-      margin: 1rem auto 0 auto;
-      display: block;
+    /* Autofill */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus{
+      -webkit-box-shadow: 0 0 0 30px #5C3A06 inset !important;
+      -webkit-text-fill-color: #FFF2C2 !important;
+      caret-color: #FFF2C2 !important;
+      transition: background-color 9999s ease-in-out 0s;
     }
-    .btn-dark:hover { background-color: #444444; }
 
-    .contact-btn {
-      display: flex; justify-content: center; align-items: center;
-      margin: 0 auto 1rem auto; padding: 0.5rem 1rem;
-      border: 2px solid #fff; border-radius: 12px;
-      color: #fff; font-weight: bold; text-decoration: none;
-      transition: 0.3s;
-      max-width: 200px;
-    }
-    .contact-btn i { margin-right: 0.5rem; font-size: 1.3rem; color: #25D366; }
-    .contact-btn:hover { background-color: #fff; color: #121212; }
-
-    .valid-text { color: #00ff00 !important; }
-    .login-link { color: #fff !important; font-weight: 700; }
-
-    .powered {
-      position: absolute;
-      bottom: 15px;
-      width: 100%;
-      text-align: center;
-      color: rgba(255,255,255,0.5);
-      font-size: 0.85rem;
+    /* valid effect */
+    .kv-ok{
+      color: #FFE7A6 !important;
+      border-color: rgba(255,215,120,.70) !important;
+      box-shadow: 0 0 0 3px rgba(255,215,120,.18) !important;
     }
   </style>
 </head>
 
 <body>
-  <!-- Reflejos extras -->
-  <div class="reflect1"></div>
-  <div class="reflect2"></div>
-  <div class="reflect3"></div>
-  <div class="reflect4"></div>
+  <div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="b4"></div>
 
-  <main class="text-center" style="flex:1; display:flex; justify-content:center; align-items:center;">
-    <div class="card">
+  <main class="text-center">
+    <div class="card-king">
+      <div class="inner">
 
-      <a href="https://wa.me/5493765142705" target="_blank" class="contact-btn">
-        <i class="bi bi-whatsapp"></i> Contacto
-      </a>
-
-      <h1 class="title">KING•VPN</h1>
-      <div class="subtitles">
-        <span>Conexión segura • Alta velocidad • Privacidad total • Protección 4K HD • Anónimo y confiable</span>
-      </div>
-
-      <form role="form" method="POST">
-        <input id="csrf_token" name="csrf_token" type="hidden" value="<%= it.csrfToken %>">
-
-        <div class="d-flex flex-column text-start gap-2 __inputs" style="width: 100%;">
-          <div>
-            <label class="form-label ms-1 mb-1" for="username">Nombre de usuario</label>
-            <input type="text" class="form-control rounded" name="username" id="username" required placeholder="Ex: username">
-          </div>
-          <div class="d-flex flex-md-row flex-column gap-2">
-            <div style="flex:1;">
-              <label class="form-label ms-1 mb-1" for="password">Contraseña</label>
-              <input type="password" class="form-control rounded" name="password" id="password" required placeholder="********">
-            </div>
-            <div style="flex:1;">
-              <label class="form-label ms-1 mb-1" for="confirm_password">Confirma la contraseña</label>
-              <input type="password" class="form-control rounded" id="confirm_password" name="confirm_password" required placeholder="********">
-            </div>
-          </div>
-          <div>
-            <label class="form-label ms-1 mb-1" for="email">E-mail</label>
-            <input type="email" class="form-control rounded" id="email" name="email" required placeholder="Ex: email@mail.com">
-          </div>
+        <div class="top-actions">
+          <p class="mini-note"><b>Registro</b><br>Creá tu cuenta</p>
+          <a href="https://wa.me/5493765142705" class="wa-chip" target="_blank" rel="noopener">
+            <i class="bi bi-whatsapp"></i> CONTACTO
+          </a>
         </div>
 
-        <button type="submit" class="btn btn-dark btn-block rounded mt-3">
-          <div class="__btn_loader d-flex justify-content-center d-none">
-            <div class="spinner-border text-light" role="status">
-              <span class="visually-hidden">Loading...</span>
+        <div class="title-king">
+          <h1>KING•VPN</h1>
+          <div class="orn"></div>
+        </div>
+
+        <div class="ticker">
+          <span>Conexión segura • Alta velocidad • Privacidad total • Acceso inmediato • Panel pro</span>
+        </div>
+
+        <form role="form" method="POST" novalidate>
+          <!-- ✅ hidden para back compat -->
+          <input id="csrf_token" name="csrf_token" type="hidden" value="<%= it.csrfToken %>">
+
+          <div class="d-flex flex-column text-start gap-2 __inputs" style="width:100%;">
+
+            <div>
+              <div class="label-chip">USUARIO</div>
+              <input type="text" class="form-control" name="username" id="username" required placeholder="Ej: maxi_store">
             </div>
+
+            <div class="row2">
+              <div>
+                <div class="label-chip">CONTRASEÑA</div>
+                <input type="password" class="form-control" name="password" id="password" required placeholder="********">
+              </div>
+              <div>
+                <div class="label-chip">CONFIRMAR</div>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required placeholder="********">
+              </div>
+            </div>
+
+            <div>
+              <div class="label-chip">E-MAIL</div>
+              <input type="email" class="form-control" id="email" name="email" required placeholder="correo@mail.com">
+            </div>
+
           </div>
-          <span class="__btn_text">Registrar</span>
-        </button>
-      </form>
-      <hr />
-      <p><a href="/login" class="login-link" target="_self">Si ya tienes una cuenta, inicia sesión👉🏻 aquí.</a></p>
+
+          <button type="submit" class="btn-gold">
+            <div class="__btn_loader d-flex justify-content-center d-none">
+              <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+            </div>
+            <span class="__btn_text">REGISTRAR</span>
+          </button>
+        </form>
+
+        <a href="/login" class="btn-login" target="_self">
+          Iniciá sesión si ya tenés cuenta
+        </a>
+
+      </div>
     </div>
   </main>
 
-  <div class="powered">Powered By ©InterKing</div>
+  <div class="powered">Powered by © InterKing</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -221,17 +457,15 @@
   <script src="../static/js/register.js"></script>
 
   <script>
+    // ✅ efecto "valid" simple y prolijo
     const username = document.getElementById('username');
     const password = document.getElementById('password');
-    const confirm = document.getElementById('confirm_password');
+    const confirmP = document.getElementById('confirm_password');
 
-    [username, password, confirm].forEach(field => {
+    [username, password, confirmP].forEach(field => {
       field.addEventListener('input', () => {
-        if (field.value.length > 6) {
-          field.classList.add('valid-text');
-        } else {
-          field.classList.remove('valid-text');
-        }
+        if (field.value && field.value.length > 6) field.classList.add('kv-ok');
+        else field.classList.remove('kv-ok');
       });
     });
   </script>
