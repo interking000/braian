@@ -6,7 +6,7 @@
   <meta name="google" content="notranslate">
   <link rel="shortcut icon" href="/static/img/favicon.svg" />
 
-  <title>KING•VPN • Tu App y Tus Diseños</title>
+  <title>KING•VPN</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
@@ -30,469 +30,367 @@
     #app_config_status, #app_config_status * { display:none !important; }
   </style>
 
-  <!-- ✅ UI PRO página (igual) -->
+  <!-- =========================================================
+       ✅ KING GOLD THEME (ESTILO LOGIN) APLICADO AL PANEL COMPLETO
+  ========================================================== -->
   <style>
     :root{
-      --kv-bg0:#060a11;
-      --kv-bg1:#0a1420;
-      --kv-text:rgba(238,243,255,.95);
-      --kv-muted:rgba(238,243,255,.66);
-      --kv-gold:rgba(255,211,77,.80);
-      --kv-cyan:rgba(34,211,238,.80);
-      --kv-shadow2:0 12px 35px rgba(0,0,0,.40);
+      --gold-main:#D4AF37;
+      --gold-soft:#FFD36A;
+      --gold-hi:#FFE7A6;
+      --gold-deep:#B88A1A;
+      --gold-dark:#8C6400;
 
-      --fx-blue:#3bb2ff;
-      --fx-cyan:#22d3ee;
-      --fx-rose:#ff4fd8;
-      --fx-red:#ff2b4a;
-      --fx-white:#eef3ff;
-      --fx-border:rgba(255,255,255,.10);
-      --fx-glow: 0 0 30px rgba(59,178,255,.22), 0 0 40px rgba(255,79,216,.18), 0 0 50px rgba(255,43,74,.10);
+      --bg1:#9A6A12;
+      --bg2:#7A4F0A;
+      --bg3:#5C3A06;
+
+      --text:#FFF2C2;
+      --text-soft:rgba(255,242,194,.70);
+
+      --shadow:0 25px 70px rgba(60,35,0,.75);
+      --border:rgba(255,215,120,.35);
     }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; }
 
     body{
+      font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
       background:
-        radial-gradient(900px 520px at 12% 0%, rgba(255,211,77,.10), transparent 62%),
-        radial-gradient(900px 520px at 92% 10%, rgba(34,211,238,.08), transparent 60%),
-        linear-gradient(180deg, var(--kv-bg0), var(--kv-bg1)) !important;
-      color: var(--kv-text);
+        radial-gradient(900px 500px at 20% 10%, rgba(255,211,106,.35), transparent 60%),
+        radial-gradient(800px 520px at 80% 20%, rgba(212,175,55,.30), transparent 65%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 45%, var(--bg3) 100%) !important;
+      color: var(--text) !important;
+      overflow:hidden;
+      position:relative;
     }
 
+    body::before,
+    body::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:linear-gradient(
+        120deg,
+        transparent 45%,
+        rgba(255,215,120,.25) 50%,
+        transparent 55%
+      );
+      filter:blur(18px);
+      opacity:.35;
+      animation:sheen 7s linear infinite;
+      pointer-events:none;
+      z-index:0;
+    }
+    body::after{ animation-duration:10s; opacity:.22; }
+
+    @keyframes sheen{
+      0%{ transform:translateX(-120%); }
+      100%{ transform:translateX(120%); }
+    }
+
+    main, .container-fluid, .content, .kv-page{ position:relative; z-index:1; }
+
+    .content{
+      background: transparent !important;
+      max-height: calc(100vh - 0px);
+      overflow: auto !important;
+    }
+    .card.h-100.border-0.overflow-auto{ background: transparent !important; }
+
     .kv-page{ padding: 12px 10px 18px; }
+
     .kv-card{
-      background: rgba(10,16,28,.30) !important;
-      border: 1px solid rgba(255,255,255,.06) !important;
-      box-shadow: var(--kv-shadow2);
-      border-radius: 18px !important;
-      overflow: hidden;
+      position:relative;
+      background:
+        radial-gradient(500px 260px at 50% 0%, rgba(255,215,120,.35), transparent 60%),
+        linear-gradient(145deg, #8C6400, #5C3A06) !important;
+      border:1px solid var(--border) !important;
+      box-shadow: var(--shadow) !important;
+      border-radius:28px !important;
+      overflow:hidden;
       backdrop-filter: blur(10px);
+    }
+    .kv-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:28px;
+      pointer-events:none;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,215,120,.18),
+        inset 0 0 0 2px rgba(255,255,255,.04);
+      opacity:.9;
     }
 
     .kv-titlebar{ display:flex; align-items:center; gap:10px; padding:14px 14px 10px; margin:0 0 10px; }
-    .kv-title-icon{
-      width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+
+    /* ✅ TITULO MÁS NOTABLE: 3D + FONDO EXTRA (PLACA) */
+    .kv-title{
+      margin:0;
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,231,166,.32) !important;
+
       background:
-        radial-gradient(16px 16px at 28% 30%, rgba(255,211,77,.26), transparent 65%),
-        radial-gradient(16px 16px at 70% 70%, rgba(34,211,238,.18), transparent 65%),
-        rgba(10,16,28,.55);
-      border:1px solid rgba(255,211,77,.16);
-      box-shadow:0 0 0 1px rgba(34,211,238,.08), 0 12px 28px rgba(0,0,0,.35);
+        radial-gradient(240px 120px at 20% 25%, rgba(255,231,166,.22), transparent 62%),
+        radial-gradient(220px 120px at 80% 15%, rgba(255,211,106,.18), transparent 65%),
+        linear-gradient(145deg, rgba(20,10,0,.38), rgba(0,0,0,.18)) !important;
+
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.05),
+        0 18px 40px rgba(0,0,0,.45) !important;
+
+      font-size:1.32rem !important;
+      font-weight:1000 !important;
+      letter-spacing:.18em !important;
+      text-transform:uppercase;
+      color:var(--gold-hi) !important;
+
+      /* 3D MÁS MARCADO */
+      text-shadow:
+        0 1px 0 rgba(90,45,0,.85),
+        0 3px 0 rgba(80,40,0,.78),
+        0 5px 0 rgba(70,35,0,.70),
+        0 8px 18px rgba(0,0,0,.60),
+        0 0 22px rgba(255,231,166,.28);
     }
-    .kv-title-icon i{ color: var(--kv-gold); font-size: 1.1rem; }
-    .kv-title{ font-weight:950; letter-spacing:.10em; text-transform:uppercase; margin:0; font-size:1.05rem; color: rgba(238,243,255,.96); }
-    .kv-subtitle{ margin:2px 0 0; font-size:.88rem; color: var(--kv-muted); letter-spacing:.04em; }
+
+    /* Subtítulo un toque más visible */
+    .kv-subtitle{
+      margin:6px 0 0;
+      font-size:.92rem;
+      color: rgba(255,242,194,.82) !important;
+      letter-spacing:.05em;
+      text-shadow: 0 8px 18px rgba(0,0,0,.35);
+    }
+
+    .kv-title-icon{
+      width:40px;height:40px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      background:
+        radial-gradient(16px 16px at 28% 30%, rgba(255,215,120,.28), transparent 65%),
+        linear-gradient(145deg, #6F4A08, #4A2E05) !important;
+      border:1px solid rgba(255,215,120,.35) !important;
+      box-shadow:0 12px 28px rgba(0,0,0,.35);
+    }
+    .kv-title-icon i{ color: var(--gold-soft) !important; font-size: 1.1rem; }
 
     .kv-actions{
       background:
-        radial-gradient(750px 260px at 10% 0%, rgba(255,211,77,.08), transparent 62%),
-        radial-gradient(750px 260px at 90% 10%, rgba(34,211,238,.06), transparent 60%),
-        rgba(8,12,20,.55);
-      border:1px solid rgba(255,255,255,.06);
-      border-radius:16px; padding:10px;
+        radial-gradient(650px 250px at 15% 0%, rgba(255,215,120,.16), transparent 62%),
+        linear-gradient(145deg, rgba(60,35,0,.38), rgba(20,10,0,.22)) !important;
+      border:1px solid rgba(255,231,166,.22) !important;
+      border-radius:18px; padding:10px;
       box-shadow:0 10px 28px rgba(0,0,0,.30);
     }
 
-    .kv-btn{
+    .kv-btn,
+    .kv-btn-primary{
       display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
-      border-radius:999px !important;
-      padding:.52rem .90rem !important;
-      font-weight:900 !important;
-      letter-spacing:.12em !important;
+      border-radius:18px !important;
+      padding:.70rem .95rem !important;
+      border:none !important;
+      background: linear-gradient(145deg, var(--gold-soft), var(--gold-deep)) !important;
+      color:#3A2400 !important;
+      font-weight:1000 !important;
+      letter-spacing:.15em !important;
       text-transform:uppercase;
-      color: rgba(238,243,255,.95) !important;
-      border:1px solid rgba(255,211,77,.14) !important;
-      background:
-        radial-gradient(140px 80px at 20% 30%, rgba(255,211,77,.16), transparent 60%),
-        radial-gradient(140px 80px at 80% 30%, rgba(34,211,238,.10), transparent 60%),
-        linear-gradient(135deg, rgba(7,10,18,.70), rgba(10,16,28,.92)) !important;
-      box-shadow:0 0 0 1px rgba(255,211,77,.06), 0 14px 30px rgba(0,0,0,.42) !important;
-      transition: transform .14s ease, filter .14s ease, box-shadow .14s ease;
-      cursor: pointer;
+      box-shadow:0 14px 35px rgba(0,0,0,.55) !important;
+      transition:.2s;
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .kv-btn::before,
+    .kv-btn-primary::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent 42%, rgba(255,255,255,.26) 50%, transparent 58%);
+      transform: translateX(-140%);
+      opacity:.65;
+      animation: btnSheen 5.6s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes btnSheen{ 0%{transform:translateX(-140%)} 100%{transform:translateX(140%)} }
+    .kv-btn:hover,
+    .kv-btn-primary:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+    .kv-btn:active,
+    .kv-btn-primary:active{ transform:translateY(0px); filter:brightness(.98); }
+    .kv-btn:disabled,
+    .kv-btn-primary:disabled{
+      opacity:.55; cursor:not-allowed !important;
+      transform:none !important; box-shadow:none !important; pointer-events:none !important;
     }
     .kv-btn i{ opacity:.95; font-size:1.05rem; }
-    .kv-btn:hover{ transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(34,211,238,.10), 0 18px 40px rgba(0,0,0,.50) !important; filter: brightness(1.05); }
-    .kv-btn:active{ transform: translateY(0px); filter: brightness(.98); }
-    .kv-btn:disabled{ opacity:.55; cursor:not-allowed !important; transform:none !important; box-shadow:none !important; pointer-events:none !important; }
 
-    .kv-btn-primary{
-      border:1px solid rgba(34,211,238,.16) !important;
+    .form-control, .form-select{
+      border-radius:16px !important;
+      background:linear-gradient(145deg, #6F4A08, #4A2E05) !important;
+      border:1px solid rgba(255,215,120,.45) !important;
+      color:var(--text) !important;
+      padding:.85rem .95rem;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05) !important;
+    }
+    .form-control::placeholder{ color:rgba(255,242,194,.55) !important; }
+
+    .form-control:focus, .form-select:focus{
+      outline:none !important;
       background:
-        radial-gradient(160px 90px at 20% 30%, rgba(34,211,238,.16), transparent 60%),
-        radial-gradient(160px 90px at 80% 30%, rgba(255,211,77,.14), transparent 60%),
-        linear-gradient(135deg, rgba(7,10,18,.66), rgba(10,16,28,.96)) !important;
+        radial-gradient(220px 90px at 20% 30%, rgba(255,215,120,.35), transparent 65%),
+        linear-gradient(145deg, #7A540C, #5C3A06) !important;
+      border-color:var(--gold-soft) !important;
+      box-shadow:0 0 0 3px rgba(255,215,120,.35) !important;
+      color:#FFF !important;
     }
 
-    .content{ background: transparent !important; }
-    .card.h-100.border-0.overflow-auto{ background: transparent !important; }
-  </style>
-
-  <!-- ✅ MODALES -->
-  <style>
     .modal-backdrop.show{ opacity:.78; }
 
-    /* FORM */
-    #apkFormModal .modal-content{
+    #apkFormModal .modal-content,
+    #apkProgressModal .modal-content,
+    #apkDoneModal .modal-content,
+    #apkErrorModal .modal-content{
       background:
-        radial-gradient(900px 420px at 8% 0%, rgba(255,79,216,.10), transparent 60%),
-        radial-gradient(900px 420px at 92% 10%, rgba(59,178,255,.12), transparent 60%),
-        linear-gradient(180deg, rgba(8,10,18,.96), rgba(8,10,18,.90)) !important;
-      color: #eef3ff;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 35px 120px rgba(0,0,0,.75);
+        radial-gradient(520px 280px at 50% 0%, rgba(255,215,120,.35), transparent 60%),
+        linear-gradient(145deg, #8C6400, #5C3A06) !important;
+      color: var(--text) !important;
+      border-radius: 26px !important;
+      border: 1px solid rgba(255,215,120,.35) !important;
+      box-shadow: var(--shadow) !important;
       overflow: hidden;
       backdrop-filter: blur(12px);
     }
-    #apkFormModal .kv-badge{
-      width: 42px; height: 42px; border-radius: 16px;
-      display:flex; align-items:center; justify-content:center;
+
+    .fx-chip, .kv-badge, .done-logo{
       background:
-        radial-gradient(18px 18px at 30% 30%, rgba(59,178,255,.30), transparent 60%),
-        radial-gradient(18px 18px at 70% 60%, rgba(255,79,216,.26), transparent 60%),
-        rgba(12,14,26,.70);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--fx-glow);
+        radial-gradient(18px 18px at 30% 30%, rgba(255,215,120,.35), transparent 60%),
+        linear-gradient(145deg, rgba(60,35,0,.38), rgba(20,10,0,.22)) !important;
+      border:1px solid rgba(255,231,166,.22) !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,.35) !important;
     }
-    #apkFormModal .kv-badge i{ color: #eef3ff; font-size: 1.15rem; }
-    #apkFormModal .kv-title{
-      font-weight: 999; letter-spacing: .14em; text-transform: uppercase;
-      font-size: .95rem !important;
-    }
-    #apkFormModal .kv-sub{ color: rgba(238,243,255,.72); letter-spacing: .06em; }
-    #apkFormModal .btn-close{ filter: invert(1) brightness(1.2); opacity:.9; }
+    .fx-chip i, .kv-badge i, .done-logo i{ color: var(--gold-soft) !important; }
 
-    #apkFormModal .form-control{
-      background: rgba(8,10,18,.65) !important;
-      color: rgba(238,243,255,.95) !important;
-      border: 1px solid rgba(255,255,255,.12) !important;
-      border-radius: 14px !important;
-    }
-    #apkFormModal .form-control:focus{
-      box-shadow: 0 0 0 3px rgba(59,178,255,.18) !important;
-      border-color: rgba(59,178,255,.35) !important;
+    .fx-sub, .fx-detail, .done-sub, .done-k{
+      color: var(--text-soft) !important;
     }
 
-    #apkFormModal .kv-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    @media (max-width: 520px){ #apkFormModal .kv-grid{ grid-template-columns:1fr; } }
+    /* ✅ FIX: SIN "BARRA DORADA" EN ANDROID (spark ahora es TEXTO 3D real, sin background-clip) */
+    .done-hero .spark{
+      color: var(--gold-hi) !important;
+      background: none !important;
+      -webkit-background-clip: initial !important;
+      background-clip: initial !important;
+      -webkit-text-fill-color: currentColor !important;
 
-    #apkFormModal .kv-logo-preview{
-      display:flex; align-items:center; gap:10px;
-      padding: 10px;
-      border-radius: 16px;
-      border: 1px dashed rgba(255,255,255,.16);
-      background: rgba(8,10,18,.45);
-    }
-    #apkFormModal .kv-logo-bubble{
-      width: 56px; height: 56px;
-      flex:0 0 56px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(7,10,18,.85);
-      display:flex; align-items:center; justify-content:center;
-      overflow:hidden;
-      box-shadow: var(--fx-glow);
-    }
-    #apkFormModal .kv-logo-bubble img{ width:100%; height:100%; object-fit:cover; object-position:center; display:none; }
-    #apkFormModal .kv-logo-bubble i{ color: rgba(255,255,255,.95); font-size: 1.1rem; }
-
-    #apkFormModal .kv-logo-meta .t1{ font-weight: 950; letter-spacing: .08em; font-size: .80rem; text-transform: uppercase; }
-    #apkFormModal .kv-logo-meta .t2{
-      font-size: .85rem;
-      color: rgba(238,243,255,.72);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 260px;
+      text-shadow:
+        0 1px 0 rgba(90,45,0,.90),
+        0 3px 0 rgba(80,40,0,.82),
+        0 5px 0 rgba(70,35,0,.75),
+        0 10px 22px rgba(0,0,0,.58),
+        0 0 18px rgba(255,231,166,.20) !important;
     }
 
-    #apkFormModal .kv-btn-cancel{
-      background: rgba(255,255,255,.06) !important;
-      border: 1px solid rgba(255,255,255,.14) !important;
-      border-radius: 999px !important;
-      color: rgba(238,243,255,.92) !important;
-      font-weight: 950 !important;
-      letter-spacing: .10em;
-      padding: .60rem 1.1rem;
-    }
-
-    #apkFormModal .kv-btn-generate{
-      background:
-        radial-gradient(120px 70px at 20% 30%, rgba(255,79,216,.22), transparent 62%),
-        radial-gradient(140px 70px at 75% 30%, rgba(59,178,255,.20), transparent 65%),
-        linear-gradient(135deg, rgba(10,10,24,.82), rgba(11,16,32,.94)) !important;
-      border: 1px solid rgba(255,255,255,.18) !important;
-      border-radius: 999px !important;
-      color: rgba(238,243,255,.96) !important;
-      font-weight: 999 !important;
-      letter-spacing: .14em;
-      padding: .60rem 1.2rem;
-      box-shadow: var(--fx-glow) !important;
-    }
-    #apkFormModal .kv-btn-generate:disabled{ opacity:.65; cursor:not-allowed; box-shadow:none !important; }
-
-    /* PROGRESS */
-    #apkProgressModal{ z-index: 20000; }
-    #apkProgressModal .modal-dialog{ max-width: 520px; }
-    #apkProgressModal .modal-content{
-      background:
-        radial-gradient(900px 420px at 10% 0%, rgba(255,43,74,.16), transparent 62%),
-        radial-gradient(900px 420px at 90% 10%, rgba(255,79,216,.14), transparent 60%),
-        radial-gradient(900px 420px at 60% 90%, rgba(59,178,255,.14), transparent 60%),
-        linear-gradient(180deg, rgba(7,8,16,.97), rgba(7,8,16,.92)) !important;
-      color: #eef3ff;
-      border-radius: 26px;
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: 0 60px 160px rgba(0,0,0,.85);
-      overflow:hidden;
-      backdrop-filter: blur(14px);
-      position: relative;
-    }
-    #apkProgressModal .modal-content::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        linear-gradient(90deg, transparent, rgba(255,79,216,.35), transparent),
-        linear-gradient(180deg, transparent, rgba(59,178,255,.25), transparent);
-      opacity:.18;
-      pointer-events:none;
-      transform: rotate(6deg);
-    }
-    .fx-head{
-      display:flex; align-items:center; justify-content:space-between;
-      padding: 16px 16px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-    }
-    .fx-brand{ display:flex; align-items:center; gap:10px; }
-    .fx-chip{
-      width: 46px; height: 46px; border-radius: 18px;
-      display:flex; align-items:center; justify-content:center;
-      background:
-        radial-gradient(18px 18px at 30% 30%, rgba(255,43,74,.35), transparent 60%),
-        radial-gradient(18px 18px at 70% 60%, rgba(59,178,255,.30), transparent 60%),
-        rgba(12,14,26,.70);
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: var(--fx-glow);
-    }
-    .fx-chip i{ font-size: 1.15rem; color: #eef3ff; }
-    .fx-title{ margin:0; font-weight: 999; letter-spacing: .16em; text-transform: uppercase; font-size: .88rem; }
-    .fx-sub{ margin:2px 0 0; color: rgba(238,243,255,.72); letter-spacing: .06em; font-size: .82rem; }
-    .fx-body{ padding: 16px; }
-    .fx-indicator{
-      display:flex; align-items:center; gap:14px;
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-    }
-    .fx-ring{
-      width: 86px; height: 86px; border-radius: 999px;
-      position: relative;
-      display:flex; align-items:center; justify-content:center;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,43,74,.22), transparent 55%),
-        radial-gradient(circle at 70% 60%, rgba(59,178,255,.22), transparent 55%),
-        rgba(10,10,18,.55);
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: var(--fx-glow);
-      overflow:hidden;
-    }
     .fx-ring::before{
-      content:"";
-      position:absolute; inset:-22px;
       background: conic-gradient(
         from 180deg,
-        rgba(59,178,255,.00),
-        rgba(59,178,255,.45),
-        rgba(255,79,216,.45),
-        rgba(255,43,74,.45),
-        rgba(59,178,255,.00)
-      );
-      animation: fxSpin 1.15s linear infinite;
-      opacity:.9;
-    }
-    .fx-ring::after{
-      content:"";
-      position:absolute; inset:8px;
-      background: rgba(7,8,16,.92);
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: inset 0 0 18px rgba(0,0,0,.55);
+        rgba(255,215,120,.00),
+        rgba(255,211,106,.55),
+        rgba(212,175,55,.55),
+        rgba(255,231,166,.55),
+        rgba(255,215,120,.00)
+      ) !important;
     }
     .fx-percent{
-      position: relative;
-      z-index: 2;
-      font-weight: 999;
-      font-size: 1.05rem;
-      letter-spacing: .08em;
-      color: rgba(238,243,255,.96);
-      text-shadow: 0 0 12px rgba(59,178,255,.22);
-    }
-    @keyframes fxSpin{ to { transform: rotate(360deg); } }
-
-    .fx-info{ flex:1; }
-    .fx-status{ margin:0; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; }
-    .fx-detail{ margin:4px 0 0; color: rgba(238,243,255,.72); font-size: .88rem; }
-
-    .fx-bar{
-      margin-top: 12px;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      overflow:hidden;
-      box-shadow: inset 0 0 12px rgba(0,0,0,.45);
+      color: var(--gold-hi) !important;
+      text-shadow: 0 0 14px rgba(255,231,166,.22) !important;
     }
     .fx-bar > div{
-      height: 100%;
-      width: 15%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(255,43,74,.95), rgba(255,79,216,.95), rgba(59,178,255,.95), rgba(238,243,255,.92));
-      box-shadow: 0 0 22px rgba(59,178,255,.18);
-      animation: fxLoad 1.05s ease-in-out infinite;
-    }
-    @keyframes fxLoad{
-      0%   { transform: translateX(-20%); width: 18%; }
-      50%  { transform: translateX(45%); width: 55%; }
-      100% { transform: translateX(120%); width: 18%; }
+      background: linear-gradient(90deg, var(--gold-deep), var(--gold-soft), var(--gold-hi), rgba(255,242,194,.92)) !important;
+      box-shadow: 0 0 22px rgba(255,215,120,.18) !important;
     }
 
-    /* DONE */
-    #apkDoneModal{ z-index: 21000; }
-    #apkDoneModal .modal-dialog{ max-width: 600px; }
-    #apkDoneModal .modal-content{
+    .kv-btn-cancel,
+    .done-btn,
+    #errCopyBtn{
+      border-radius:18px !important;
+      border:1px solid rgba(255,231,166,.40) !important;
       background:
-        radial-gradient(900px 420px at 12% 0%, rgba(59,178,255,.16), transparent 60%),
-        radial-gradient(900px 420px at 90% 10%, rgba(255,79,216,.14), transparent 60%),
-        radial-gradient(900px 420px at 60% 90%, rgba(255,43,74,.12), transparent 60%),
-        linear-gradient(180deg, rgba(7,8,16,.98), rgba(7,8,16,.94)) !important;
-      color: #eef3ff;
-      border-radius: 26px;
-      border: 1px solid rgba(255,255,255,.16);
-      box-shadow: 0 60px 180px rgba(0,0,0,.90);
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.22), transparent 64%),
+        linear-gradient(145deg, rgba(30,16,0,.35), rgba(15,8,0,.22)) !important;
+      color:rgba(255,242,194,.98) !important;
+      font-weight:1000 !important;
+      letter-spacing:.08em !important;
+      box-shadow:0 12px 28px rgba(0,0,0,.40) !important;
+      transition:.2s;
+      position:relative;
       overflow:hidden;
-      backdrop-filter: blur(14px);
     }
-    .done-top{
-      padding: 16px 16px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      display:flex; align-items:center; justify-content:space-between;
+    .kv-btn-cancel::before,
+    .done-btn::before,
+    #errCopyBtn::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent 42%, rgba(255,215,120,.22) 50%, transparent 58%);
+      transform: translateX(-140%);
+      opacity:.75;
+      animation: regSheen 6.2s linear infinite;
+      pointer-events:none;
     }
-    .done-brand{ display:flex; align-items:center; gap:12px; }
-    .done-logo{
-      width: 66px; height: 66px;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.20);
-      box-shadow: var(--fx-glow);
-      overflow:hidden;
-      display:flex; align-items:center; justify-content:center;
-      flex:0 0 66px;
-    }
-    .done-logo img{ width:100%; height:100%; object-fit: cover; object-position:center; display:none; }
-    .done-logo i{ font-size: 1.25rem; color: rgba(238,243,255,.92); }
-    .done-title{
-      margin:0; font-weight: 999; letter-spacing: .16em; text-transform: uppercase; font-size: .95rem;
-    }
-    .done-sub{ margin:2px 0 0; color: rgba(238,243,255,.72); letter-spacing: .06em; font-size: .86rem; }
-    .done-hero{ padding: 14px 16px 0; }
-    .done-hero h3{
-      margin: 0; font-weight: 999; letter-spacing: .06em; line-height: 1.1; font-size: 1.15rem;
-      text-shadow: 0 0 18px rgba(59,178,255,.16);
-    }
-    .done-hero .spark{
-      background: linear-gradient(90deg, rgba(255,43,74,.95), rgba(255,79,216,.95), rgba(59,178,255,.95), rgba(238,243,255,.92));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .done-hero p{ margin: 8px 0 0; color: rgba(238,243,255,.72); font-size: .92rem; }
-    .done-body{ padding: 16px; }
-    .done-card{
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-    }
-    .done-row{
-      display:flex; justify-content:space-between; gap:10px;
-      padding: 10px 0;
-      border-bottom: 1px dashed rgba(255,255,255,.10);
-      flex-wrap: wrap;
-    }
-    .done-row:last-child{ border-bottom: none; padding-bottom: 0; }
-    .done-k{
-      color: rgba(238,243,255,.70);
-      letter-spacing: .06em;
-      font-size: .82rem;
-      text-transform: uppercase;
-      font-weight: 900;
-    }
-    .done-v{
-      color: rgba(238,243,255,.94);
-      font-size: .94rem;
-      font-weight: 900;
-      max-width: 380px;
-      overflow:hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .done-badges{ display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px; }
-    .done-badge{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      font-weight: 900;
-      letter-spacing: .10em;
-      text-transform: uppercase;
-      font-size: .72rem;
-      color: rgba(238,243,255,.92);
-    }
-    .done-badge.blue{ border-color: rgba(59,178,255,.25); box-shadow: 0 0 20px rgba(59,178,255,.10); }
-    .done-badge.rose{ border-color: rgba(255,79,216,.22); box-shadow: 0 0 20px rgba(255,79,216,.10); }
-    .done-badge.red{ border-color: rgba(255,43,74,.22); box-shadow: 0 0 20px rgba(255,43,74,.10); }
-    .done-footer{
-      padding: 12px 16px 16px;
-      border-top: 1px solid rgba(255,255,255,.10);
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .done-btn{
-      border-radius: 999px !important;
-      font-weight: 999 !important;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      padding: .62rem 1.15rem !important;
-      border: 1px solid rgba(255,255,255,.16) !important;
-      background: rgba(255,255,255,.06) !important;
-      color: rgba(238,243,255,.95) !important;
-    }
-    .done-btn-primary{
-      border: none !important;
-      background: linear-gradient(90deg, rgba(255,43,74,.96), rgba(255,79,216,.96), rgba(59,178,255,.96), rgba(238,243,255,.92)) !important;
-      color: #06101f !important;
-      box-shadow: var(--fx-glow);
-    }
+    @keyframes regSheen{ 0%{transform:translateX(-140%)} 100%{transform:translateX(140%)} }
+    .kv-btn-cancel:hover,
+    .done-btn:hover,
+    #errCopyBtn:hover{ transform:translateY(-1px); filter:brightness(1.06); }
 
-    /* ✅ ERROR MODAL */
-    #apkErrorModal{ z-index: 22000; }
-    #apkErrorModal .modal-dialog{ max-width: 860px; }
+    .done-btn-primary,
+    #errBackBtn{
+      border-radius:18px !important;
+      border:none !important;
+      background: linear-gradient(145deg, var(--gold-soft), var(--gold-deep)) !important;
+      color:#3A2400 !important;
+      font-weight:1000 !important;
+      letter-spacing:.15em !important;
+      text-transform:uppercase;
+      box-shadow:0 14px 35px rgba(0,0,0,.55) !important;
+      transition:.2s;
+      position:relative;
+      overflow:hidden;
+    }
+    .done-btn-primary::before,
+    #errBackBtn::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent 42%, rgba(255,255,255,.26) 50%, transparent 58%);
+      transform: translateX(-140%);
+      opacity:.65;
+      animation: btnSheen 5.6s linear infinite;
+      pointer-events:none;
+    }
+    .done-btn-primary:hover,
+    #errBackBtn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+
     #apkErrorModal pre{
       margin:0;
       white-space:pre-wrap;
       word-break:break-word;
       padding:12px;
       border-radius:14px;
-      background:rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.12);
-      color:rgba(238,243,255,.92);
+      background:rgba(0,0,0,.18) !important;
+      border:1px solid rgba(255,231,166,.16) !important;
+      color:rgba(255,242,194,.95) !important;
       max-height: 45vh;
       overflow:auto;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05) !important;
     }
+
+    *::-webkit-scrollbar{ width:10px; height:10px; }
+    *::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(255,211,106,.55), rgba(184,138,26,.55));
+      border-radius:999px;
+      border:2px solid rgba(0,0,0,.25);
+    }
+    *::-webkit-scrollbar-track{ background: rgba(0,0,0,.18); }
   </style>
 </head>
 
@@ -516,7 +414,7 @@
                 </div>
                 <div class="d-flex flex-column">
                   <h1 class="kv-title">TU APP Y TUS DISEÑOS.</h1>
-                  <div class="kv-subtitle">KING•VPN • Diseños & APK • Panel de configuración</div>
+                  <div class="kv-subtitle">Tus Temas & APK • Sona de configuración</div>
                 </div>
               </div>
 
@@ -524,7 +422,7 @@
                 <div class="d-flex gap-2">
                   <button type="button" class="__create kv-btn flex-fill">
                     <i class="bi bi-plus-lg"></i>
-                    <span>NUEVO</span>
+                    <span>CREAR</span>
                   </button>
 
                   <button type="button" class="__import kv-btn flex-fill">
@@ -543,8 +441,8 @@
 
               <div class="col-md-2 mb-2" style="display:none !important;">
                 <select class="form-select" id="app_config_status">
-                  <option value="ACTIVE">ACTIVO</option>
-                  <option value="INACTIVE">INACTIVO</option>
+                  <option value="ACTIVE">ACTIVOS</option>
+                  <option value="INACTIVE">INACTIVOS</option>
                   <option value="ALL" selected>TODOS</option>
                 </select>
               </div>
@@ -575,16 +473,16 @@
             </div>
             <div class="d-flex flex-column">
               <h5 class="modal-title kv-title m-0">Generar APK</h5>
-              <small class="kv-sub">Configurá el nombre, paquete y logo</small>
+              <small class="kv-sub">Configurá tu apk a tu gusto</small>
             </div>
           </div>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
 
         <div class="modal-body">
-          <div class="kv-grid mb-2">
+          <div class="kv-grid mb-2" style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div>
-              <label class="form-label mb-1">Nombre de la app</label>
+              <label class="form-label mb-1">Nombre de tu app</label>
               <input class="form-control" id="appName" placeholder="Ej: KING VPN" value="KING VPN">
             </div>
             <div>
@@ -593,7 +491,7 @@
             </div>
           </div>
 
-          <div class="kv-grid mb-2">
+          <div class="kv-grid mb-2" style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div>
               <label class="form-label mb-1">URL del logo</label>
               <input class="form-control" id="logoUrl" placeholder="https://.../logo.png">
@@ -604,18 +502,32 @@
             </div>
           </div>
 
-          <div class="kv-logo-preview mb-2">
-            <div class="kv-logo-bubble" id="logoBubble">
+          <div class="kv-logo-preview mb-2" style="
+            display:flex; align-items:center; gap:10px;
+            padding:10px; border-radius:16px;
+            border:1px dashed rgba(255,231,166,.28);
+            background: rgba(0,0,0,.16);
+          ">
+            <div class="kv-logo-bubble" id="logoBubble" style="
+              width:56px;height:56px;flex:0 0 56px;border-radius:18px;
+              border:1px solid rgba(255,231,166,.22);
+              background: rgba(0,0,0,.18);
+              display:flex; align-items:center; justify-content:center;
+              overflow:hidden;
+              box-shadow: 0 12px 28px rgba(0,0,0,.35);
+            ">
               <i class="bi bi-image"></i>
-              <img id="logoImg" alt="Logo preview">
+              <img id="logoImg" alt="Logo preview" style="width:100%;height:100%;object-fit:cover;object-position:center;display:none;">
             </div>
             <div class="kv-logo-meta">
-              <div class="t1">Preview</div>
-              <div class="t2" id="logoHint">Elegí un archivo o poné una URL</div>
+              <div class="t1" style="font-weight:1000;letter-spacing:.10em;font-size:.78rem;text-transform:uppercase;color:rgba(255,242,194,.92);">Preview</div>
+              <div class="t2" id="logoHint" style="font-size:.86rem;color:rgba(255,242,194,.70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">
+                Elegí un archivo o poné una URL
+              </div>
             </div>
           </div>
 
-          <p class="text-center" style="margin:0;color:rgba(238,243,255,.72)">
+          <p class="text-center" style="margin:0;color:rgba(255,242,194,.70)">
             Cuando estés listo, tocá <b>Generar</b>.
           </p>
         </div>
@@ -624,7 +536,7 @@
           <button type="button" class="btn kv-btn-cancel" data-bs-dismiss="modal">
             <i class="bi bi-x-lg"></i> Cancelar
           </button>
-          <button type="button" class="btn kv-btn-generate" id="btnGenerateApp">
+          <button type="button" class="btn kv-btn-generate done-btn-primary" id="btnGenerateApp">
             <i class="bi bi-gear-fill"></i> Generar
           </button>
         </div>
@@ -636,31 +548,46 @@
   <div class="modal fade" id="apkProgressModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="fx-head">
-          <div class="fx-brand">
+        <div class="fx-head" style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 10px;border-bottom:1px solid rgba(255,231,166,.18);">
+          <div class="fx-brand" style="display:flex;align-items:center;gap:10px;">
             <div class="fx-chip"><i class="bi bi-cpu-fill"></i></div>
             <div class="d-flex flex-column">
-              <h6 class="fx-title" id="fxTitle">Generando APK</h6>
+              <h6 class="fx-title" id="fxTitle" style="margin:0;font-weight:1000;letter-spacing:.16em;text-transform:uppercase;font-size:.88rem;color:rgba(255,242,194,.95);">Generando APK</h6>
               <div class="fx-sub" id="fxSub">Inicializando proceso…</div>
             </div>
           </div>
           <button type="button" class="btn-close btn-close-white" id="fxCloseX" style="opacity:.85" aria-label="Cerrar"></button>
         </div>
 
-        <div class="fx-body">
-          <div class="fx-indicator">
-            <div class="fx-ring">
+        <div class="fx-body" style="padding:16px;">
+          <div class="fx-indicator" style="
+            display:flex; align-items:center; gap:14px;
+            padding:14px;border-radius:18px;
+            border:1px solid rgba(255,231,166,.16);
+            background:rgba(0,0,0,.18);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+          ">
+            <div class="fx-ring" style="
+              width:86px;height:86px;border-radius:999px;position:relative;
+              display:flex;align-items:center;justify-content:center;
+              background:rgba(0,0,0,.18);
+              border:1px solid rgba(255,231,166,.18);
+              overflow:hidden;
+              box-shadow: 0 12px 28px rgba(0,0,0,.35);
+            ">
               <div class="fx-percent" id="fxPercent">0%</div>
             </div>
-            <div class="fx-info">
-              <p class="fx-status" id="fxStatus">EN PROCESO</p>
+            <div class="fx-info" style="flex:1;">
+              <p class="fx-status" id="fxStatus" style="margin:0;font-weight:1000;letter-spacing:.10em;text-transform:uppercase;font-size:.85rem;color:rgba(255,242,194,.95);">EN PROCESO</p>
               <p class="fx-detail" id="fxDetail">Estamos compilando, firmando y armando tu APK.</p>
-              <div class="fx-bar"><div></div></div>
+              <div class="fx-bar" style="margin-top:12px;height:10px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,231,166,.16);overflow:hidden;">
+                <div style="height:100%;width:15%;border-radius:999px;"></div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="px-3 pb-3" style="color:rgba(238,243,255,.70);font-size:.88rem;">
+        <div class="px-3 pb-3" style="color:rgba(255,242,194,.70);font-size:.88rem;">
           No cierres esta ventana mientras se genera.
         </div>
       </div>
@@ -672,61 +599,74 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
 
-        <div class="done-top">
-          <div class="done-brand">
+        <div class="done-top" style="padding:16px 16px 12px;border-bottom:1px solid rgba(255,231,166,.18);display:flex;align-items:center;justify-content:space-between;">
+          <div class="done-brand" style="display:flex;align-items:center;gap:12px;">
             <div class="done-logo" id="doneLogoBox">
               <i class="bi bi-shield-check"></i>
-              <img id="doneLogoImg" alt="Logo final">
+              <img id="doneLogoImg" alt="Logo final" style="width:100%;height:100%;object-fit:cover;object-position:center;display:none;">
             </div>
             <div>
-              <h6 class="done-title m-0">APK Lista</h6>
+              <h6 class="done-title m-0" style="font-weight:1000;letter-spacing:.16em;text-transform:uppercase;font-size:.95rem;color:rgba(255,242,194,.95);">APK Lista</h6>
               <div class="done-sub" id="doneSubtitle">Compilación completada con éxito</div>
             </div>
           </div>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
 
-        <div class="done-hero">
-          <h3 id="doneCongrats">
-            <span class="spark">Felicidades</span>, tu app ha sido creada con éxito ✅
+        <div class="done-hero" style="padding:14px 16px 0;">
+          <h3 id="doneCongrats" style="margin:0;font-weight:1000;letter-spacing:.06em;line-height:1.1;font-size:1.15rem;">
+            <span class="spark">Felicidades!</span> tu app ha sido creada con éxito ✅
           </h3>
-          <p>
-            Todo quedó aplicado con tus diseños y configuraciones. Descargá tu APK cuando quieras.
+          <p style="margin:8px 0 0;color:rgba(255,242,194,.70);font-size:.92rem;">
+            Todo quedó aplicado con tus diseños y configuraciones. Descargá tu APK y envía a tus clientes.
           </p>
         </div>
 
-        <div class="done-body">
-          <div class="done-card">
-            <div class="done-row">
+        <div class="done-body" style="padding:16px;">
+          <div class="done-card" style="
+            border:1px solid rgba(255,231,166,.16);
+            background:rgba(0,0,0,.18);
+            border-radius:18px;
+            padding:14px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+          ">
+            <div class="done-row" style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed rgba(255,231,166,.16);flex-wrap:wrap;">
               <div class="done-k">Usuario</div>
-              <div class="done-v" id="doneUser">-</div>
+              <div class="done-v" id="doneUser" style="color:rgba(255,242,194,.95);font-weight:1000;">-</div>
             </div>
-            <div class="done-row">
+            <div class="done-row" style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed rgba(255,231,166,.16);flex-wrap:wrap;">
               <div class="done-k">Nombre de la app</div>
-              <div class="done-v" id="doneAppName">-</div>
+              <div class="done-v" id="doneAppName" style="color:rgba(255,242,194,.95);font-weight:1000;">-</div>
             </div>
-            <div class="done-row">
+            <div class="done-row" style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed rgba(255,231,166,.16);flex-wrap:wrap;">
               <div class="done-k">Paquete</div>
-              <div class="done-v" id="donePackage">-</div>
+              <div class="done-v" id="donePackage" style="color:rgba(255,242,194,.95);font-weight:1000;">-</div>
             </div>
-            <div class="done-row">
+            <div class="done-row" style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed rgba(255,231,166,.16);flex-wrap:wrap;">
               <div class="done-k">Logo</div>
-              <div class="done-v" id="doneLogoInfo">-</div>
+              <div class="done-v" id="doneLogoInfo" style="color:rgba(255,242,194,.95);font-weight:1000;">-</div>
             </div>
-            <div class="done-row">
+            <div class="done-row" style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;flex-wrap:wrap;">
               <div class="done-k">Diseños</div>
-              <div class="done-v" id="doneDesigns">Aplicados (tema + layout + colores) ✅</div>
+              <div class="done-v" id="doneDesigns" style="color:rgba(255,242,194,.95);font-weight:1000;">Aplicados (tema + layout + colores) ✅</div>
             </div>
 
-            <div class="done-badges">
-              <div class="done-badge blue"><i class="bi bi-lightning-charge"></i> build</div>
-              <div class="done-badge rose"><i class="bi bi-palette2"></i> diseños</div>
-              <div class="done-badge red"><i class="bi bi-shield-lock"></i> firma</div>
+            <div class="done-badges" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+              <div class="done-badge" style="padding:8px 10px;border-radius:999px;border:1px solid rgba(255,231,166,.22);background:rgba(255,255,255,.06);font-weight:1000;letter-spacing:.10em;text-transform:uppercase;font-size:.72rem;color:rgba(255,242,194,.92);">
+                <i class="bi bi-lightning-charge"></i> build
+              </div>
+              <div class="done-badge" style="padding:8px 10px;border-radius:999px;border:1px solid rgba(255,231,166,.22);background:rgba(255,255,255,.06);font-weight:1000;letter-spacing:.10em;text-transform:uppercase;font-size:.72rem;color:rgba(255,242,194,.92);">
+                <i class="bi bi-palette2"></i> diseños
+              </div>
+              <div class="done-badge" style="padding:8px 10px;border-radius:999px;border:1px solid rgba(255,231,166,.22);background:rgba(255,255,255,.06);font-weight:1000;letter-spacing:.10em;text-transform:uppercase;font-size:.72rem;color:rgba(255,242,194,.92);">
+                <i class="bi bi-shield-lock"></i> firma
+              </div>
             </div>
+
           </div>
         </div>
 
-        <div class="done-footer">
+        <div class="done-footer" style="padding:12px 16px 16px;border-top:1px solid rgba(255,231,166,.14);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
           <button type="button" class="btn done-btn" data-bs-dismiss="modal">
             <i class="bi bi-check2"></i> Listo
           </button>
@@ -743,22 +683,15 @@
   <!-- ✅ MODAL D: ERROR EXACTO -->
   <div class="modal fade" id="apkErrorModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content" style="
-        background:
-          radial-gradient(900px 420px at 12% 0%, rgba(255,43,74,.18), transparent 60%),
-          radial-gradient(900px 420px at 90% 10%, rgba(255,79,216,.14), transparent 60%),
-          linear-gradient(180deg, rgba(7,8,16,.98), rgba(7,8,16,.94));
-        color:#eef3ff;border-radius:26px;border:1px solid rgba(255,255,255,.16);
-        box-shadow:0 60px 180px rgba(0,0,0,.90);overflow:hidden;backdrop-filter:blur(14px);
-      ">
-        <div class="modal-header border-0" style="border-bottom:1px solid rgba(255,255,255,.10)!important;">
+      <div class="modal-content">
+        <div class="modal-header border-0" style="border-bottom:1px solid rgba(255,231,166,.18)!important;">
           <div class="d-flex align-items-center gap-2">
             <div class="fx-chip"><i class="bi bi-bug-fill"></i></div>
             <div class="d-flex flex-column">
-              <h6 class="m-0" style="font-weight:999;letter-spacing:.16em;text-transform:uppercase;font-size:.88rem;">
+              <h6 class="m-0" style="font-weight:1000;letter-spacing:.16em;text-transform:uppercase;font-size:.88rem;color:rgba(255,242,194,.95);">
                 Error exacto de compilación
               </h6>
-              <small style="color:rgba(238,243,255,.72);letter-spacing:.06em;">
+              <small style="color:rgba(255,242,194,.70);letter-spacing:.06em;">
                 Copiá esto y pegalo tal cual para debug
               </small>
             </div>
@@ -768,17 +701,29 @@
 
         <div class="modal-body">
           <div class="d-flex flex-wrap gap-2 mb-2">
-            <span class="done-badge red">status: <b id="errStatus">-</b></span>
-            <span class="done-badge rose">endpoint: <b>/download-app</b></span>
-            <span class="done-badge blue">request-id: <b id="errReqId">-</b></span>
+            <span class="done-badge" style="padding:8px 10px;border-radius:999px;border:1px solid rgba(255,231,166,.22);background:rgba(255,255,255,.06);font-weight:1000;letter-spacing:.10em;text-transform:uppercase;font-size:.72rem;color:rgba(255,242,194,.92);">
+              status: <b id="errStatus">-</b>
+            </span>
+            <span class="done-badge" style="padding:8px 10px;border-radius:999px;border:1px solid rgba(255,231,166,.22);background:rgba(255,255,255,.06);font-weight:1000;letter-spacing:.10em;text-transform:uppercase;font-size:.72rem;color:rgba(255,242,194,.92);">
+              endpoint: <b>/download-app</b>
+            </span>
+            <span class="done-badge" style="padding:8px 10px;border-radius:999px;border:1px solid rgba(255,231,166,.22);background:rgba(255,255,255,.06);font-weight:1000;letter-spacing:.10em;text-transform:uppercase;font-size:.72rem;color:rgba(255,242,194,.92);">
+              request-id: <b id="errReqId">-</b>
+            </span>
           </div>
 
-          <div class="done-card">
-            <div class="done-row">
+          <div class="done-card" style="
+            border:1px solid rgba(255,231,166,.16);
+            background:rgba(0,0,0,.18);
+            border-radius:18px;
+            padding:14px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+          ">
+            <div class="done-row" style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed rgba(255,231,166,.16);flex-wrap:wrap;">
               <div class="done-k">Mensaje</div>
-              <div class="done-v" id="errMessage" style="white-space:normal;max-width:100%;">-</div>
+              <div class="done-v" id="errMessage" style="white-space:normal;max-width:100%;color:rgba(255,242,194,.95);font-weight:1000;">-</div>
             </div>
-            <div class="done-row">
+            <div class="done-row" style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;flex-wrap:wrap;">
               <div class="done-k">Detalles</div>
               <div class="done-v" style="max-width:100%;white-space:normal;">
                 <pre id="errBody">-</pre>
@@ -885,7 +830,6 @@
       const doneLogoInfo = document.getElementById("doneLogoInfo");
       const doneDownloadBtn = document.getElementById("doneDownloadBtn");
 
-      // ✅ ERROR UI fields
       const errStatus = document.getElementById("errStatus");
       const errReqId = document.getElementById("errReqId");
       const errMessage = document.getElementById("errMessage");
@@ -938,7 +882,6 @@
         bindOpenButton();
       });
 
-      // preview por URL
       if (logoUrlEl){
         logoUrlEl.addEventListener("input", () => {
           const url = (logoUrlEl.value || "").trim();
@@ -952,7 +895,6 @@
         });
       }
 
-      // aceptar cualquier imagen
       if (logoFileEl){
         logoFileEl.addEventListener("change", () => {
           const file = logoFileEl.files && logoFileEl.files[0];
@@ -979,7 +921,6 @@
         });
       }
 
-      // progress steps
       const steps = [
         { sub: "Validando datos…", detail: "Chequeando nombre, paquete y logo." },
         { sub: "Compilando y firmando…", detail: "Construyendo la app y aplicando firma." },
@@ -1038,7 +979,7 @@
       function fillDoneModal({ appName, packageName, logoUrl, usedFile }){
         const user = (window.__USER__ && window.__USER__.display_name) ? window.__USER__.display_name : "Usuario";
 
-        doneCongrats.innerHTML = `<span class="spark">Felicidades ${escapeHtml(user)}</span>, tu app ha sido creada con éxito ✅`;
+        doneCongrats.innerHTML = `<span class="spark">Felicidades!</span> ${escapeHtml(user)} tu app ha sido creada con éxito ✅`;
         doneUser.textContent = user;
 
         doneAppName.textContent = appName || "-";
@@ -1068,7 +1009,6 @@
         doneModal.hide();
       });
 
-      // ✅ lee el body aunque NO sea JSON, y NO pisa el error real
       async function readErrorBody(response){
         const ct = (response.headers.get("content-type") || "").toLowerCase();
         try{
@@ -1112,7 +1052,6 @@
         ].join("\n");
         errBody.textContent = dump;
 
-        // cerrar otros modales y abrir error
         try{ progressModal.hide(); }catch{}
         try{ doneModal.hide(); }catch{}
         try{ formModal.hide(); }catch{}
@@ -1177,7 +1116,6 @@
             if (refreshed) csrfToken = refreshed;
           }
 
-          // ✅ si NO OK, mostrar error exacto (status + body)
           if (!response.ok){
             const reqId = pickRequestId(response.headers);
             const { raw } = await readErrorBody(response);
@@ -1241,7 +1179,6 @@
     })();
   </script>
 
-  <!-- ✅ main.js (tu versión parchada) -->
   <script type="module" src="/static/js/app_config/main.js"></script>
 </body>
 </html>

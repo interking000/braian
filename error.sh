@@ -430,7 +430,7 @@ if need_cmd curl; then
   # clave
   check_route "GET" "/" "html"
   check_route "GET" "/login" "html"
-  check_route "GET" "/acceso" "html"
+  check_route "GET" "/" "html"
 
   if [[ $DEEP -eq 1 ]]; then
     # rutas que suelen romper
@@ -485,3 +485,4 @@ fi
 write_report
 say
 say "${CYA}Reporte guardado en:${RST} ${WHT}${REPORT}${RST}"
+

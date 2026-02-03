@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es-AR" translate="no" data-bs-theme="light">
+<head>
+  <base href="/" target="_self">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="google" content="notranslate">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="../static/img/favicon.svg" />
+  <title>Payloads • KING•VPN</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+  <style>
+    :root{
+      /* 🎨 Paleta basada en tu imagen */
+      --kv-g1:#FFE7A6;
+      --kv-g2:#FFD36A;
+      --kv-g3:#D4AF37;
+      --kv-g4:#8C6400;
+
+      --kv-brown0:#6B3F00;
+      --kv-brown1:#8A5200;
+      --kv-brown2:#A86500;
+
+      --kv-bg0:#3B2200;   /* marrón profundo */
+      --kv-bg1:#5A3400;   /* marrón medio */
+      --kv-bg2:#7A4600;   /* marrón cálido */
+
+      --kv-panelA:rgba(90,52,0,.62);
+      --kv-panelB:rgba(45,25,0,.78);
+
+      --kv-text:#FFF6D6;
+      --kv-muted:rgba(255,246,214,.78);
+      --kv-line:rgba(255,215,120,.28);
+
+      --kv-shadow:0 18px 60px rgba(0,0,0,.55);
+      --kv-radius:22px;
+      --kv-radius2:16px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--kv-text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background:
+        radial-gradient(1100px 720px at 20% 10%, rgba(255,211,106,.22), transparent 60%),
+        radial-gradient(900px 560px at 80% 20%, rgba(212,175,55,.20), transparent 62%),
+        radial-gradient(700px 420px at 50% 92%, rgba(255,231,166,.12), transparent 65%),
+        linear-gradient(135deg, var(--kv-bg0), var(--kv-bg1));
+      background-attachment: fixed;
+      overflow-x:hidden;
+    }
+
+    .kv-wrap{
+      width:100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 18px 14px 26px;
+    }
+
+    /* Header premium dorado */
+    .kv-hero{
+      background:
+        radial-gradient(800px 260px at 18% 0%, rgba(255,211,106,.20), transparent 60%),
+        radial-gradient(800px 260px at 88% 8%, rgba(212,175,55,.14), transparent 60%),
+        linear-gradient(180deg, rgba(140,100,0,.22), rgba(45,25,0,.55));
+      border-radius: var(--kv-radius);
+      border: 1px solid var(--kv-line);
+      box-shadow: var(--kv-shadow);
+      position:relative;
+      overflow:hidden;
+      padding: 16px 16px 14px;
+    }
+
+    .kv-hero::before{
+      content:"";
+      position:absolute;
+      inset:-160px;
+      background: linear-gradient(120deg, transparent 42%, rgba(255,255,255,.16) 50%, transparent 58%);
+      transform: translateX(-140%);
+      opacity:.28;
+      filter: blur(10px);
+      animation: kvSheen 7.2s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes kvSheen{ from{transform:translateX(-140%)} to{transform:translateX(140%)} }
+
+    .kv-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin: 0 0 6px 0;
+      position:relative;
+      z-index:1;
+    }
+
+    .kv-badge{
+      width: 46px;
+      height: 46px;
+      border-radius: 20px;
+      display:grid;
+      place-items:center;
+      color:#2b1a00;
+      background:
+        radial-gradient(130px 80px at 30% 20%, rgba(255,255,255,.42), transparent 62%),
+        linear-gradient(145deg, var(--kv-g1), var(--kv-g2), var(--kv-g3));
+      box-shadow: 0 14px 36px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.16);
+      flex:0 0 auto;
+    }
+
+    .kv-title h1{
+      margin:0;
+      font-size: 1.05rem;
+      font-weight: 950;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color: var(--kv-g1);
+      text-shadow: 0 2px 0 rgba(70,35,0,.70), 0 12px 18px rgba(0,0,0,.40);
+    }
+
+    .kv-sub{
+      margin: 0;
+      color: var(--kv-muted);
+      line-height: 1.35;
+      font-size: .95rem;
+      position:relative;
+      z-index:1;
+    }
+    .kv-sub b{ color: var(--kv-g1); font-weight: 950; }
+
+    .kv-note{
+      margin-top: 10px;
+      border: 1px solid rgba(255,215,120,.22);
+      background: rgba(0,0,0,.20);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      position:relative;
+      z-index:1;
+    }
+    .kv-note i{ color: var(--kv-g2); margin-top: 1px; }
+    .kv-note span{
+      color: rgba(255,246,214,.84);
+      font-size: .90rem;
+    }
+
+    /* Grid */
+    .kv-grid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+    @media (max-width: 980px){
+      .kv-grid{ grid-template-columns: 1fr; }
+    }
+
+    .kv-card{
+      background:
+        radial-gradient(560px 240px at 18% 0%, rgba(255,211,106,.16), transparent 60%),
+        linear-gradient(180deg, rgba(140,100,0,.20), rgba(0,0,0,.38));
+      border-radius: var(--kv-radius);
+      border: 1px solid rgba(255,215,120,.22);
+      box-shadow: 0 16px 52px rgba(0,0,0,.50);
+      overflow:hidden;
+      position:relative;
+      padding: 12px;
+    }
+
+    .kv-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-radius: var(--kv-radius);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        inset 0 00 0 2px rgba(255,215,120,.08);
+      opacity:1;
+    }
+
+    /* ✅ Alerón / etiqueta superior */
+    .kv-flag{
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:5;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 950;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-size: .70rem;
+      color:#2b1a00;
+      background:
+        radial-gradient(240px 110px at 20% 20%, rgba(255,255,255,.35), transparent 62%),
+        linear-gradient(145deg, var(--kv-g1), var(--kv-g2), var(--kv-g3));
+      box-shadow: 0 12px 28px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.16);
+      border: 1px solid rgba(255,215,120,.22);
+      pointer-events:none;
+    }
+
+    .kv-card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+
+    .kv-actions{
+      display:flex;
+      gap:8px;
+    }
+
+    .btn-kv{
+      border-radius: 14px;
+      font-weight: 950;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      border: 1px solid rgba(255,215,120,.22);
+      background: rgba(0,0,0,.22);
+      color: rgba(255,246,214,.92);
+      box-shadow: 0 14px 36px rgba(0,0,0,.40);
+      transition: transform .16s ease, filter .16s ease;
+      cursor:pointer;
+    }
+    .btn-kv:hover{ transform: translateY(-1px); filter: brightness(1.06); }
+
+    .btn-kv-gold{
+      border:none;
+      color:#2b1a00;
+      background:
+        radial-gradient(260px 110px at 20% 20%, rgba(255,255,255,.35), transparent 62%),
+        linear-gradient(145deg, var(--kv-g1), var(--kv-g2), var(--kv-g3));
+    }
+
+    .kv-box{
+      width:100%;
+      min-height: 320px;
+      max-height: 52vh;
+      resize: vertical;
+      border-radius: var(--kv-radius2);
+      border: 1px solid rgba(255,215,120,.22);
+      background: rgba(0,0,0,.22);
+      color: rgba(255,246,214,.95);
+      padding: 12px;
+      outline:none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .92rem;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+
+    .kv-toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background:
+        linear-gradient(145deg, rgba(255,231,166,.18), rgba(0,0,0,.55));
+      border: 1px solid rgba(255,215,120,.24);
+      color: rgba(255,246,214,.95);
+      padding: 10px 14px;
+      border-radius: 14px;
+      box-shadow: 0 16px 50px rgba(0,0,0,.55);
+      font-weight: 900;
+      display:none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="kv-wrap">
+
+    <section class="kv-hero">
+      <div class="kv-title">
+        <div class="kv-badge"><i class="bi bi-shield-lock-fill"></i></div>
+        <div>
+          <h1>Payloads compatibles con el panel</h1>
+          <p class="kv-sub">
+            Payloads <b>probados</b> y <b>asegurados</b> para funcionar con <b>KING•VPN</b>.
+            Copiá y pegá tal cual.
+          </p>
+        </div>
+      </div>
+
+      <div class="kv-note">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>
+          Estos payloads se cargan desde archivos JSON.  
+          Si mañana querés cambiar algo, editás el archivo y listo.
+        </span>
+      </div>
+    </section>
+
+    <section class="kv-grid">
+
+      <!-- NORMAL -->
+      <article class="kv-card">
+        <div class="kv-flag">NORMAL</div>
+
+        <div class="kv-card-head">
+          <div></div>
+          <div class="kv-actions">
+            <button class="btn-kv" onclick="reloadPayload('normal')">
+              <i class="bi bi-arrow-clockwise"></i> Recargar
+            </button>
+            <button class="btn-kv btn-kv-gold" onclick="copyPayload('normal')">
+              <i class="bi bi-clipboard-check"></i> Copiar
+            </button>
+          </div>
+        </div>
+
+        <textarea id="payload-normal" class="kv-box" readonly>Cargando...</textarea>
+      </article>
+
+      <!-- ROTATE -->
+      <article class="kv-card">
+        <div class="kv-flag">ROTATE</div>
+
+        <div class="kv-card-head">
+          <div></div>
+          <div class="kv-actions">
+            <button class="btn-kv" onclick="reloadPayload('rotate')">
+              <i class="bi bi-arrow-clockwise"></i> Recargar
+            </button>
+            <button class="btn-kv btn-kv-gold" onclick="copyPayload('rotate')">
+              <i class="bi bi-clipboard-check"></i> Copiar
+            </button>
+          </div>
+        </div>
+
+        <textarea id="payload-rotate" class="kv-box" readonly>Cargando...</textarea>
+      </article>
+
+    </section>
+
+  </div>
+
+  <div id="kvToast" class="kv-toast"></div>
+
+  <script>
+    const FILES = {
+      normal: 'directo.json',
+      rotate: 'rotate.json',
+    };
+
+    function toast(msg){
+      const el = document.getElementById('kvToast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(window.__kv_toast);
+      window.__kv_toast = setTimeout(() => el.style.display = 'none', 2200);
+    }
+
+    async function loadPayload(key){
+      const box = document.getElementById(`payload-${key}`);
+      box.value = 'Cargando...';
+
+      try{
+        const res = await fetch(FILES[key], { cache: 'no-store' });
+        const text = await res.text();
+        box.value = text || '';
+      }catch{
+        box.value = 'Error al cargar el archivo.';
+      }
+    }
+
+    function reloadPayload(key){
+      loadPayload(key);
+      toast('Recargado ✅');
+    }
+
+    async function copyPayload(key){
+      const text = document.getElementById(`payload-${key}`).value;
+      try{
+        await navigator.clipboard.writeText(text);
+        toast('Copiado ✅');
+      }catch{
+        toast('No se pudo copiar');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPayload('normal');
+      loadPayload('rotate');
+    });
+  </script>
+</body>
+</html>

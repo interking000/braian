@@ -1,10 +1,11 @@
 #!/bin/bash
 # ============================================================
 #  KING•VPN — start.sh (DTunnel)
-#  ✅ Lee PORT y dominio desde .env (sin hardcode)
+#  ✅ Detecta nombre real desde ecosystem.config.js (DTunnel)
+#  ✅ Lee PORT desde .env (sin hardcode)
 #  ✅ Arranca / reinicia por PM2 de forma limpia
 #  ✅ Opcional: build + prisma db push (con flags)
-#  ✅ NGINX: test + reload seguro (si no está activo -> start)
+#  ✅ NGINX: test + reload seguro
 # ============================================================
 
 set -euo pipefail
@@ -22,8 +23,8 @@ die(){  echo -e "${RED}✖${RST} ${WHT}$1${RST}"; exit 1; }
 # Config
 # --------------------------
 PROJECT_DIR="/root/DTunnel"
-APP_NAME="kingvpn-panel"   # <- el nombre real que querés ver en pm2
 ENV_FILE="$PROJECT_DIR/.env"
+ECO_FILE="$PROJECT_DIR/ecosystem.config.js"
 
 # Flags:
 #   ./start.sh            -> solo inicia/reinicia
@@ -62,10 +63,22 @@ done
 cd "$PROJECT_DIR"
 
 command -v pm2 >/dev/null 2>&1 || die "PM2 no está instalado (npm i -g pm2)"
-command -v nginx >/dev/null 2>&1 || warn "NGINX no está instalado (se omite reload)"
 command -v node >/dev/null 2>&1 || die "Node no está instalado"
 
 [ -f "$ENV_FILE" ] || die "No existe $ENV_FILE (crealo con el install.sh)"
+
+# --------------------------
+# Detectar APP_NAME real (DTunnel) desde ecosystem
+# --------------------------
+APP_NAME="DTunnel"
+if [ -f "$ECO_FILE" ]; then
+  # busca: name: 'DTunnel'  o  name: "DTunnel"
+  DETECTED_NAME="$(node -e "try{const c=require('$ECO_FILE');const n=(c.apps&&c.apps[0]&&c.apps[0].name)||'';process.stdout.write(String(n||''))}catch(e){process.stdout.write('')}" 2>/dev/null || true)"
+  if [ -n "${DETECTED_NAME// }" ]; then
+    APP_NAME="$DETECTED_NAME"
+  fi
+fi
+ok "PM2 APP_NAME=$APP_NAME"
 
 # --------------------------
 # Cargar .env sin romper el sistema
@@ -85,7 +98,6 @@ if ! [[ "$PORT" =~ ^[0-9]+$ ]] || [ "$PORT" -lt 1 ] || [ "$PORT" -gt 65535 ]; th
   die "PORT inválido en .env: $PORT"
 fi
 
-# URL mostrada (solo para el mensaje final)
 PUBLIC_URL="$APP_BASE_URL"
 if [ -z "${PUBLIC_URL// }" ]; then
   PUBLIC_URL="$FRONTEND_RETURN_URL"
@@ -127,27 +139,31 @@ if [ "$DO_BUILD" -eq 1 ]; then
 fi
 
 # --------------------------
+# Verificar build/index.js (tu panel corre desde ahí)
+# --------------------------
+[ -f "$PROJECT_DIR/build/index.js" ] || die "Falta build/index.js. Corré: npm run build"
+
+# --------------------------
 # Iniciar / reiniciar con PM2
 # --------------------------
 step "Iniciando/reiniciando PM2 app: $APP_NAME..."
 
-# Si existe ecosystem.config.js, mejor usarlo.
-if [ -f "$PROJECT_DIR/ecosystem.config.js" ]; then
+if [ -f "$ECO_FILE" ]; then
   if pm2 describe "$APP_NAME" >/dev/null 2>&1; then
-    step "PM2: restart con --update-env (ecosystem.config.js)"
+    step "PM2: restart $APP_NAME --update-env"
     pm2 restart "$APP_NAME" --update-env
   else
-    step "PM2: start ecosystem.config.js con --update-env"
-    pm2 start "$PROJECT_DIR/ecosystem.config.js" --only "$APP_NAME" --update-env || pm2 start "$PROJECT_DIR/ecosystem.config.js" --update-env
+    step "PM2: start ecosystem.config.js --update-env"
+    pm2 start "$ECO_FILE" --update-env
   fi
 else
-  # fallback: pm2 start npm -- start
+  # fallback directo
   if pm2 describe "$APP_NAME" >/dev/null 2>&1; then
-    step "PM2: restart (npm start) con --update-env"
+    step "PM2: restart $APP_NAME (script build/index.js)"
     pm2 restart "$APP_NAME" --update-env
   else
-    step "PM2: start npm -- start"
-    pm2 start npm --name "$APP_NAME" -- start
+    step "PM2: start build/index.js"
+    pm2 start "$PROJECT_DIR/build/index.js" --name "$APP_NAME"
   fi
 fi
 
@@ -155,13 +171,12 @@ pm2 save >/dev/null 2>&1 || true
 ok "PM2 OK"
 
 # --------------------------
-# NGINX reload seguro
+# NGINX reload seguro (opcional)
 # --------------------------
 if command -v nginx >/dev/null 2>&1; then
   step "NGINX: test + reload..."
   nginx -t
 
-  # ✅ FIX: si no está activo, lo iniciamos en vez de reload
   if command -v systemctl >/dev/null 2>&1; then
     if systemctl is-active --quiet nginx; then
       systemctl reload nginx
@@ -173,7 +188,6 @@ if command -v nginx >/dev/null 2>&1; then
       ok "NGINX iniciado"
     fi
   else
-    # fallback sin systemd
     if service nginx status >/dev/null 2>&1; then
       service nginx reload
       ok "NGINX recargado (service)"
@@ -183,11 +197,18 @@ if command -v nginx >/dev/null 2>&1; then
       ok "NGINX iniciado (service)"
     fi
   fi
+else
+  warn "NGINX no instalado -> se omite"
 fi
 
 # --------------------------
-# Info final
+# Smoke rápido local
 # --------------------------
+step "Smoke local: verificando puerto..."
+if command -v ss >/dev/null 2>&1; then
+  ss -ltnp | grep -E ":${PORT}\b" || warn "No veo el puerto $PORT escuchando todavía (puede tardar 1-2s)."
+fi
+
 echo
 echo "========================================"
 echo "      KING•VPN PANEL LISTO"
@@ -199,6 +220,7 @@ if [ -n "${PUBLIC_URL// }" ]; then
 else
   echo "URL    : (no definido en .env)"
 fi
-echo "Logs   : pm2 logs $APP_NAME --lines 100"
+echo "Logs   : pm2 logs $APP_NAME --lines 120"
 echo "Estado : pm2 status"
 echo "========================================"
+
