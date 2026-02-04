@@ -12,6 +12,10 @@ const registerSchema = z.object({
   email: z.string().email(),
 });
 
+function addHours(hours: number) {
+  return new Date(Date.now() + hours * 60 * 60 * 1000);
+}
+
 export default {
   url: '/register',
   method: 'POST',
@@ -45,12 +49,24 @@ export default {
 
     const passwordHash = BCrypt.hash(password);
 
+    // ✅ DEMO 24 HORAS
+    const trialEnds = addHours(24);
+
     const user = await SafeCallback(() =>
       prisma.user.create({
         data: {
           email,
           username,
           password: passwordHash,
+
+          // ✅ activar demo 24h
+          access_status: 'TRIAL',
+          trial_ends_at: trialEnds,
+
+          // limpio por las dudas
+          access_ends_at: null,
+          grace_delete_at: null,
+          last_payment_at: null,
         },
       })
     );
@@ -74,4 +90,3 @@ export default {
     reply.status(201).send();
   },
 } as RouteOptions;
-

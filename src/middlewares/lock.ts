@@ -1,3 +1,5 @@
+//Direcion Del Archivo Lock.ts DTunnel/src/middlewares/
+
 import prisma from '../config/prisma-client';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
@@ -43,14 +45,17 @@ export async function lock(req: FastifyRequest, reply: FastifyReply) {
 
   if (!u) return reply.redirect('/login');
 
-  // ✅ TRIAL vigente
+  // ✅ TRIAL vigente (demo activo)
   if (u.access_status === 'TRIAL' && isFuture(u.trial_ends_at)) return;
 
-  // ✅ TRIAL vencido -> NONE + Home
-  if (u.access_status === 'TRIAL' && u.trial_ends_at && !isFuture(u.trial_ends_at)) {
-    await prisma.user.update({ where: { id: u.id }, data: { access_status: 'NONE' } });
-    return reply.redirect('/?pay=1');
-  }
+  // ✅ TRIAL vencido -> GRACE 2 días + Home (bloqueado)
+if (u.access_status === 'TRIAL' && u.trial_ends_at && !isFuture(u.trial_ends_at)) {
+  await prisma.user.update({
+    where: { id: u.id },
+    data: { access_status: 'GRACE', grace_delete_at: addDays(2) },
+  });
+  return reply.redirect('/?pay=1');
+}
 
   // ✅ ACTIVE vigente
   if (u.access_status === 'ACTIVE' && isFuture(u.access_ends_at)) return;
@@ -70,7 +75,7 @@ export async function lock(req: FastifyRequest, reply: FastifyReply) {
     return reply.redirect('/register');
   }
 
-  // ✅ GRACE vigente -> Home
+  // ✅ GRACE vigente -> Home (bloqueado hasta pagar)
   if (u.access_status === 'GRACE') {
     return reply.redirect('/?pay=1');
   }
@@ -78,4 +83,3 @@ export async function lock(req: FastifyRequest, reply: FastifyReply) {
   // ✅ cualquier otro estado -> Home
   return reply.redirect('/?pay=1');
 }
-
