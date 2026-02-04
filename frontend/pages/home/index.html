@@ -277,6 +277,7 @@
       display:flex;
       flex-wrap:wrap;
       gap:10px;
+      align-items:center;
     }
 
     .meta-item{
@@ -291,6 +292,23 @@
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
     }
     .meta-item i{ color: rgba(255,211,106,.98); }
+
+    /* ✅ Botón info mini */
+    .btn-info-king{
+      border: 1px solid rgba(255,211,106,.26) !important;
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.14), transparent 64%),
+        rgba(22, 12, 3, .55) !important;
+      color: rgba(255,246,214,.95) !important;
+      border-radius: 14px !important;
+      padding: 8px 10px !important;
+      font-weight: 950 !important;
+      letter-spacing: .10em !important;
+      text-transform: uppercase !important;
+      box-shadow: 0 10px 20px rgba(0,0,0,.45);
+      line-height: 1;
+    }
+    .btn-info-king i{ color: rgba(255,211,106,.98); }
 
     .price-card{
       border-radius: 18px;
@@ -524,7 +542,7 @@
             </div>
           </div>
 
-          <!-- ✅ BLOQUE ACCESO / COMPRA -->
+          <!-- ✅ BLOQUE ACCESO / COMPRA (AHORA TAMBIÉN EN DEMO) -->
           <div id="accessBox" class="access-box d-none">
             <div class="access-left">
               <div class="access-badge" id="accessBadge">
@@ -543,28 +561,35 @@
                   <span>Vence:</span>
                   <strong id="accessEnds">—</strong>
                 </div>
-                <div class="meta-item">
+                <div class="meta-item" id="graceMeta" style="display:none">
                   <i class="bi bi-clock-history"></i>
                   <span>Gracia:</span>
                   <strong id="graceEnds">—</strong>
                 </div>
+
+                <!-- ✅ BOTÓN INFO (solo GRACE) -->
+                <button id="btnGraceInfo" type="button" class="btn btn-info-king d-none">
+                  <i class="bi bi-info-circle-fill me-1"></i> Info
+                </button>
               </div>
             </div>
 
             <div class="access-right">
               <div class="price-card">
                 <div class="price-top">
-                  <div class="price-name">Acceso mensual</div>
-                  <div class="price-tag">30 días</div>
+                  <div class="price-name" id="planName">Acceso mensual</div>
+                  <div class="price-tag" id="planTag">30 días</div>
                 </div>
 
                 <div class="price-value">$ <span id="priceArs">7.000</span></div>
                 <div class="price-note">Pago con Mercado Pago</div>
 
+                <!-- ✅ en DEMO: “Comprar acceso mensual” -->
                 <button id="btnBuy" class="btn btn-primary w-100 btn-buy">
-                  <i class="bi bi-bag-check-fill me-2"></i> Comprar acceso
+                  <i class="bi bi-bag-check-fill me-2"></i> Comprar acceso mensual
                 </button>
 
+                <!-- ✅ en GRACE: “Renovar acceso” (se muestra) -->
                 <button id="btnRenew" class="btn btn-outline-light w-100 mt-2 btn-renew d-none">
                   <i class="bi bi-arrow-repeat me-2"></i> Renovar acceso
                 </button>
@@ -642,7 +667,10 @@
 
   <script>
     // =========================================================
-    // ✅ Acceso + Compra
+    // ✅ Acceso + Compra (MEJORADO)
+    // - DEMO (TRIAL vigente): mostrar botón “Comprar acceso mensual” (sin bloquear)
+    // - GRACE: mostrar Renovar + botón Info con días restantes
+    // - TRIAL vencido / NONE: mostrar compra + modal
     // =========================================================
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -650,10 +678,10 @@
       if (!v) return '—';
       try {
         const d = new Date(v);
-        if (isNaN(d.getTime())) return v;
+        if (isNaN(d.getTime())) return String(v);
         return d.toLocaleString('es-AR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       } catch {
-        return v;
+        return String(v);
       }
     };
 
@@ -664,44 +692,185 @@
       return d.getTime() < Date.now();
     };
 
-    const shouldPay = (u) => {
-      const st = (u.access_status || 'NONE').toUpperCase();
+    const daysLeft = (v) => {
+      if (!v) return null;
+      const d = new Date(v);
+      if (isNaN(d.getTime())) return null;
+      const ms = d.getTime() - Date.now();
+      const days = Math.ceil(ms / (24 * 60 * 60 * 1000));
+      return days;
+    };
 
-      if (st === 'ACTIVE') return false;
+    // ✅ Debe aparecer el bloque en:
+    // - GRACE / TRIAL (vigente o vencido) / NONE / BLOCKED
+    // - o si viene ?pay=1
+    const shouldShowAccessBox = (u, queryPay) => {
+      const st = (u.access_status || 'NONE').toUpperCase();
+      if (queryPay === '1') return true;
+      if (st === 'GRACE') return true;
+      if (st === 'TRIAL') return true;           // ✅ DEMO también lo muestra
+      if (st === 'NONE' || st === 'BLOCKED') return true;
+      return false;
+    };
+
+    // ✅ Debe abrir el modal “Acceso requerido” en:
+    // - GRACE (si viene ?pay=1, o si querés forzarlo)
+    // - TRIAL vencido / NONE
+    const shouldForcePayModal = (u, queryPay) => {
+      const st = (u.access_status || 'NONE').toUpperCase();
+      if (queryPay === '1') return true;
       if (st === 'TRIAL' && u.trial_ends_at && isPast(u.trial_ends_at)) return true;
       if (st === 'GRACE') return true;
       if (st === 'NONE' || st === 'BLOCKED') return true;
       if (u.access_ends_at && isPast(u.access_ends_at)) return true;
-
       return false;
+    };
+
+    const goPay = async () => {
+      try {
+        const res = await fetch('/api/mp/pay', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrfToken
+          },
+          body: JSON.stringify({ plan_code: 'plan_1m' })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data || data.ok === false) {
+          throw new Error(data?.error || data?.message || 'Error creando el pago');
+        }
+
+        if (data.init_point) {
+          window.location.href = data.init_point;
+          return;
+        }
+
+        throw new Error('No se recibió init_point');
+      } catch (e) {
+        Swal.fire({
+          icon: 'error',
+          title: 'No se pudo iniciar el pago',
+          text: (e && e.message) ? e.message : 'Error inesperado',
+          confirmButtonText: 'OK'
+        });
+      }
+    };
+
+    const showGraceInfoModal = (u) => {
+      const dLeft = daysLeft(u.grace_delete_at);
+      const leftTxt = (typeof dLeft === 'number')
+        ? (dLeft <= 0 ? 'HOY' : `${dLeft} día${dLeft === 1 ? '' : 's'}`)
+        : '—';
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Modo gracia',
+        html: `
+          <div style="color:rgba(255,246,214,.92); line-height:1.55;">
+            Estás en <b>modo gracia</b>. El panel queda restringido hasta pagar.<br/><br/>
+            <div style="padding:10px 12px; border-radius:14px; border:1px solid rgba(255,211,106,.22); background: rgba(0,0,0,.18); text-align:left;">
+              <div><b style="color:rgba(255,211,106,.98)">⏳ Plazo restante:</b> ${leftTxt}</div>
+              <div style="margin-top:6px;"><b style="color:rgba(255,211,106,.98)">🧨 Importante:</b> si no renovás, <b>se borrarán tus datos</b> al terminar el plazo.</div>
+            </div>
+            <div style="margin-top:12px; font-size:.95rem; color:rgba(255,226,170,.78);">
+              Recomendación: renová ahora para evitar pérdidas.
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Renovar ahora',
+        cancelButtonText: 'Entendido',
+        allowOutsideClick: true
+      }).then((r) => {
+        if (r.isConfirmed) goPay();
+      });
+    };
+
+    const showPayModal = (u, planPriceText) => {
+      const st = (u.access_status || 'NONE').toUpperCase();
+
+      // Mensaje más específico por estado
+      let msg = `Para seguir usando <b>KING•VPN</b> necesitás activar el acceso mensual.`;
+      if (st === 'GRACE') {
+        const dLeft = daysLeft(u.grace_delete_at);
+        const leftTxt = (typeof dLeft === 'number')
+          ? (dLeft <= 0 ? 'HOY' : `${dLeft} día${dLeft === 1 ? '' : 's'}`)
+          : '—';
+        msg = `
+          Estás en <b>modo gracia</b>. El panel está restringido hasta pagar.<br/>
+          <span style="display:block; margin-top:10px; color:rgba(255,226,170,.78);">
+            ⏳ Plazo restante: <b style="color:rgba(255,211,106,.98)">${leftTxt}</b><br/>
+            🧨 Si no renovás, <b>se borrarán tus datos</b> al finalizar el plazo.
+          </span>
+        `;
+      } else if (st === 'TRIAL' && u.trial_ends_at && !isPast(u.trial_ends_at)) {
+        // no debería entrar aquí porque modal se fuerza solo si vencido, pero lo dejamos safe
+        msg = `Tu demo está activa. Si querés, podés comprar el acceso mensual ahora mismo.`;
+      } else if (st === 'TRIAL') {
+        msg = `Tu demo terminó. Activá el acceso mensual para seguir usando el servicio sin cortes.`;
+      }
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Acceso requerido',
+        html: `
+          <div style="color:rgba(255,246,214,.92); line-height:1.45;">
+            ${msg}
+            <span style="display:block; margin-top:12px; font-size:.95rem; color:rgba(255,226,170,.78);">
+              Plan: <b style="color:rgba(255,211,106,.98)">30 días</b> — 
+              <b style="color:rgba(255,211,106,.98)">${planPriceText}</b>
+            </span>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: (st === 'GRACE') ? 'Renovar ahora' : 'Comprar ahora',
+        cancelButtonText: (st === 'GRACE') ? 'Más tarde' : 'Más tarde',
+        allowOutsideClick: true,
+        buttonsStyling: true
+      }).then((r) => {
+        if (r.isConfirmed) goPay();
+      });
     };
 
     const setAccessUI = () => {
       const u = window.__USER__ || {};
       const box = document.getElementById('accessBox');
+
       const badge = document.getElementById('accessBadge');
       const badgeText = document.getElementById('accessBadgeText');
       const title = document.getElementById('accessTitle');
       const sub = document.getElementById('accessSub');
+
       const accessEnds = document.getElementById('accessEnds');
       const graceEnds = document.getElementById('graceEnds');
+      const graceMeta = document.getElementById('graceMeta');
+
       const btnBuy = document.getElementById('btnBuy');
       const btnRenew = document.getElementById('btnRenew');
+      const btnGraceInfo = document.getElementById('btnGraceInfo');
+
+      const priceArs = document.getElementById('priceArs');
 
       if (!box) return;
 
-      const pay = shouldPay(u);
       const queryPay = new URLSearchParams(window.location.search).get('pay');
-
-      if (!pay && queryPay !== '1') return;
-
-      box.classList.remove('d-none');
-
-      accessEnds.textContent = toNiceDate(u.access_ends_at || u.trial_ends_at || '');
-      graceEnds.textContent = toNiceDate(u.grace_delete_at || '');
-
       const st = (u.access_status || 'NONE').toUpperCase();
 
+      // ✅ Mostrar/ocultar bloque
+      if (!shouldShowAccessBox(u, queryPay)) return;
+      box.classList.remove('d-none');
+
+      // ✅ Fechas
+      accessEnds.textContent = toNiceDate(u.access_ends_at || u.trial_ends_at || '');
+      graceEnds.textContent = toNiceDate(u.grace_delete_at || '');
+      if (graceMeta) graceMeta.style.display = (st === 'GRACE') ? '' : 'none';
+
+      // ✅ Estado + textos
+      badge.classList.remove('ok', 'danger');
+
+      // ACTIVE (no deberia mostrarse por shouldShowAccessBox, pero safe)
       if (st === 'ACTIVE') {
         badge.classList.add('ok');
         badgeText.textContent = 'ACTIVO';
@@ -709,79 +878,64 @@
         sub.textContent = 'Podés usar el panel normalmente.';
         btnBuy.classList.add('d-none');
         btnRenew.classList.remove('d-none');
+        btnRenew.onclick = goPay;
+        btnBuy.onclick = null;
         return;
       }
 
+      // ✅ DEMO vigente (TRIAL futuro): mostrar botón comprar mensual y NO bloquear
+      if (st === 'TRIAL' && u.trial_ends_at && !isPast(u.trial_ends_at)) {
+        badge.classList.add('ok');
+        badgeText.textContent = 'DEMO';
+        title.textContent = 'Demo activa';
+        sub.textContent = 'Probá el panel. Si querés, podés comprar el acceso mensual ahora.';
+        btnBuy.classList.remove('d-none');
+        btnRenew.classList.add('d-none'); // en demo, no “renovar”
+        btnBuy.onclick = () => {
+          // ✅ “directo al modal” (confirm) y si acepta, paga
+          showPayModal(u, `$${(priceArs?.textContent || '—')}`);
+        };
+        if (btnGraceInfo) btnGraceInfo.classList.add('d-none');
+        return;
+      }
+
+      // ✅ TRIAL vencido / NONE / GRACE: bloqueado => mostrar compra/renovar
       badge.classList.add('danger');
-      badgeText.textContent = (st === 'TRIAL') ? 'DEMO VENCIDO' : 'ACCESO VENCIDO';
+      badgeText.textContent = (st === 'TRIAL') ? 'DEMO VENCIDO' : (st === 'GRACE' ? 'GRACIA' : 'SIN ACCESO');
 
       if (st === 'GRACE') {
         title.textContent = 'Tu acceso venció (modo gracia)';
-        sub.textContent = 'No podés usar el panel. Renová ahora para evitar que se borren tus datos.';
+        sub.textContent = 'Renová ahora para evitar que se borren tus datos.';
+        btnBuy.classList.add('d-none');
+        btnRenew.classList.remove('d-none');
+        btnRenew.onclick = goPay;
+
+        // ✅ Botón info (explica días restantes y borrado)
+        if (btnGraceInfo) {
+          btnGraceInfo.classList.remove('d-none');
+          btnGraceInfo.onclick = () => showGraceInfoModal(u);
+        }
+
       } else if (st === 'TRIAL') {
         title.textContent = 'Tu demo terminó';
         sub.textContent = 'Activá el acceso mensual para seguir usando el servicio sin cortes.';
+        btnBuy.classList.remove('d-none');
+        btnRenew.classList.add('d-none');
+        btnBuy.onclick = goPay;
+        if (btnGraceInfo) btnGraceInfo.classList.add('d-none');
+
       } else {
         title.textContent = 'Necesitás activar el acceso';
         sub.textContent = 'Comprá el acceso mensual para habilitar el panel.';
+        btnBuy.classList.remove('d-none');
+        btnRenew.classList.add('d-none');
+        btnBuy.onclick = goPay;
+        if (btnGraceInfo) btnGraceInfo.classList.add('d-none');
       }
 
-      const goPay = async () => {
-        try {
-          const res = await fetch('/api/mp/pay', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-csrf-token': csrfToken
-            },
-            body: JSON.stringify({ plan_code: 'plan_1m' })
-          });
-
-          const data = await res.json().catch(() => ({}));
-          if (!res.ok || !data || data.ok === false) {
-            throw new Error(data?.error || data?.message || 'Error creando el pago');
-          }
-
-          if (data.init_point) {
-            window.location.href = data.init_point;
-            return;
-          }
-
-          throw new Error('No se recibió init_point');
-        } catch (e) {
-          Swal.fire({
-            icon: 'error',
-            title: 'No se pudo iniciar el pago',
-            text: (e && e.message) ? e.message : 'Error inesperado',
-            confirmButtonText: 'OK'
-          });
-        }
-      };
-
-      // ✅ Evita doble listener si se llama más de 1 vez
-      btnBuy.onclick = goPay;
-      btnRenew.onclick = goPay;
-
-      if (queryPay === '1' || pay) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Acceso requerido',
-          html: `
-            <div style="color:rgba(255,246,214,.92); line-height:1.45;">
-              Para seguir usando <b>KING•VPN</b> necesitás activar el acceso mensual.<br/>
-              <span style="display:block; margin-top:10px; font-size:.95rem; color:rgba(255,226,170,.78);">
-                Plan: <b style="color:rgba(255,211,106,.98)">30 días</b> — <b style="color:rgba(255,211,106,.98)">$7.000</b>
-              </span>
-            </div>
-          `,
-          showCancelButton: true,
-          confirmButtonText: 'Comprar ahora',
-          cancelButtonText: 'Más tarde',
-          allowOutsideClick: true,
-          buttonsStyling: true
-        }).then((r) => {
-          if (r.isConfirmed) goPay();
-        });
+      // ✅ Modal automático cuando corresponde (vencido / gracia / none / ?pay=1)
+      if (shouldForcePayModal(u, queryPay)) {
+        showPayModal(u, `$${(priceArs?.textContent || '—')}`);
       }
     };
 

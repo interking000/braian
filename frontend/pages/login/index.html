@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="es-AR">
+<html lang="es-AR" translate="no" data-bs-theme="dark">
 <head>
   <base href="/" target="_self">
   <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="google" content="notranslate">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
   <link rel="shortcut icon" href="/static/img/favicon.svg" />
   <title>KING•VPN - LOGIN</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+  <!-- ✅ Bootstrap + Icons (misma línea que el resto del panel) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
   <!-- ✅ Importante: dejá el meta csrf como el original -->
@@ -15,326 +20,470 @@
 
   <style>
     :root{
-      --gold-main:#D4AF37;
-      --gold-soft:#FFD36A;
-      --gold-hi:#FFE7A6;
-      --gold-deep:#B88A1A;
-      --gold-dark:#8C6400;
+      /* ✅ PALETA KING (igual a SERVIDORES/PANEL) */
+      --bg1:#7A4A10;
+      --bg2:#2A1705;
+      --bg3:#4B2A09;
 
-      --bg1:#9A6A12;
-      --bg2:#7A4F0A;
-      --bg3:#5C3A06;
+      --panel: rgba(55, 32, 8, .92);
+      --panel2: rgba(32, 18, 5, .88);
 
-      --text:#FFF2C2;
+      --gold:#D4AF37;
+      --gold2:#FFD36A;
+      --gold3:#8C6B1A;
+      --gold4:#F0B92D;
 
-      --shadow:0 25px 70px rgba(60,35,0,.75);
+      --text: rgba(255, 246, 214, .96);
+      --text2: rgba(255, 246, 214, .88);
+      --muted: rgba(255, 226, 170, .74);
+      --muted2: rgba(255, 226, 170, .60);
+
+      --line: rgba(255,211,106,.22);
+      --radius: 22px;
+
+      --shadow: 0 18px 55px rgba(0,0,0,.72);
+      --ring: 0 0 0 3px rgba(255,211,106,.22);
+      --softGlow: 0 0 0 1px rgba(255,211,106,.18), 0 12px 28px rgba(0,0,0,.62);
+      --softGlow2: 0 0 0 1px rgba(255,211,106,.14), 0 18px 40px rgba(0,0,0,.70);
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; }
+    html, body{ height:100%; margin:0; }
+
+    /* ✅ ANTI-BLUR GLOBAL (MOBILE SAFE) */
+    body, main, .content, .card, .card-body{
+      filter:none !important;
+      -webkit-filter:none !important;
+      backdrop-filter:none !important;
+      -webkit-backdrop-filter:none !important;
+    }
 
     body{
       display:flex;
       justify-content:center;
       align-items:center;
       padding:16px;
-      font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+
+      /* ✅ Fondo premium KING */
       background:
-        radial-gradient(900px 500px at 20% 10%, rgba(255,211,106,.35), transparent 60%),
-        radial-gradient(800px 520px at 80% 20%, rgba(212,175,55,.30), transparent 65%),
-        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 45%, var(--bg3) 100%);
+        radial-gradient(980px 560px at 18% 0%, rgba(255,211,106,.30), transparent 62%),
+        radial-gradient(980px 560px at 92% 12%, rgba(212,175,55,.22), transparent 66%),
+        radial-gradient(980px 620px at 50% 92%, rgba(212,175,55,.16), transparent 68%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg3) 36%, var(--bg2) 100%);
+      background-attachment: fixed;
       overflow:hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
       position:relative;
+      overscroll-behavior-y: contain; /* ✅ para que el gesto sea estable */
     }
 
-    /* reflejo global */
-    body::before,
-    body::after{
+    /* Scrollbar (marrón/dorado) */
+    *{
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,211,106,.55) rgba(42,23,5,.55);
+    }
+    *::-webkit-scrollbar{ width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track{ background: rgba(42,23,5,.55); border-radius: 999px; }
+    *::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(255,211,106,.42), rgba(212,175,55,.78));
+      border-radius: 999px;
+      border: 2px solid rgba(42,23,5,.55);
+    }
+
+    /* ✅ brillo sutil global (como SERVIDORES) */
+    body::before{
       content:"";
       position:absolute;
       inset:-40%;
-      background:linear-gradient(
-        120deg,
-        transparent 45%,
-        rgba(255,215,120,.25) 50%,
-        transparent 55%
-      );
-      filter:blur(18px);
-      opacity:.35;
-      animation:sheen 7s linear infinite;
+      background: linear-gradient(120deg, transparent 44%, rgba(255,255,255,.12) 50%, transparent 56%);
+      filter: blur(16px);
+      opacity:.28;
+      transform: translateX(-140%);
+      animation: kvSheen 7.2s linear infinite;
       pointer-events:none;
     }
-    body::after{ animation-duration:10s; opacity:.22; }
-
-    @keyframes sheen{
-      0%{ transform:translateX(-120%); }
-      100%{ transform:translateX(120%); }
+    @keyframes kvSheen{
+      0%{transform:translateX(-140%)}
+      100%{transform:translateX(140%)}
     }
 
-    /* CARD */
+    /* ✅ CARD LOGIN (mismo lenguaje que cards/panel) */
     .card-king{
       width:100%;
-      max-width:420px;
-      border-radius:28px;
-      padding:26px 24px 22px;
+      max-width: 460px;
+      border-radius: calc(var(--radius) + 6px);
       background:
-        radial-gradient(500px 260px at 50% 0%, rgba(255,215,120,.35), transparent 60%),
-        linear-gradient(145deg, #8C6400, #5C3A06);
-      box-shadow:var(--shadow);
-      border:1px solid rgba(255,215,120,.35);
+        radial-gradient(640px 240px at 20% 0%, rgba(255,211,106,.16), transparent 64%),
+        linear-gradient(145deg, rgba(60, 35, 9, .92), rgba(18, 10, 2, .96));
+      border: 1px solid rgba(255,211,106,.26);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255,211,106,.08);
       position:relative;
-      z-index:2;
-      text-align:center;
       overflow:hidden;
+      padding: 18px;
+      z-index: 2;
     }
 
-    /* borde interno premium */
+    .card-king::before{
+      content:"";
+      position:absolute;
+      inset:-2px -2px auto -2px;
+      height: 120px;
+      background:
+        radial-gradient(520px 110px at 18% 30%, rgba(255,255,255,.07), transparent 66%),
+        radial-gradient(620px 110px at 72% 30%, rgba(255,211,106,.22), transparent 72%),
+        linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,211,106,.10));
+      pointer-events:none;
+      border-bottom: 1px solid rgba(255,211,106,.16);
+    }
+
     .card-king::after{
       content:"";
       position:absolute;
       inset:0;
-      border-radius:28px;
+      border-radius: calc(var(--radius) + 6px);
       pointer-events:none;
       box-shadow:
-        inset 0 0 0 1px rgba(255,215,120,.18),
-        inset 0 0 0 2px rgba(255,255,255,.04);
-      opacity:.9;
+        inset 0 0 0 1px rgba(255,211,106,.18),
+        inset 0 0 0 2px rgba(255,255,255,.02);
     }
 
-    /* TITULO 3D REAL */
-    .title-king{
-      margin:6px 0 18px;
+    .card-inner{
       position:relative;
-      z-index:2;
+      z-index:1;
+      padding: 12px 10px 10px;
+    }
+
+    /* ✅ Header / marca */
+    .brand-row{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      margin-bottom: 8px;
+    }
+
+    .brand-logo{
+      width:46px;height:46px;border-radius:16px;
+      display:grid;place-items:center;
+      background:
+        radial-gradient(210px 90px at 30% 20%, rgba(255,231,166,.26), transparent 65%),
+        linear-gradient(145deg, rgba(255,211,106,.18), rgba(184,138,26,.10));
+      border:1px solid rgba(255,231,166,.18);
+      box-shadow: var(--softGlow);
+      flex: 0 0 auto;
+    }
+    .brand-logo i{
+      color: rgba(255,231,166,.95);
+      filter: drop-shadow(0 0 12px rgba(255,215,120,.20));
+      font-size: 1.25rem;
+    }
+
+    .title-king{
+      text-align:center;
+      margin: 2px 0 14px;
     }
 
     .title-king h1{
-      margin:0;
-      font-size:2.25rem;
-      font-weight:1000;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--gold-hi);
-
-      text-shadow:
-        0 2px 0 rgba(80,40,0,.70),
-        0 4px 0 rgba(70,35,0,.60),
-        0 6px 0 rgba(60,30,0,.52),
-        0 10px 20px rgba(0,0,0,.55),
-        0 0 18px rgba(255,231,166,.35);
+      margin: 0;
+      font-size: 1.55rem;
+      font-weight: 1000;
+      letter-spacing: .20em;
+      text-transform: uppercase;
+      color: var(--gold4);
+      text-shadow: 0 10px 28px rgba(0,0,0,.60);
     }
 
-    /* línea elegante debajo */
     .title-king .orn{
-      width:76%;
-      margin:10px auto 0;
-      height:2px;
-      border-radius:999px;
-      background:
-        linear-gradient(90deg,
-          transparent 0%,
-          rgba(255,231,166,.20) 15%,
-          rgba(255,231,166,.90) 50%,
-          rgba(255,231,166,.20) 85%,
-          transparent 100%
-        );
-      box-shadow:0 0 16px rgba(255,231,166,.25);
-      position:relative;
+      width: 170px;
+      margin: 10px auto 0;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,211,106,0), rgba(255,211,106,.90), rgba(255,211,106,0));
+      box-shadow: 0 10px 22px rgba(0,0,0,.55);
     }
 
-    .title-king .orn::after{
-      content:"";
-      position:absolute;
-      left:50%;
-      top:50%;
-      width:10px;height:10px;
-      transform:translate(-50%,-50%) rotate(45deg);
-      background: linear-gradient(145deg, var(--gold-soft), var(--gold-deep));
-      border:1px solid rgba(255,255,255,.15);
-      border-radius:3px;
-      box-shadow:0 0 14px rgba(255,215,120,.35);
+    .subtitle{
+      text-align:center;
+      margin: 10px 0 16px;
+      color: var(--muted);
+      line-height: 1.25rem;
+      font-size: .95rem;
     }
 
-    /* LABELS PRO */
+    /* ✅ Label chip (igual vibe) */
     .label-chip{
       display:inline-flex;
       align-items:center;
       gap:10px;
       padding:8px 12px;
       border-radius:14px;
-      border:1px solid rgba(255,231,166,.32);
+      border:1px solid rgba(255,231,166,.22);
       background:
-        radial-gradient(200px 80px at 20% 20%, rgba(255,231,166,.18), transparent 60%),
-        linear-gradient(145deg, rgba(60,35,0,.38), rgba(20,10,0,.22));
-      color:rgba(255,242,194,.96);
-      font-weight:1000;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      font-size:.72rem;
-      box-shadow:0 10px 25px rgba(0,0,0,.35);
-      margin-bottom:8px;
+        radial-gradient(200px 80px at 20% 20%, rgba(255,231,166,.12), transparent 60%),
+        rgba(22, 12, 3, .42);
+      color: rgba(255,246,214,.96);
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: .72rem;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 10px 18px rgba(0,0,0,.45);
+      margin-bottom: 8px;
     }
+    .label-chip i{ color: rgba(255,211,106,.98); }
 
-    /* INPUTS */
+    /* ✅ Inputs como SERVIDORES */
     .form-control{
-      border-radius:16px;
-      background:linear-gradient(145deg, #6F4A08, #4A2E05);
-      border:1px solid rgba(255,215,120,.45);
-      color:var(--text);
-      padding:.9rem .95rem;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+      background: rgba(22, 12, 3, .58) !important;
+      color: var(--text) !important;
+      border: 1px solid rgba(255,211,106,.20) !important;
+      border-radius: 14px !important;
+      padding: .95rem .95rem !important;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.03);
     }
-    .form-control::placeholder{ color:rgba(255,242,194,.55); }
+    .form-control::placeholder{ color: var(--muted2); }
 
     .form-control:focus{
-      outline:none;
-      background:
-        radial-gradient(220px 90px at 20% 30%, rgba(255,215,120,.35), transparent 65%),
-        linear-gradient(145deg, #7A540C, #5C3A06);
-      border-color:var(--gold-soft);
-      box-shadow:0 0 0 3px rgba(255,215,120,.35);
-      color:#FFF;
+      box-shadow: var(--ring) !important;
+      border-color: rgba(255,211,106,.40) !important;
+      outline: none !important;
     }
 
-    /* BOTON LOGIN */
+    /* ✅ Botón primary (igual a panel: dorado fuerte) */
     .btn-gold{
       width:100%;
-      margin-top:18px;
-      padding:14px;
-      border-radius:18px;
-      border:none;
-      background: linear-gradient(145deg, var(--gold-soft), var(--gold-deep));
-      color:#3A2400;
-      font-weight:1000;
-      letter-spacing:.15em;
-      text-transform:uppercase;
-      box-shadow:0 14px 35px rgba(0,0,0,.55);
-      transition:.2s;
-      position:relative;
-      overflow:hidden;
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 14px !important;
+      border: none !important;
+      background: linear-gradient(145deg, rgba(255,211,106,.98), rgba(212,175,55,.98)) !important;
+      color: rgba(0,0,0,.95) !important;
+      font-weight: 950 !important;
+      letter-spacing: .14em !important;
+      text-transform: uppercase !important;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(255,211,106,.35), 0 16px 36px rgba(255,211,106,.18);
+      transition: transform .08s ease, filter .2s ease, box-shadow .2s ease;
     }
-    .btn-gold::before{
+
+    .btn-gold::after{
       content:"";
-      position:absolute; inset:-2px;
-      background: linear-gradient(120deg, transparent 42%, rgba(255,255,255,.26) 50%, transparent 58%);
-      transform: translateX(-140%);
-      opacity:.65;
-      animation: btnSheen 5.6s linear infinite;
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 80%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+      transition: left .55s ease;
       pointer-events:none;
     }
-    @keyframes btnSheen{ 0%{transform:translateX(-140%)} 100%{transform:translateX(140%)} }
-    .btn-gold:hover{ filter:brightness(1.08); transform:translateY(-1px); }
 
-    /* BOTON REGISTRO */
+    .btn-gold:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      box-shadow: 0 0 0 1px rgba(255,211,106,.16), 0 14px 30px rgba(0,0,0,.62);
+    }
+    .btn-gold:hover::after{ left: 140%; }
+    .btn-gold:active{ transform: translateY(0); filter: brightness(.99); }
+
+    /* ✅ Botón secundario (marrón premium) */
     .btn-register{
       display:block;
       width:100%;
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius:18px;
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 14px !important;
       text-decoration:none;
       text-align:center;
-      border:1px solid rgba(255,231,166,.40);
+      border: 1px solid rgba(255,211,106,.26) !important;
       background:
-        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.22), transparent 64%),
-        linear-gradient(145deg, rgba(30,16,0,.35), rgba(15,8,0,.22));
-      color:rgba(255,242,194,.98);
-      font-weight:1000;
-      letter-spacing:.08em;
-      box-shadow:0 12px 28px rgba(0,0,0,.40);
-      transition:.2s;
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.18), transparent 64%),
+        linear-gradient(145deg, rgba(88, 52, 12, .92), rgba(18, 10, 2, .96)) !important;
+      color: rgba(255,246,214,.95) !important;
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
       position:relative;
       overflow:hidden;
+      box-shadow: 0 10px 22px rgba(0,0,0,.44);
+      transition: transform .08s ease, filter .2s ease, box-shadow .2s ease, border-color .2s ease;
     }
-    .btn-register::before{
+
+    .btn-register::after{
       content:"";
-      position:absolute; inset:-2px;
-      background: linear-gradient(120deg, transparent 42%, rgba(255,215,120,.22) 50%, transparent 58%);
-      transform: translateX(-140%);
-      opacity:.75;
-      animation: regSheen 6.2s linear infinite;
+      position:absolute;
+      top:-40%; left:-120%;
+      width: 80%;
+      height: 180%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      transition: left .55s ease;
       pointer-events:none;
     }
-    @keyframes regSheen{ 0%{transform:translateX(-140%)} 100%{transform:translateX(140%)} }
-    .btn-register:hover{ transform:translateY(-1px); filter:brightness(1.06); }
 
-    /* Spinner / inputs */
+    .btn-register:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      box-shadow: 0 0 0 1px rgba(255,211,106,.16), 0 14px 30px rgba(0,0,0,.62);
+      border-color: rgba(255,211,106,.36) !important;
+    }
+    .btn-register:hover::after{ left: 140%; }
+
+    /* Spinner */
     .__spinner{ display:none; }
     .__spinner .spinner-border{ width:3.2rem; height:3.2rem; }
 
+    /* Footer */
     .footer{
       position:absolute;
-      bottom:12px;
+      bottom: 12px;
       width:100%;
       text-align:center;
-      color:rgba(255,242,194,.6);
-      font-size:.85rem;
-      z-index:1;
+      color: rgba(255,226,170,.62);
+      font-size: .85rem;
+      z-index: 1;
       pointer-events:none;
+    }
+
+    /* ✅ Pull-to-refresh indicator (custom) */
+    .ptr{
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,211,106,.26);
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.14), transparent 64%),
+        rgba(22, 12, 3, .72);
+      box-shadow: var(--softGlow2);
+      color: rgba(255,246,214,.95);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: .72rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      will-change: transform, opacity;
+    }
+    .ptr.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .ptr .dot{
+      width: 8px; height: 8px;
+      border-radius: 999px;
+      background: rgba(255,211,106,.95);
+      box-shadow: 0 0 0 2px rgba(255,211,106,.16), 0 0 18px rgba(255,211,106,.22);
+    }
+    .ptr .spin{
+      width: 16px; height: 16px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,211,106,.22);
+      border-top-color: rgba(255,211,106,.95);
+      animation: ptrSpin .9s linear infinite;
+      display:none;
+    }
+    .ptr.loading .spin{ display:inline-block; }
+    .ptr.loading .dot{ display:none; }
+    @keyframes ptrSpin{ to{ transform: rotate(360deg); } }
+
+    /* Ajuste mobile */
+    @media (max-width: 420px){
+      .card-king{ padding: 14px; }
+      .card-inner{ padding: 10px 8px 8px; }
+      .title-king h1{ font-size: 1.38rem; }
+      .subtitle{ font-size: .92rem; }
+      .ptr{ top: 8px; }
     }
   </style>
 </head>
 
 <body>
 
+  <!-- ✅ Indicador propio (por si Chrome NO muestra el nativo) -->
+  <div id="ptr" class="ptr" aria-hidden="true">
+    <span class="dot"></span>
+    <span class="spin"></span>
+    <span id="ptrText">Deslizá para actualizar</span>
+  </div>
+
   <div class="card-king">
-    <!-- ✅ LOGO ELIMINADO (como pediste) -->
+    <div class="card-inner">
+      <div class="brand-row" aria-hidden="true">
+        <div class="brand-logo"><i class="bi bi-shield-lock-fill"></i></div>
+      </div>
 
-    <div class="title-king">
-      <h1>KING•VPN</h1>
-      <div class="orn"></div>
+      <div class="title-king">
+        <h1>KING•VPN</h1>
+        <div class="orn"></div>
+      </div>
+
+      <div class="subtitle">
+        Accedé al panel con tus credenciales
+      </div>
+
+      <form role="form" action="/login" class="pt-1" novalidate>
+        <input type="hidden" name="csrf_token" value="<%= it.csrfToken %>">
+
+        <div class="__spinner text-center py-3">
+          <div class="spinner-border text-light p-2 mb-2" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+        </div>
+
+        <div class="__inputs">
+          <div class="mb-3 text-start">
+            <div class="label-chip"><i class="bi bi-person-fill"></i> USUARIO</div>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="form-control"
+              placeholder="usuario"
+              autocomplete="username"
+              required
+            >
+          </div>
+
+          <div class="mb-2 text-start">
+            <div class="label-chip"><i class="bi bi-key-fill"></i> CONTRASEÑA</div>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-control"
+              placeholder="********"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+
+          <button type="submit" id="login" class="btn-gold">
+            ENTRAR
+          </button>
+
+          <a href="/register" class="btn-register">
+            REGISTRARME
+          </a>
+        </div>
+      </form>
     </div>
-
-    <form role="form" action="/login" class="pt-1" novalidate>
-      <!-- ✅ mantenemos hidden por compatibilidad -->
-      <input type="hidden" name="csrf_token" value="<%= it.csrfToken %>">
-
-      <div class="__spinner text-center">
-        <div class="spinner-border text-light p-2 mb-2" role="status">
-          <span class="visually-hidden">Cargando...</span>
-        </div>
-      </div>
-
-      <div class="__inputs">
-        <div class="mb-3 text-start">
-          <div class="label-chip">USUARIO</div>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            class="form-control"
-            placeholder="usuario"
-            required
-          >
-        </div>
-
-        <div class="mb-2 text-start">
-          <div class="label-chip">CONTRASEÑA</div>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            class="form-control"
-            placeholder="********"
-            required
-          >
-        </div>
-
-        <button type="submit" id="login" class="btn-gold">
-          ENTRAR
-        </button>
-
-        <a href="/register" class="btn-register">
-          Registrate si no tenés aún tu cuenta
-        </a>
-      </div>
-    </form>
   </div>
 
   <div class="footer">Powered by © InterKing</div>
 
   <!-- JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
   <!-- helpers originales -->
@@ -372,13 +521,11 @@
         body: JSON.stringify(body)
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (data.status === 200) {
         showToastSuccess(data.message || 'Acceso concedido');
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 900);
+        setTimeout(() => { window.location.href = '/'; }, 900);
         return;
       }
 
@@ -388,6 +535,101 @@
       showToastError(data.message || 'Error al iniciar sesión');
       closeSpinner();
     });
+  </script>
+
+  <script>
+    // =========================================================
+    // ✅ Pull-to-refresh (deslizar hacia abajo para recargar)
+    // - En Chrome mobile, el "pull to refresh" nativo depende del navegador.
+    // - Esto agrega un fallback REAL por JS que recarga cuando tirás hacia abajo.
+    // =========================================================
+    (function(){
+      const ptr = document.getElementById('ptr');
+      const txt = document.getElementById('ptrText');
+
+      const THRESHOLD = 110;     // px para disparar recarga
+      const MAX_PULL  = 160;     // px máximo visual
+      let startY = 0;
+      let pulling = false;
+      let loading = false;
+
+      const setUI = (pullPx) => {
+        const y = Math.min(pullPx, MAX_PULL);
+        ptr.style.transform = `translateX(-50%) translateY(${Math.min(y, 70)}px)`;
+        ptr.classList.add('show');
+
+        if (pullPx >= THRESHOLD) {
+          txt.textContent = 'Soltá para actualizar';
+        } else {
+          txt.textContent = 'Deslizá para actualizar';
+        }
+      };
+
+      const hideUI = () => {
+        ptr.classList.remove('show', 'loading');
+        ptr.style.transform = 'translateX(-50%) translateY(0)';
+        txt.textContent = 'Deslizá para actualizar';
+      };
+
+      const doReload = () => {
+        if (loading) return;
+        loading = true;
+        ptr.classList.add('show','loading');
+        txt.textContent = 'Actualizando...';
+        // Pequeño delay para que se vea el estado
+        setTimeout(() => window.location.reload(), 250);
+      };
+
+      window.addEventListener('touchstart', (e) => {
+        if (loading) return;
+        // Solo si estamos arriba del todo (para simular el pull real)
+        if ((window.scrollY || document.documentElement.scrollTop || 0) > 0) return;
+
+        startY = e.touches[0].clientY;
+        pulling = true;
+      }, { passive:true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!pulling || loading) return;
+        if ((window.scrollY || document.documentElement.scrollTop || 0) > 0) return;
+
+        const y = e.touches[0].clientY;
+        const pull = y - startY;
+
+        if (pull > 12) {
+          // Prevent bounce feeling on some Androids:
+          // (no usamos preventDefault porque necesitamos passive para performance)
+          setUI(pull);
+        } else if (pull <= 0) {
+          hideUI();
+        }
+      }, { passive:true });
+
+      window.addEventListener('touchend', () => {
+        if (!pulling || loading) { pulling = false; return; }
+
+        // Si el indicador está visible, evaluamos umbral según el texto/estado actual
+        const currentText = (txt.textContent || '').toLowerCase();
+        const should = currentText.includes('solt');
+
+        pulling = false;
+
+        if (should) {
+          doReload();
+        } else {
+          hideUI();
+        }
+      }, { passive:true });
+
+      // Si la pestaña vuelve al foreground, refresca tokens/caches si querés:
+      // (Lo dejo apagado por defecto, pero te sirve si querés "auto refresh")
+      // document.addEventListener('visibilitychange', () => {
+      //   if (!document.hidden) window.location.reload();
+      // });
+
+      // Estado inicial
+      hideUI();
+    })();
   </script>
 
 </body>
