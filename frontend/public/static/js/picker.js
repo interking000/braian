@@ -5,7 +5,7 @@ jscolor.presets.default = {
     paletteCols: 12,
     sliderSize: 25,
     borderRadius: 5,
-    closeText: 'Fechar',
+    closeText: 'Cerrar',
     closeButton: true,
     buttonColor: '#fff',
     buttonHeight: 20,

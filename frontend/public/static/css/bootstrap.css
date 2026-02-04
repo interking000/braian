@@ -1,67 +1,181 @@
-.text-bg-success {
-    background-color: #0bc54d !important;
+/* =========================================================
+   KING•VPN — COLOR OVERRIDE (solo colores, sin layout)
+   Pegar al FINAL del CSS global para que gane prioridad
+   ========================================================= */
+
+:root{
+  --kv-bg1:#7A4A10;
+  --kv-bg2:#2A1705;
+  --kv-bg3:#4B2A09;
+
+  --kv-panel: rgba(55, 32, 8, .92);
+  --kv-panel2: rgba(32, 18, 5, .88);
+
+  --kv-gold:#D4AF37;
+  --kv-gold2:#FFD36A;
+  --kv-gold3:#8C6B1A;
+  --kv-gold4:#F0B92D;
+
+  --kv-text: rgba(255, 246, 214, .96);
+  --kv-text2: rgba(255, 246, 214, .88);
+  --kv-muted: rgba(255, 226, 170, .74);
+  --kv-muted2: rgba(255, 226, 170, .60);
+
+  --kv-line: rgba(255,211,106,.22);
+  --kv-shadow: 0 18px 55px rgba(0,0,0,.72);
+  --kv-ring: 0 0 0 3px rgba(255,211,106,.22);
 }
 
-.text-bg-danger {
-    background-color: #f44336 !important;
+/* ✅ No romper otros modales: solo limitar tu regla vieja */
+.modal:not(.king-modal) .modal-content{
+  border: none !important;
+  box-shadow: 0 0 10px 0 rgba(0,0,0,.2) !important;
 }
 
-.text-bg-warning {
-    background-color: #ff9800 !important;
+/* =========================================================
+   ✅ MODALES KING (si no tienen clase, igual los pintamos)
+   ========================================================= */
+.modal .modal-content{
+  background:
+    radial-gradient(620px 260px at 18% 12%, rgba(255,211,106,.16), transparent 60%),
+    radial-gradient(620px 260px at 86% 10%, rgba(212,175,55,.14), transparent 62%),
+    linear-gradient(145deg, rgba(60, 35, 9, .94), rgba(18, 10, 2, .98)) !important;
+  border: 1px solid rgba(255,211,106,.40) !important;
+  box-shadow: var(--kv-shadow), 0 0 0 1px rgba(255,211,106,.10) !important;
+  color: var(--kv-text) !important;
 }
 
-.form-check-input {
-    border-color: #2c3136 !important;
+.modal .modal-header,
+.modal .modal-footer{
+  border-color: rgba(255,211,106,.28) !important;
+  background:
+    linear-gradient(90deg, rgba(255,211,106,.14), rgba(18,10,2,.94), rgba(212,175,55,.16)) !important;
 }
 
-.form-check-input:checked {
-    background-color: #282d31 !important;
-    border-color: #2c3136 !important;
+.modal .modal-title{
+  color: rgba(255,211,106,.98) !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  font-weight: 950 !important;
+  text-shadow: 0 0 12px rgba(255,211,106,.25) !important;
 }
 
-.btn-dark {
-    background-color: #282d31 !important;
+/* X de cerrar en dorado (sin mover tamaño/posición) */
+.modal .btn-close{
+  filter: none !important;
+  opacity: 1 !important;
+}
+.modal .btn-close{
+  background: none !important;
+}
+.modal .btn-close::before{
+  content:"✕";
+  display:inline-block;
+  color: rgba(255,211,106,.98);
+  font-weight: 950;
+  text-shadow: 0 0 12px rgba(255,211,106,.45);
 }
 
-.bg-dark {
-    background-color: #282d31 !important;
+/* Inputs dentro de modales */
+.modal .form-control,
+.modal .form-select,
+.modal textarea,
+.modal .input-group-text{
+  background: rgba(22, 12, 3, .72) !important;
+  color: var(--kv-text) !important;
+  border: 1px solid rgba(255,211,106,.28) !important;
 }
 
-.link-none {
-    color: unset !important;
+.modal .form-control::placeholder,
+.modal textarea::placeholder{
+  color: var(--kv-muted2) !important;
 }
 
-.form-switch .form-check-input {
-    width: 3rem;
-    height: 1.5rem;
-    cursor: pointer;
+.modal .form-control:focus,
+.modal .form-select:focus,
+.modal textarea:focus{
+  box-shadow: var(--kv-ring) !important;
+  border-color: rgba(255,211,106,.55) !important;
 }
 
-.modal-content {
-    border: none !important;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2) !important;
+/* =========================================================
+   ✅ BOTONES (pintar btn-dark/bg-dark a KING, sin layout)
+   ========================================================= */
+.btn-dark,
+.bg-dark{
+  background:
+    radial-gradient(240px 92px at 24% 28%, rgba(255,211,106,.18), transparent 64%),
+    linear-gradient(145deg, rgba(88, 52, 12, .92), rgba(18, 10, 2, .96)) !important;
+  border-color: rgba(255,211,106,.22) !important;
+  color: var(--kv-text) !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,.44) !important;
 }
 
-.page-item.active .page-link {
-    background-color: #212529 !important;
-    border-color: #212529 !important;
+/* Botón primario “KING” (si usás btn-primary/btn-success) */
+.btn-primary,
+.btn-success{
+  background: linear-gradient(145deg, rgba(255,211,106,.98), rgba(212,175,55,.98)) !important;
+  border: none !important;
+  color: rgba(0,0,0,.95) !important;
+  box-shadow: 0 0 0 1px rgba(255,211,106,.25), 0 16px 36px rgba(255,211,106,.18) !important;
+  font-weight: 950 !important;
 }
 
-.btn-custom-dark {
-    background-color: #262a2e;
-    border: none;
-    color: #fff !important;
+/* =========================================================
+   ✅ SWITCH / CHECKBOX (form-check)
+   ========================================================= */
+.form-check-input{
+  border-color: rgba(255,211,106,.28) !important;
+  background-color: rgba(22, 12, 3, .62) !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.03) !important;
 }
 
-.btn-custom-outline-dark {
-    color: #fff !important;
-    border: #fff 1px solid;
+.form-check-input:focus{
+  box-shadow: var(--kv-ring) !important;
+  border-color: rgba(255,211,106,.50) !important;
 }
 
-.btn-custom-outline-dark:hover {
-    border: #fff 1px solid;
+.form-check-input:checked{
+  background-color: rgba(255,211,106,.92) !important;
+  border-color: rgba(255,211,106,.60) !important;
 }
 
+/* =========================================================
+   ✅ BADGES (text-bg-*)
+   ========================================================= */
+.text-bg-success{
+  background: linear-gradient(145deg, rgba(255,211,106,.92), rgba(212,175,55,.92)) !important;
+  color: rgba(0,0,0,.92) !important;
+}
+.text-bg-warning{
+  background: linear-gradient(145deg, rgba(255,211,106,.86), rgba(240,185,45,.92)) !important;
+  color: rgba(0,0,0,.92) !important;
+}
+.text-bg-danger{
+  background: linear-gradient(145deg, rgba(239,68,68,.85), rgba(127,29,29,.90)) !important;
+  color: rgba(255,246,214,.96) !important;
+}
+
+/* =========================================================
+   ✅ PAGINACIÓN
+   ========================================================= */
+.page-item .page-link{
+  background: rgba(22, 12, 3, .62) !important;
+  color: var(--kv-text) !important;
+  border: 1px solid rgba(255,211,106,.16) !important;
+}
+.page-item .page-link:focus{
+  box-shadow: var(--kv-ring) !important;
+}
+.page-item.active .page-link{
+  background: linear-gradient(90deg, rgba(255,211,106,.16), rgba(212,175,55,.26)) !important;
+  border-color: rgba(255,211,106,.32) !important;
+  color: var(--kv-text) !important;
+}
+
+/* =========================================================
+   ✅ Quitar "focus outline" sin romper nada
+   ========================================================= */
 textarea:hover,
 input:hover,
 textarea:active,
@@ -73,8 +187,8 @@ button:active,
 button:hover,
 label:focus,
 .btn:active,
-.btn.active {
-    outline: 0px !important;
-    -webkit-appearance: none;
-    box-shadow: none !important;
+.btn.active{
+  outline: 0 !important;
+  -webkit-appearance: none;
+  box-shadow: none;
 }

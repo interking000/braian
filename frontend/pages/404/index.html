@@ -1,27 +1,429 @@
 <!DOCTYPE html>
 <html lang="es-AR">
-
 <head>
   <base href="/" target="_blank">
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="shortcut icon" href="/static/img/favicon.svg" />
-  <title>KING•VPN - 404</title>
+  <title>KING•VPN • Error 404</title>
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <link href="../static/css/signin.css" rel="stylesheet">
   <link href="../static/css/bootstrap.css" rel="stylesheet">
+
+  <!-- =========================================================
+       ✅ KING GOLD THEME (ESTILO 1RA IMAGEN) + FULL RESPONSIVE
+       ✅ 404 + MANTENIMIENTO + MOTIVOS (ELEGANTE)
+  ========================================================== -->
+  <style>
+    :root{
+      --kg-gold-1:#F0D489;
+      --kg-gold-2:#D0B060;
+      --kg-gold-3:#B38A2E;
+
+      --kg-bg-0:#0B0906;
+      --kg-bg-1:#120D08;
+
+      --kg-text:#F4E6C2;
+      --kg-text-soft:rgba(244,230,194,.72);
+      --kg-border:rgba(240,212,137,.18);
+
+      --shadow: 0 20px 70px rgba(0,0,0,.62);
+      --inset: inset 0 1px 0 rgba(255,255,255,.06), inset 0 -1px 0 rgba(0,0,0,.55);
+
+      --radius: 26px;
+      --pad: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; }
+
+    body{
+      color: var(--kg-text);
+      font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+      background:
+        radial-gradient(900px 520px at 50% -10%, rgba(240,212,137,.14), transparent 65%),
+        radial-gradient(760px 520px at 14% 18%, rgba(179,138,46,.10), transparent 62%),
+        radial-gradient(760px 520px at 86% 18%, rgba(123,90,24,.12), transparent 60%),
+        linear-gradient(180deg, var(--kg-bg-0) 0%, var(--kg-bg-1) 55%, #0A0705 100%) !important;
+      background-attachment: fixed !important;
+      overflow-x:hidden;
+      overflow-y:auto;
+      position:relative;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body::before{
+      content:"";
+      position:absolute;
+      inset:-35%;
+      background:linear-gradient(120deg, transparent 47%, rgba(240,212,137,.12) 50%, transparent 53%);
+      filter: blur(20px);
+      opacity:.18;
+      animation: kgSheen 10s linear infinite;
+      pointer-events:none;
+      z-index:0;
+    }
+    @keyframes kgSheen{
+      0%{ transform:translateX(-120%); }
+      100%{ transform:translateX(120%); }
+    }
+
+    main{ position:relative; z-index:1; }
+
+    /* ✅ Layout responsive real */
+    .kv-page{
+      min-height: 100dvh; /* mejor en móviles */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: clamp(14px, 3.5vw, 24px);
+      padding-bottom: calc(clamp(14px, 3.5vw, 24px) + env(safe-area-inset-bottom));
+      padding-top: calc(clamp(14px, 3.5vw, 24px) + env(safe-area-inset-top));
+    }
+
+    .kv-wrap{
+      width: 100%;
+      max-width: 920px;
+    }
+
+    .kv-card{
+      border-radius: var(--radius);
+      border: 1px solid var(--kg-border);
+      background:
+        radial-gradient(520px 260px at 50% 0%, rgba(240,212,137,.12), transparent 70%),
+        linear-gradient(180deg, rgba(36,24,12,.68), rgba(18,13,8,.92));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .kv-card::before{
+      content:"";
+      position:absolute;
+      inset:0 0 auto 0;
+      height: 92px;
+      background:
+        radial-gradient(280px 96px at 18% 30%, rgba(240,212,137,.12), transparent 65%),
+        radial-gradient(360px 96px at 80% 30%, rgba(179,138,46,.10), transparent 65%);
+      border-bottom: 1px solid rgba(240,212,137,.10);
+      pointer-events:none;
+    }
+
+    .kv-head{
+      position:relative;
+      padding: var(--pad);
+      padding-bottom: 10px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+    }
+
+    .kv-brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width:0;
+    }
+
+    .kv-icon{
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(18px 18px at 30% 28%, rgba(240,212,137,.18), transparent 65%),
+        linear-gradient(180deg, rgba(40,28,14,.72), rgba(18,13,8,.92));
+      border:1px solid rgba(240,212,137,.20);
+      box-shadow: var(--inset), 0 12px 24px rgba(0,0,0,.45);
+      flex: 0 0 auto;
+    }
+    .kv-icon i{ color: var(--kg-gold-1); font-size: 1.25rem; }
+
+    .kv-title{
+      margin:0;
+      font-weight:1000;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      font-size: .98rem;
+      color: var(--kg-gold-1);
+      text-shadow: 0 10px 18px rgba(0,0,0,.55);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .kv-sub{
+      margin:4px 0 0;
+      color: var(--kg-text-soft);
+      font-size: .92rem;
+    }
+
+    .kv-body{ position:relative; padding: 0 var(--pad) var(--pad); }
+
+    .kv-hero{
+      border: 1px solid rgba(240,212,137,.14);
+      border-radius: 20px;
+      background: rgba(0,0,0,.22);
+      box-shadow: var(--inset);
+      padding: 14px 14px;
+    }
+
+    /* ✅ 404 grande y responsive */
+    .kv-404{
+      display:flex;
+      align-items:baseline;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin: 0 0 10px;
+      line-height:1;
+    }
+    .kv-404 .num{
+      font-weight:1100;
+      letter-spacing:.10em;
+      font-size: clamp(2.1rem, 7vw, 3.4rem);
+      color: var(--kg-gold-1);
+      text-shadow:
+        0 1px 0 rgba(90,45,0,.85),
+        0 3px 0 rgba(80,40,0,.78),
+        0 10px 22px rgba(0,0,0,.60);
+    }
+    .kv-404 .lbl{
+      font-weight:1000;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-size: clamp(.85rem, 2.8vw, 1.05rem);
+      color: rgba(244,230,194,.92);
+      opacity:.95;
+    }
+
+    .kv-h1{
+      margin:0;
+      font-weight:1000;
+      letter-spacing:.04em;
+      line-height:1.15;
+      font-size: clamp(1.05rem, 3.6vw, 1.22rem);
+      color: var(--kg-text);
+    }
+    .kv-h1 .spark{
+      color: var(--kg-gold-1);
+      text-shadow:
+        0 1px 0 rgba(90,45,0,.85),
+        0 3px 0 rgba(80,40,0,.78),
+        0 8px 18px rgba(0,0,0,.60);
+    }
+
+    .kv-p{
+      margin:10px 0 0;
+      color: var(--kg-text-soft);
+      font-size: clamp(.92rem, 3.2vw, .98rem);
+      line-height: 1.4;
+    }
+
+    .kv-reasons{
+      margin-top: 12px;
+      display:grid;
+      gap: 10px;
+    }
+    .kv-reason{
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+      border: 1px solid rgba(240,212,137,.12);
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      box-shadow: var(--inset);
+      padding: 12px 12px;
+    }
+    .kv-reason .dot{
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(14px 14px at 30% 28%, rgba(240,212,137,.16), transparent 65%),
+        linear-gradient(180deg, rgba(40,28,14,.70), rgba(18,13,8,.92));
+      border: 1px solid rgba(240,212,137,.18);
+      box-shadow: var(--inset), 0 10px 22px rgba(0,0,0,.40);
+      flex: 0 0 auto;
+    }
+    .kv-reason .dot i{ color: var(--kg-gold-1); font-size: 1.05rem; }
+    .kv-reason h6{
+      margin:0;
+      font-weight:1000;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size: clamp(.76rem, 2.7vw, .82rem);
+      color: var(--kg-gold-1);
+    }
+    .kv-reason p{
+      margin:6px 0 0;
+      color: var(--kg-text-soft);
+      font-size: clamp(.90rem, 3.1vw, .94rem);
+      line-height: 1.35;
+    }
+
+    .kv-actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .kv-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: .75rem 1.05rem;
+      border-radius: 999px;
+      font-weight:1000;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      border: 1px solid rgba(240,212,137,.18);
+      box-shadow: 0 14px 35px rgba(0,0,0,.55);
+      transition: .18s ease;
+      text-decoration:none;
+      cursor:pointer;
+      user-select:none;
+      width: auto;
+      flex: 1 1 auto; /* ✅ se acomodan en móvil */
+      min-width: 160px;
+    }
+
+    .kv-btn-primary{
+      background: linear-gradient(180deg, rgba(208,176,96,.98), rgba(179,138,46,.98));
+      color:#1A120A;
+    }
+
+    .kv-btn-ghost{
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(240,212,137,.10), transparent 64%),
+        linear-gradient(180deg, rgba(40,28,14,.70), rgba(18,13,8,.92));
+      color: var(--kg-text);
+      box-shadow: var(--inset), 0 10px 24px rgba(0,0,0,.45);
+    }
+
+    .kv-btn:hover{ transform: translateY(-1px); filter: brightness(1.06); }
+    .kv-btn:active{ transform: translateY(0); filter: brightness(1.00); }
+
+    .kv-foot{
+      padding: 12px var(--pad) 16px;
+      border-top: 1px solid rgba(240,212,137,.10);
+      color: rgba(244,230,194,.70);
+      font-size: clamp(.88rem, 3.0vw, .92rem);
+      line-height:1.35;
+    }
+    .kv-foot b{ color: var(--kg-gold-1); }
+
+    /* ✅ Mobile: espaciado + botones en columna si hace falta */
+    @media (max-width: 520px){
+      :root{ --radius: 22px; --pad: 14px; }
+      .kv-actions{ justify-content:stretch; }
+      .kv-btn{ width: 100%; min-width: 0; }
+      .kv-icon{ width:48px; height:48px; border-radius:16px; }
+    }
+
+    /* ✅ Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      body::before{ animation:none !important; }
+      .kv-btn{ transition:none !important; }
+    }
+  </style>
 </head>
 
 <body>
-  <main class="form-signin d-flex justify-content-center align-items-center">
-    <div class="d-flex justify-content-center flex-wrap">
-      <h1 class="h3 mb-4 fw-normal text-light text-center text-nowrap">Pagina no encontrada...</h1>
-      <a href="/" target="_self" class="btn btn-primary mb-4 waves-effect waves-light">Volver</a>
+  <main class="kv-page">
+    <div class="kv-wrap">
+      <div class="kv-card">
+
+        <div class="kv-head">
+          <div class="kv-brand">
+            <div class="kv-icon" aria-hidden="true">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div style="min-width:0;">
+              <h1 class="kv-title">KING•VPN</h1>
+              <div class="kv-sub">Error 404 • No se encontró esta página</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kv-body">
+          <div class="kv-hero">
+            <!-- ✅ 404 bien visible -->
+            <div class="kv-404">
+              <div class="num">404</div>
+              <div class="lbl">No se encontró esta página</div>
+            </div>
+
+            <h2 class="kv-h1">
+              <span class="spark">Sección en mantenimiento</span> 🛠️
+            </h2>
+
+            <p class="kv-p">
+              En este momento <b>InterKING</b> está actualizando y preparando esta sección.
+              Es posible que el enlace haya cambiado o que la página esté temporalmente fuera de servicio.
+              Te pedimos por favor que seas paciente y vuelvas a intentar más tarde.
+            </p>
+          </div>
+
+          <!-- ✅ Motivos con explicaciones (elegante) -->
+          <div class="kv-reasons">
+            <div class="kv-reason">
+              <div class="dot"><i class="bi bi-arrow-repeat"></i></div>
+              <div>
+                <h6>Actualización del sistema</h6>
+                <p>Estamos aplicando mejoras para que el panel funcione mejor y sea más compatible en celulares y PC.</p>
+              </div>
+            </div>
+
+            <div class="kv-reason">
+              <div class="dot"><i class="bi bi-shield-lock-fill"></i></div>
+              <div>
+                <h6>Seguridad y validaciones</h6>
+                <p>Se están reforzando controles de acceso y ajustes internos para evitar fallos y mantener el servicio protegido.</p>
+              </div>
+            </div>
+
+            <div class="kv-reason">
+              <div class="dot"><i class="bi bi-speedometer2"></i></div>
+              <div>
+                <h6>Rendimiento y estabilidad</h6>
+                <p>Optimizamos recursos para mejorar la velocidad de carga y reducir interrupciones.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="kv-actions">
+            <a href="/" target="_self" class="kv-btn kv-btn-primary">
+              <i class="bi bi-house-door-fill"></i> Volver al inicio
+            </a>
+
+            <a href="javascript:location.reload();" class="kv-btn kv-btn-ghost">
+              <i class="bi bi-arrow-clockwise"></i> Reintentar
+            </a>
+          </div>
+        </div>
+
+        <div class="kv-foot">
+          Gracias por tu paciencia 🤝<br>
+          Si el problema continúa, volvé a intentar en unos minutos: <b>InterKING</b> está trabajando en ello.
+        </div>
+
+      </div>
     </div>
   </main>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
-
 </html>

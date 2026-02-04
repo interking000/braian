@@ -6,7 +6,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="google" content="notranslate">
   <link rel="shortcut icon" href="/static/img/favicon.svg" />
-  <title>KING•VPN — Perfil</title>
+  <title>TU PERFIL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- CSRF -->
@@ -27,54 +27,87 @@
   <script src="../static/js/dark_light.js"></script>
   <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
 
+  <!-- =========================================================
+       ✅ KING GOLD THEME (ESTILO 1RA IMAGEN) APLICADO AL PERFIL
+       - Oro sobrio + marrón oscuro/negro
+       - Relieve/inset suave
+       - Unifica con el theme que te dejé en el otro HTML
+  ========================================================== -->
   <style>
-    /* ==========================
-       KING•VPN — GOLDEN HD (igual header/sidebar)
-       ========================== */
     :root{
-      --bg1:#0b0b0d;
-      --bg2:#000000;
+      /* Gold (sobrio) */
+      --kg-gold-1:#F0D489;   /* brillo */
+      --kg-gold-2:#D0B060;   /* base */
+      --kg-gold-3:#B38A2E;   /* deep */
+      --kg-gold-4:#7B5A18;   /* shadow gold */
 
-      --panel: rgba(10,10,12,.92);
-      --panel2: rgba(0,0,0,.86);
+      /* Dark browns */
+      --kg-bg-0:#0B0906;     /* fondo */
+      --kg-bg-1:#120D08;     /* base panel */
+      --kg-bg-2:#1A120A;     /* tarjeta */
+      --kg-bg-3:#24180C;     /* relieve */
 
-      --gold:#D4AF37;
-      --gold2:#FFD34D;
-      --gold3:#8C6B1A;
+      /* Text */
+      --kg-text:#F4E6C2;
+      --kg-text-soft:rgba(244,230,194,.72);
+      --kg-text-dim:rgba(244,230,194,.55);
 
-      --text: rgba(255,255,255,.96);
-      --muted: rgba(185,188,200,.78);
+      /* Borders / shadows */
+      --kg-border:rgba(240,212,137,.18);
+      --kg-border-2:rgba(240,212,137,.26);
+
+      --kg-shadow-outer: 0 18px 55px rgba(0,0,0,.62);
+      --kg-shadow-inset: inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 0 rgba(0,0,0,.55);
+      --kg-shadow-soft: 0 10px 26px rgba(0,0,0,.45);
+
+      --kg-radius:22px;
+      --kg-radius-sm:16px;
+
+      /* safe header */
+      --header-safe: 140px;
 
       --danger:#ff4d4d;
-
-      --radius:18px;
-      --shadow: 0 18px 55px rgba(0,0,0,.65);
-      --ring: 0 0 0 3px rgba(212,175,55,.18);
-      --softGlow: 0 0 0 1px rgba(212,175,55,.14), 0 12px 28px rgba(0,0,0,.55);
-      --softGlow2: 0 0 0 1px rgba(255,211,77,.16), 0 18px 40px rgba(0,0,0,.62);
-
-      /* ⬇⬇⬇ más abajo del header */
-      --header-safe: 140px;
+      --ring: 0 0 0 3px rgba(240,212,137,.18);
     }
 
     html, body { height: 100%; }
 
     body{
-      background:
-        radial-gradient(900px 520px at 18% 0%, rgba(255,211,77,.22), transparent 60%),
-        radial-gradient(900px 520px at 90% 12%, rgba(212,175,55,.14), transparent 62%),
-        radial-gradient(900px 620px at 50% 92%, rgba(212,175,55,.09), transparent 62%),
-        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg2) 100%) !important;
-      background-attachment: fixed !important;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--text);
+      color: var(--kg-text) !important;
       margin: 0;
       overflow-x: hidden;
+
+      background:
+        radial-gradient(900px 480px at 50% -10%, rgba(240,212,137,.14), transparent 65%),
+        radial-gradient(720px 460px at 15% 15%, rgba(179,138,46,.10), transparent 62%),
+        radial-gradient(760px 520px at 85% 18%, rgba(123,90,24,.12), transparent 60%),
+        linear-gradient(180deg, var(--kg-bg-0) 0%, #100C07 40%, #0A0705 100%) !important;
+      background-attachment: fixed !important;
+
+      font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+    }
+
+    body::before{
+      content:"";
+      position:absolute;
+      inset:-35%;
+      background:linear-gradient(120deg, transparent 47%, rgba(240,212,137,.12) 50%, transparent 53%);
+      filter: blur(20px);
+      opacity:.18;
+      animation: kgSheen 10s linear infinite;
+      pointer-events:none;
+      z-index:0;
+    }
+    @keyframes kgSheen{
+      0%{ transform:translateX(-120%); }
+      100%{ transform:translateX(120%); }
     }
 
     @media (max-width: 520px){
       :root{ --header-safe: 160px; }
     }
+
+    main, .container-fluid, .content, .content-wrapper, .kv-shell{ position:relative; z-index:1; }
 
     .content-wrapper{
       display:flex;
@@ -87,19 +120,18 @@
     .kv-shell{
       width: 100%;
       max-width: 980px;
-      position: relative;
-      z-index: 2;
       margin-top: var(--header-safe);
       padding-bottom: 24px;
     }
 
+    /* Card principal (oscuro + oro sobrio) */
     .kv-card{
       background:
-        radial-gradient(620px 220px at 20% 0%, rgba(255,211,77,.10), transparent 60%),
-        linear-gradient(145deg, rgba(10,10,12,.92), rgba(0,0,0,.96));
-      border-radius: calc(var(--radius) + 4px);
-      box-shadow: var(--shadow), 0 0 0 1px rgba(212,175,55,.06);
-      border: 1px solid rgba(212,175,55,.18);
+        radial-gradient(520px 240px at 50% 0%, rgba(240,212,137,.12), transparent 70%),
+        linear-gradient(180deg, rgba(36,24,12,.70), rgba(18,13,8,.92)) !important;
+      border:1px solid var(--kg-border) !important;
+      border-radius: var(--kg-radius) !important;
+      box-shadow: var(--kg-shadow-outer) !important;
       padding: 1.15rem 1.15rem 1.0rem;
       overflow: hidden;
       position: relative;
@@ -111,9 +143,9 @@
       inset:0 0 auto 0;
       height: 92px;
       background:
-        radial-gradient(280px 92px at 16% 30%, rgba(255,211,77,.14), transparent 65%),
-        radial-gradient(360px 92px at 78% 30%, rgba(212,175,55,.10), transparent 65%);
-      border-bottom: 1px solid rgba(212,175,55,.10);
+        radial-gradient(280px 92px at 16% 30%, rgba(240,212,137,.12), transparent 65%),
+        radial-gradient(360px 92px at 78% 30%, rgba(179,138,46,.10), transparent 65%);
+      border-bottom: 1px solid rgba(240,212,137,.10);
       pointer-events:none;
     }
 
@@ -126,7 +158,7 @@
       justify-content:space-between;
       gap: 12px;
       padding-bottom: .8rem;
-      margin-bottom: .6rem;
+      margin-bottom: .2rem;
     }
 
     .kv-user{
@@ -140,9 +172,11 @@
       width: 54px;
       height: 54px;
       border-radius: 18px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(212,175,55,.18);
-      box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 12px 24px rgba(0,0,0,.45);
+      background:
+        radial-gradient(18px 18px at 30% 28%, rgba(240,212,137,.18), transparent 65%),
+        linear-gradient(180deg, rgba(40,28,14,.72), rgba(18,13,8,.92)) !important;
+      border: 1px solid rgba(240,212,137,.18);
+      box-shadow: var(--kg-shadow-inset), 0 12px 24px rgba(0,0,0,.45);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -150,21 +184,23 @@
       overflow:hidden;
     }
     .kv-avatar svg{ width: 28px; height: 28px; opacity: .95; }
-    .kv-avatar svg path{ fill: rgba(255,211,77,.95); }
+    .kv-avatar svg path{ fill: var(--kg-gold-1); }
 
     .kv-user-meta{ min-width:0; }
     .kv-user-meta .name{
-      font-weight: 950;
-      letter-spacing: .10em;
+      font-weight: 1000;
+      letter-spacing: .14em;
       text-transform: uppercase;
       font-size: 1.0rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       margin: 0;
+      color: var(--kg-gold-1);
+      text-shadow: 0 10px 18px rgba(0,0,0,.55);
     }
     .kv-user-meta .sub{
-      color: rgba(185,188,200,.78);
+      color: var(--kg-text-soft);
       font-size: .88rem;
       white-space: nowrap;
       overflow: hidden;
@@ -176,137 +212,114 @@
     .kv-edit-btn{
       width: 42px; height: 42px;
       border-radius: 999px;
-      border: 1px solid rgba(212,175,55,.22);
+      border: 1px solid rgba(240,212,137,.18);
       background:
-        radial-gradient(120px 70px at 20% 30%, rgba(255,211,77,.16), transparent 62%),
-        radial-gradient(140px 70px at 75% 30%, rgba(212,175,55,.14), transparent 65%),
-        linear-gradient(135deg, rgba(10,10,12,.78), rgba(0,0,0,.96));
-      box-shadow: var(--softGlow);
-      color: rgba(255,255,255,.95);
+        radial-gradient(180px 90px at 20% 30%, rgba(240,212,137,.12), transparent 62%),
+        linear-gradient(180deg, rgba(40,28,14,.72), rgba(18,13,8,.92)) !important;
+      box-shadow: var(--kg-shadow-inset), 0 12px 26px rgba(0,0,0,.45);
+      color: var(--kg-text);
       display:flex; align-items:center; justify-content:center;
-      transition: .2s ease;
+      transition: .18s ease;
       flex: 0 0 auto;
     }
-    .kv-edit-btn:hover{ transform: translateY(-1px); box-shadow: var(--softGlow2); }
+    .kv-edit-btn:hover{ transform: translateY(-1px); filter:brightness(1.06); }
     .kv-edit-btn:active{ transform: translateY(0); }
-    .kv-edit-btn i{ font-size: 1.05rem; color: rgba(255,211,77,.92); }
+    .kv-edit-btn i{ font-size: 1.05rem; color: var(--kg-gold-1); }
 
-    /* acciones (2 botones) */
-    .kv-actions{
-      position: relative;
-      z-index: 1;
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-    .kv-action-btn{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      padding: .62rem .95rem;
-      border-radius: 999px;
-      border: 1px solid rgba(212,175,55,.18);
-      background: rgba(0,0,0,.45);
-      color: rgba(255,255,255,.95);
-      font-weight: 950;
-      letter-spacing: .10em;
-      text-transform: uppercase;
-      font-size: .78rem;
-      box-shadow: var(--softGlow);
-      transition: .2s ease;
-    }
-    .kv-action-btn i{
-      color: rgba(255,211,77,.95);
-      font-size: 1.0rem;
-    }
-    .kv-action-btn:hover{ transform: translateY(-1px); box-shadow: var(--softGlow2); }
-    .kv-action-btn:active{ transform: translateY(0); }
+    /* acciones (antes eran 2 botones) -> AHORA: ELIMINADAS POR PEDIDO */
+    .kv-actions{ display:none !important; }
 
     /* modal estilo */
     .modal-content{
-      background: rgba(0,0,0,.92) !important;
-      color: var(--text) !important;
-      border-radius: 18px !important;
-      border: 1px solid rgba(212,175,55,.16) !important;
-      box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.04) !important;
+      background:
+        radial-gradient(520px 280px at 50% 0%, rgba(240,212,137,.12), transparent 70%),
+        linear-gradient(180deg, rgba(36,24,12,.62), rgba(18,13,8,.92)) !important;
+      color: var(--kg-text) !important;
+      border-radius: 22px !important;
+      border: 1px solid rgba(240,212,137,.18) !important;
+      box-shadow: var(--kg-shadow-outer) !important;
       overflow: hidden;
       backdrop-filter: blur(14px);
     }
     .modal-header, .modal-footer{
-      background: linear-gradient(90deg, rgba(255,211,77,.10), rgba(0,0,0,.92), rgba(212,175,55,.10)) !important;
-      border-color: rgba(212,175,55,.10) !important;
+      background:
+        linear-gradient(90deg, rgba(240,212,137,.10), rgba(0,0,0,.00), rgba(179,138,46,.10)) !important;
+      border-color: rgba(240,212,137,.10) !important;
     }
     .modal-title{
       letter-spacing: .14em;
       text-transform: uppercase;
       font-size: .92rem !important;
-      font-weight: 950 !important;
+      font-weight: 1000 !important;
     }
     .btn-close{ filter: invert(1) brightness(1.2); opacity: .85; }
     .btn-close:hover{ opacity: 1; }
 
     .form-control{
-      background: rgba(0,0,0,.55) !important;
-      color: rgba(255,255,255,.95) !important;
-      border: 1px solid rgba(212,175,55,.16) !important;
+      background: linear-gradient(180deg, rgba(36,24,12,.55), rgba(18,13,8,.88)) !important;
+      color: var(--kg-text) !important;
+      border: 1px solid rgba(240,212,137,.18) !important;
       border-radius: 14px !important;
-      font-weight: 750;
+      font-weight: 800;
+      box-shadow: var(--kg-shadow-inset);
     }
     .form-control:focus{
       box-shadow: var(--ring) !important;
-      border-color: rgba(255,211,77,.35) !important;
+      border-color: rgba(240,212,137,.35) !important;
     }
 
     .input-group-text{
-      background: rgba(0,0,0,.50) !important;
-      border: 1px solid rgba(212,175,55,.16) !important;
-      color: rgba(255,211,77,.92) !important;
+      background: rgba(0,0,0,.30) !important;
+      border: 1px solid rgba(240,212,137,.16) !important;
+      color: var(--kg-gold-1) !important;
       border-radius: 14px 0 0 14px !important;
-      font-weight: 900;
+      font-weight: 1000;
     }
     .input-group .form-control{ border-left: 0 !important; }
 
     .btn-kv{
       border-radius: 999px !important;
-      font-weight: 950 !important;
+      font-weight: 1000 !important;
       letter-spacing: .10em;
       text-transform: uppercase;
       padding: .55rem 1.05rem !important;
     }
     .btn-kv-cancel{
-      background: rgba(212,175,55,.10) !important;
-      border: 1px solid rgba(212,175,55,.18) !important;
-      color: rgba(255,255,255,.92) !important;
+      background:
+        radial-gradient(240px 92px at 24% 28%, rgba(240,212,137,.10), transparent 64%),
+        linear-gradient(180deg, rgba(40,28,14,.72), rgba(18,13,8,.92)) !important;
+      border: 1px solid rgba(240,212,137,.18) !important;
+      color: var(--kg-text) !important;
+      box-shadow: var(--kg-shadow-inset), 0 10px 24px rgba(0,0,0,.45) !important;
     }
     .btn-kv-primary{
       background:
-        radial-gradient(120px 70px at 20% 30%, rgba(255,211,77,.16), transparent 62%),
-        radial-gradient(140px 70px at 75% 30%, rgba(212,175,55,.14), transparent 65%),
-        linear-gradient(135deg, rgba(10,10,12,.78), rgba(0,0,0,.96)) !important;
-      border: 1px solid rgba(212,175,55,.22) !important;
-      color: rgba(255,255,255,.95) !important;
-      box-shadow: var(--softGlow) !important;
+        radial-gradient(260px 120px at 20% 20%, rgba(255,255,255,.10), transparent 65%),
+        linear-gradient(180deg, rgba(208,176,96,.96), rgba(179,138,46,.96)) !important;
+      border: 1px solid rgba(240,212,137,.22) !important;
+      color: #1A120A !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,.55) !important;
     }
     .btn-kv-danger{
-      background: linear-gradient(90deg, rgba(255,211,77,.95), rgba(212,175,55,.95)) !important;
-      border: none !important;
-      color: #0a0a0c !important;
-      box-shadow: var(--softGlow2) !important;
+      background: linear-gradient(180deg, rgba(208,176,96,.98), rgba(179,138,46,.98)) !important;
+      border: 1px solid rgba(240,212,137,.22) !important;
+      color: #1A120A !important;
+      box-shadow: 0 12px 28px rgba(0,0,0,.55) !important;
     }
 
     .kv-note{
-      background: rgba(0,0,0,.45);
-      border: 1px solid rgba(212,175,55,.16);
+      background: rgba(0,0,0,.24);
+      border: 1px solid rgba(240,212,137,.14);
       border-radius: 14px;
       padding: .75rem .85rem;
-      color: rgba(255,255,255,.92);
+      color: var(--kg-text);
+      box-shadow: var(--kg-shadow-inset);
     }
-    .kv-note b{ color: rgba(255,211,77,.95); }
+    .kv-note b{ color: var(--kg-gold-1); }
 
     .kv-danger-text{
       color: var(--danger);
-      font-weight: 950;
+      font-weight: 1000;
     }
   </style>
 </head>
@@ -342,7 +355,8 @@
               </button>
             </div>
 
-            <!-- ✅ SOLO 2 BOTONES -->
+            <!-- ✅ ELIMINADO POR PEDIDO: Tus Usuarios / Tus Revendedores -->
+            <!--
             <div class="kv-actions">
               <a class="kv-action-btn" id="btnTusUsuarios" href="/users" role="button">
                 <i class="bi bi-people-fill"></i> Tus Usuarios
@@ -352,6 +366,7 @@
                 <i class="bi bi-diagram-3-fill"></i> Tus Revendedores
               </a>
             </div>
+            -->
 
           </div>
         </div>
@@ -442,7 +457,7 @@
         <div class="modal-body">
           <div class="kv-note">
             Estás por cambiar tus datos de acceso en <b>KING•VPN</b>.
-            <div class="mt-2" style="color:rgba(185,188,200,.85); font-weight:800;">
+            <div class="mt-2" style="color:var(--kg-text-soft); font-weight:800;">
               Esto puede afectar tu acceso premium. Si estás seguro, confirmá.
             </div>
             <div class="mt-2">
@@ -450,26 +465,26 @@
             </div>
           </div>
 
-          <div class="kv-box mt-3" style="padding:.85rem; border-radius:16px; border:1px solid rgba(212,175,55,.14); background: rgba(0,0,0,.38);">
+          <div class="kv-box mt-3" style="padding:.85rem; border-radius:16px; border:1px solid rgba(240,212,137,.14); background: rgba(0,0,0,.22); box-shadow: var(--kg-shadow-inset);">
             <div class="kv-title" style="margin-bottom:.5rem;">
-              <h6 style="margin:0; font-size:.80rem; letter-spacing:.14em; text-transform:uppercase; color: rgba(255,211,77,.92); font-weight:950;">
+              <h6 style="margin:0; font-size:.80rem; letter-spacing:.14em; text-transform:uppercase; color: var(--kg-gold-1); font-weight:1000;">
                 <i class="bi bi-eye-fill"></i> Vista previa
               </h6>
             </div>
 
             <div class="kv-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-              <div class="kv-row" style="border:1px dashed rgba(212,175,55,.18); border-radius:14px; background: rgba(0,0,0,.35); padding:.65rem .75rem;">
-                <div class="k" style="font-size:.72rem; color: rgba(185,188,200,.82); letter-spacing:.10em; text-transform:uppercase; font-weight:900;">Nuevo usuario</div>
-                <div class="v" id="previewUser" style="margin-top:.25rem; font-weight:950; font-size:.98rem; color: rgba(255,255,255,.95); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">—</div>
+              <div class="kv-row" style="border:1px dashed rgba(240,212,137,.18); border-radius:14px; background: rgba(0,0,0,.22); padding:.65rem .75rem;">
+                <div class="k" style="font-size:.72rem; color: var(--kg-text-soft); letter-spacing:.10em; text-transform:uppercase; font-weight:900;">Nuevo usuario</div>
+                <div class="v" id="previewUser" style="margin-top:.25rem; font-weight:1000; font-size:.98rem; color: var(--kg-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">—</div>
               </div>
-              <div class="kv-row" style="border:1px dashed rgba(212,175,55,.18); border-radius:14px; background: rgba(0,0,0,.35); padding:.65rem .75rem;">
-                <div class="k" style="font-size:.72rem; color: rgba(185,188,200,.82); letter-spacing:.10em; text-transform:uppercase; font-weight:900;">Contraseña</div>
-                <div class="v" id="previewPass" style="margin-top:.25rem; font-weight:950; font-size:.98rem; color: rgba(255,255,255,.95); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">—</div>
+              <div class="kv-row" style="border:1px dashed rgba(240,212,137,.18); border-radius:14px; background: rgba(0,0,0,.22); padding:.65rem .75rem;">
+                <div class="k" style="font-size:.72rem; color: var(--kg-text-soft); letter-spacing:.10em; text-transform:uppercase; font-weight:900;">Contraseña</div>
+                <div class="v" id="previewPass" style="margin-top:.25rem; font-weight:1000; font-size:.98rem; color: var(--kg-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">—</div>
               </div>
             </div>
           </div>
 
-          <div id="confirmError" class="mt-3" style="display:none; color: var(--danger); font-weight: 950;">
+          <div id="confirmError" class="mt-3" style="display:none; color: var(--danger); font-weight: 1000;">
             Error al guardar. Intentá nuevamente.
           </div>
         </div>
